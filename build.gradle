@@ -189,6 +189,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
 
   // temporary work around for dependency check
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
