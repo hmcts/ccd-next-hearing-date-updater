@@ -13,10 +13,6 @@ GradleBuilder builder = new GradleBuilder(this, product)
 
 def secrets = [
   'ccd-${env}': [
-    secret('idam-next-hearing-date-updater-system-user-username', 'IDAM_NEXT_HEARING_DATE_UPDATER_SYSTEM_USER_USERNAME'),
-    secret('idam-next-hearing-date-updater-system-user-password', 'IDAM_NEXT_HEARING_DATE_UPDATER_SYSTEM_USER_PASSWORD'),
-    secret('idam-next-hearing-date-updater-client-secret', 'IDAM_NEXT_HEARING_DATE_UPDATER_CLIENT_SECRET'),
-    secret('ccd-next-hearing-date-updater-s2s-secret', 'IDAM_KEY_CCD_NEXT_HEARING_DATE_UPDATER'),
     secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_STORE_S2S_SECRET'),
     secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
     secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
@@ -28,10 +24,6 @@ def secrets = [
 
 def prSecrets = [
   'ccd-aat': [
-    secret('idam-next-hearing-date-updater-system-user-username', 'IDAM_NEXT_HEARING_DATE_UPDATER_SYSTEM_USER_USERNAME'),
-    secret('idam-next-hearing-date-updater-system-user-password', 'IDAM_NEXT_HEARING_DATE_UPDATER_SYSTEM_USER_PASSWORD'),
-    secret('idam-next-hearing-date-updater-client-secret', 'IDAM_NEXT_HEARING_DATE_UPDATER_CLIENT_SECRET'),
-    secret('ccd-next-hearing-date-updater-s2s-secret', 'IDAM_KEY_CCD_NEXT_HEARING_DATE_UPDATER'),
     secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_STORE_S2S_SECRET'),
     secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
     secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
