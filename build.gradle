@@ -210,7 +210,7 @@ dependencies {
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 }
 
-mainClassName = 'uk.gov.hmcts.reform.ccd.next.hearing.date.updater.ApplicationBootstrap'
+mainClassName = 'uk.gov.hmcts.reform.next.hearing.date.updater.ApplicationBootstrap'
 
 bootJar {
   archiveFileName = "ccd-next-hearing-date-updater.jar"
