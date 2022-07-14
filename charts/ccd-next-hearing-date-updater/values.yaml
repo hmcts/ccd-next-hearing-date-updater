@@ -27,14 +27,6 @@ job:
           alias: ELASTIC_SEARCH_HOSTS
         - name: ccd-ELASTIC-SEARCH-PASSWORD
           alias: ELASTIC_SEARCH_PASSWORD
-        - name: idam-next-hearing-date-updater-system-user-username
-          alias: IDAM_NEXT_HEARING_DATE_UPDATER_SYSTEM_USER_USERNAME
-        - name: idam-next-hearing-date-updater-system-user-password
-          alias: IDAM_NEXT_HEARING_DATE_UPDATER_SYSTEM_USER_PASSWORD
-        - name: idam-next-hearing-date-updater-client-secret
-          alias: IDAM_NEXT_HEARING_DATE_UPDATER_CLIENT_SECRET
-        - name: ccd-next-hearing-date-updater-s2s-secret
-          alias: IDAM_KEY_CCD_NEXT_HEARING_DATE_UPDATER
         - name: ccd-definition-s2s-secret
           alias: CCD_DEFINITION_STORE_S2S_SECRET
   environment:
