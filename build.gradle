@@ -191,10 +191,8 @@ dependencies {
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
-
-  // temporary work around for dependency check
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
-  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: jacksonVersion
+  implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
