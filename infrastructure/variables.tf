@@ -1,9 +1,7 @@
 variable "product" {
-  default = "ccd"
 }
 
 variable "component" {
-  default = "next-hearing-date-updater"
 }
 
 variable "location" {
