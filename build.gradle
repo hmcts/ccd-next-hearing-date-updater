@@ -204,6 +204,11 @@ dependencies {
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
+  implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.0'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.7.RELEASE'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas'
+
 }
 
 mainClassName = 'uk.gov.hmcts.reform.next.hearing.date.updater.ApplicationBootstrap'
