@@ -187,6 +187,7 @@ dependencies {
   implementation group: 'javax.inject', name: 'javax.inject', version: '1'
 
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
