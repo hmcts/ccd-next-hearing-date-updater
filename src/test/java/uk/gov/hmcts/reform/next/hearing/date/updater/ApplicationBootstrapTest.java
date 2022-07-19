@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpdaterService;
 
 import static org.mockito.Mockito.doNothing;
@@ -25,6 +26,7 @@ class ApplicationBootstrapTest {
 
     @Test
     void testShouldRunExecutor() throws Exception {
+        ReflectionTestUtils.setField(underTest, "cronJobEnabled", true);
         doNothing().when(nextHearingDateUpdaterService).execute();
 
         underTest.run(applicationArguments);

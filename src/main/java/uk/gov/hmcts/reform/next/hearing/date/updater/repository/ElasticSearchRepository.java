@@ -7,7 +7,7 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.clients.ElasticSearchClient
 @Repository
 public class ElasticSearchRepository {
 
-    private ElasticSearchClient elasticSearchClient;
+    private final ElasticSearchClient elasticSearchClient;
 
     @Autowired
     public ElasticSearchRepository(ElasticSearchClient elasticSearchClient) {
