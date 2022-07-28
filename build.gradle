@@ -226,6 +226,7 @@ dependencies {
 
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
 
+  cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
 }
 
 mainClassName = 'uk.gov.hmcts.reform.next.hearing.date.updater.ApplicationBootstrap'
