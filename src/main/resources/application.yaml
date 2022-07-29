@@ -7,3 +7,7 @@ spring:
 azure:
   application-insights:
     instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+csv:
+  caseReferences:
+    fileName: "${CSV_FILENAME:caseReferences.csv}"
+    fileLocation: "${FILE_LOCATION:/src/main/resources}"

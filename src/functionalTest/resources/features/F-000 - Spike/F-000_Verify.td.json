@@ -1,0 +1,82 @@
+{
+  "_guid_": "F-000_Verify",
+  "title": "must return a successful response when hitting the Healthcheck Operation",
+  "productName": "Translation Service",
+  "operationName": "Healthcheck",
+  "method": "GET",
+  "uri": "http://localhost:4650/health",
+  "specs": [
+    "to verify"
+  ],
+  "request": {
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "expectedResponse": {
+    "responseCode": 200,
+    "responseMessage": "OK",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/vnd.spring-boot.actuator.v3+json",
+      "Date": "[[ANYTHING_PRESENT]]",
+      "Request-Context": "[[ANY_NULLABLE]]"
+    },
+    "body": {
+      "status": "UP",
+      "components" : {
+        "clientConfigServer": {
+          "status": "UNKNOWN",
+          "details": {
+            "error": "no property sources located"
+          }
+        },
+        "db" : {
+          "status" : "UP",
+          "details" : {
+            "database" : "PostgreSQL",
+            "validationQuery" : "isValid()"
+          }
+        },
+        "discoveryComposite" : {
+          "description" : "Discovery Client not initialized",
+          "status" : "UNKNOWN",
+          "components" : {
+            "discoveryClient" : {
+              "description" : "Discovery Client not initialized",
+              "status" : "UNKNOWN"
+            }
+          }
+        },
+        "diskSpace" : {
+          "status" : "UP",
+          "details" : {
+            "total" : "[[ANYTHING_PRESENT]]",
+            "free" : "[[ANYTHING_PRESENT]]",
+            "threshold" : "[[ANYTHING_PRESENT]]",
+            "exists" : true
+          }
+        },
+        "livenessState" : {
+          "status" : "UP"
+        },
+        "ping": {
+          "status": "UP"
+        },
+        "readinessState" : {
+          "status" : "UP"
+        },
+        "refreshScope": {
+          "status": "UP"
+        },
+        "serviceAuth": {
+          "status": "UP"
+        }
+      },
+      "groups": [
+        "liveness",
+        "readiness"
+      ]
+    }
+  }
+}
