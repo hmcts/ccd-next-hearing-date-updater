@@ -6,7 +6,7 @@ ccd:
 job:
   image: 'https://hmctspublic.azurecr.io/ccd/ccd-next-hearing-date-updater:latest'
   kind: CronJob
-  schedule: "* 15/1 0 ? * * *"
+  schedule: "* * * ? * *"
   successfulJobsHistoryLimit: 11
   startingDeadlineSeconds: 600
   concurrencyPolicy: Forbid
