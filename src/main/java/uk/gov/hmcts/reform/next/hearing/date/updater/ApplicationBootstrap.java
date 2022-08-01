@@ -17,6 +17,8 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpda
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 public class ApplicationBootstrap implements ApplicationRunner, CommandLineRunner {
 
+    private static final String ARROW = "--------------------->";
+
     @Value("${cronjob.enabled}")
     private boolean cronJobEnabled;
 
@@ -33,19 +35,21 @@ public class ApplicationBootstrap implements ApplicationRunner, CommandLineRunne
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("Starting the Next-Hearing-Date-Updater job triggered by cron job.");
+        log.info(ARROW + "Starting the Next-Hearing-Date-Updater job triggered by cron job.");
         if (cronJobEnabled) {
+            log.info(ARROW + "Running the Next-Hearing-Date-Updater job triggered by cron job.");
             nextHearingDateUpdaterService.execute();
         }
-        log.info("Completed the Next-Hearing-Date-Updater job successfully triggered by cron job.");
+        log.info(ARROW + "Completed the Next-Hearing-Date-Updater job successfully triggered by cron job.");
     }
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("Starting the Next-Hearing-Date-Updater job from command line.");
+        log.info(ARROW + "Starting the Next-Hearing-Date-Updater job from command line.");
         if (cronJobEnabled) {
+            log.info(ARROW + "Running the Next-Hearing-Date-Updater job triggered by cron job.");
             nextHearingDateUpdaterService.execute();
         }
-        log.info("Completed the Next-Hearing-Date-Updater job from command line successfully.");
+        log.info(ARROW + "Completed the Next-Hearing-Date-Updater job from command line successfully.");
     }
 }
