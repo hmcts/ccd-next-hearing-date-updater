@@ -35,7 +35,7 @@ public class ApplicationBootstrap implements ApplicationRunner, CommandLineRunne
     public void run(ApplicationArguments args) throws Exception {
         if (cronJobEnabled) {
             log.info("Starting the Next-Hearing-Date-Updater job triggered by cron job.");
-            nextHearingDateUpdaterService.execute();
+            //nextHearingDateUpdaterService.execute();
         }
         log.info("Completed the Next-Hearing-Date-Updater job successfully triggered by cron job.");
     }
@@ -44,7 +44,7 @@ public class ApplicationBootstrap implements ApplicationRunner, CommandLineRunne
     public void run(String... args) throws Exception {
         if (cronJobEnabled) {
             log.info("Starting the Next-Hearing-Date-Updater job from command line.");
-            nextHearingDateUpdaterService.execute();
+            //nextHearingDateUpdaterService.execute();
         }
         log.info("Completed the Next-Hearing-Date-Updater job from command line successfully.");
     }
