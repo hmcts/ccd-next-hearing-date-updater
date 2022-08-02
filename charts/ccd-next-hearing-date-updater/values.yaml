@@ -6,8 +6,7 @@ ccd:
 job:
   image: 'https://hmctspublic.azurecr.io/ccd/ccd-next-hearing-date-updater:latest'
   kind: CronJob
-  schedule: "* * * ? * *"
-  successfulJobsHistoryLimit: 11
+  schedule: "0 22 * * *"
   startingDeadlineSeconds: 600
   concurrencyPolicy: Forbid
   ingressHost: ccd-next-hearing-date-updater-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal

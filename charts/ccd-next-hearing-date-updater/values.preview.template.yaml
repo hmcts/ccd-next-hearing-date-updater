@@ -2,11 +2,9 @@ job:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   kind: CronJob
-  schedule: "*/1 * * * *"
-  spec:
-    schedule: "*/1 * * * *"
-    successfulJobsHistoryLimit: 11
-    concurrencyPolicy: Forbid
+  schedule: "*/20 * * * *"
+  startingDeadlineSeconds: 180
+  concurrencyPolicy: Forbid
   environment:
     APPLICATIONINSIGHTS_INSTRUMENTATIONKEY: "00000000-0000-0000-0000-000000000000"
 global:
