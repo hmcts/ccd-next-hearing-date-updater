@@ -26,4 +26,4 @@ idam:
     url: ${IDAM_S2S_URL:http://localhost:4502}
 
 cronjob:
-  enabled: true
+  enabled: ${HEARING_NEXT_DAY_CRON_JOB:true}
