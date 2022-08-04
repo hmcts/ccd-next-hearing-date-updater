@@ -48,11 +48,17 @@ public class NextHearingDateUpdaterService {
             if (caseReferences.isEmpty()) {
                 List<String> caseTypes = csvService.getCaseTypes();
 
-                //run elastic search/call service
-                caseReferences = elasticSearchService.findOutOfDateCaseReferencesByCaseType(caseTypes);
+                if (caseTypes == null || caseTypes.isEmpty()) {
+                    log.error("No case references or case types found");
+                } else {
+                    //run elastic search/call service
+                    caseReferences = elasticSearchService.findOutOfDateCaseReferencesByCaseType(caseTypes);
+                }
             }
 
-            callBackService.performCallbacks(caseReferences);
+            if (!caseReferences.isEmpty()) {
+                callBackService.performCallbacks(caseReferences);
+            }
         } catch (TooManyCsvRecordsException tooManyCsvRecordsException) {
             log.error("Failed to get case references", tooManyCsvRecordsException);
         }

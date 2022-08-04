@@ -197,6 +197,10 @@ dependencies {
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  testImplementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  integrationTestImplementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -204,7 +208,7 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
-  testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
 
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '9.3.1'
@@ -225,6 +229,15 @@ dependencies {
   integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2'
 
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
+  testImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.16.0'
+  testImplementation group: 'org.testcontainers', name: 'elasticsearch', version: '1.16.0'
+
+  integrationTestImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+  integrationTestImplementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.4'
+  implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '7.17.4'
+  implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.17.4'
+
+  testImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.5.1'
 }
 
 mainClassName = 'uk.gov.hmcts.reform.next.hearing.date.updater.ApplicationBootstrap'

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.next.hearing.date.updater.repository.ElasticSearchRepository;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,7 +27,9 @@ public class ElasticSearchService {
      * @return paginated result set of case references
      */
     public List<String> findOutOfDateCaseReferencesByCaseType(List<String> caseTypes) {
-        elasticSearchRepository.findOutOfDateNextHearingDate();
-        return Collections.emptyList();
+        return caseTypes.stream()
+            .flatMap(caseType -> elasticSearchRepository.findCasesWithOutOfDateNextHearingDate(caseType).stream())
+            .map(caseDetails -> caseDetails.getId().toString())
+            .toList();
     }
 }

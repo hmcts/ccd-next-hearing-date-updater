@@ -15,12 +15,10 @@ import java.time.LocalDateTime;
 @Data
 public class NextHearingDetails {
     private String hearingId;
-
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime hearingDateTime;
     private String caseReference;
-
     public static final String HEARING_DATE_TIME_IN_PAST =
         "003 hearingDateTime set is in the past '{}'";
     public static final String NULL_HEARING_DATE_TIME_LOG_MESSAGE = "004 hearingDateTime set is null '{}'";

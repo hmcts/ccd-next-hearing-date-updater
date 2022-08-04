@@ -27,6 +27,9 @@ public class CsvService {
     @Value("${csv.caseReferences.fileName}")
     private String fileName;
 
+    @Value("#{'${csv.caseTypes}'.split(',')}")
+    private List<String> caseTypes;
+
     public List<String> getCaseReferences() throws TooManyCsvRecordsException {
         List<String> caseReferences = getCaseReferencesFromCsvFile();
         validateCaseRefsFile(caseReferences);
@@ -75,6 +78,6 @@ public class CsvService {
      * @return List of case types
      */
     public List<String> getCaseTypes() {
-        return Collections.emptyList();
+        return caseTypes;
     }
 }

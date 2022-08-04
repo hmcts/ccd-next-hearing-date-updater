@@ -38,14 +38,6 @@ class NextHearingDateUpdaterServiceTest {
     @InjectMocks
     private NextHearingDateUpdaterService nextHearingDateUpdaterService;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void executeCaseReferencesFromCsv() throws TooManyCsvRecordsException {
         List<String> caseReferences = List.of("123", "456");
@@ -70,6 +62,7 @@ class NextHearingDateUpdaterServiceTest {
         when(csvService.getCaseReferences()).thenAnswer(invocation -> {
             throw new TooManyCsvRecordsException();
         });
+
         nextHearingDateUpdaterService.execute();
         verify(callBackService, never()).performCallbacks(any());
 
@@ -79,13 +72,28 @@ class NextHearingDateUpdaterServiceTest {
     }
 
     @Test
-    void executeCaseReferencesFromCaseTypeCsv() throws Exception {
+    void executeCaseReferencesFromElasticSearchQueryNoCaseTypesPresent() throws Exception {
         when(csvService.getCaseReferences()).thenReturn(Collections.emptyList());
+        when(csvService.getCaseTypes()).thenReturn(Collections.emptyList());
 
         nextHearingDateUpdaterService.execute();
 
-        verify(csvService).getCaseTypes();
-        verify(elasticSearchService).findOutOfDateCaseReferencesByCaseType(any());
-        verify(callBackService).performCallbacks(any());
+        verify(elasticSearchService, never()).findOutOfDateCaseReferencesByCaseType(any());
+        verify(callBackService, never()).performCallbacks(any());
+    }
+
+    @Test
+    void executeCaseReferencesFromElasticSearchQueryCaseTypesPresent() throws Exception {
+        when(csvService.getCaseReferences()).thenReturn(Collections.emptyList());
+
+        List<String> caseTypes = List.of("CASE_TYPE_1", "CASE_TYPE_2");
+        List<String> caseReferences = List.of("caseRef1", "caseRef2", "caseRef3", "caseRef4", "caseRef5", "caseRef6");
+        when(csvService.getCaseTypes()).thenReturn(caseTypes);
+
+        when(elasticSearchService.findOutOfDateCaseReferencesByCaseType(caseTypes)).thenReturn(caseReferences);
+        nextHearingDateUpdaterService.execute();
+
+        verify(elasticSearchService).findOutOfDateCaseReferencesByCaseType(caseTypes);
+        verify(callBackService).performCallbacks(caseReferences);
     }
 }
