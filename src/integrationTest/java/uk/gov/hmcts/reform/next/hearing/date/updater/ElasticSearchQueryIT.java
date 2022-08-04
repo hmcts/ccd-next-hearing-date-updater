@@ -90,30 +90,25 @@ class ElasticSearchQueryIT extends TestContainers {
 
     @Test
     void testQueryReturnsHearingDatesInPast() throws Exception {
-        Request request = new Request("GET", "_search");
-        request.setJsonEntity(String.format(query,10));
-        Response response = elasticsearchClient.getLowLevelClient().performRequest(request);
+        String querySizeOfTen = String.format(query,10);
 
-        String text = EntityUtils.toString(response.getEntity());
-
-        List<String> referencesFromResponse = JsonPath.read(text, "$.hits.hits..reference");
-        assertTrue(referencesFromResponse.containsAll(List.of("2092542372492013", "9454757880038200")));
+        sendRequestAndAssertResponseContainsReference(querySizeOfTen, List.of("2092542372492013", "9454757880038200"));
     }
 
     @Test
     void testQueryReturnsSingleHearingDateInPastUsingSearchAfter() throws Exception {
         String querySizeOfOne = String.format(query, 1);
 
-        sendRequestAndAssertResponseContainsReference(querySizeOfOne, "2092542372492013");
+        sendRequestAndAssertResponseContainsReference(querySizeOfOne, List.of("2092542372492013"));
 
         int insertPosition = querySizeOfOne.lastIndexOf('}');
         String substring = querySizeOfOne.substring(0, insertPosition);
         querySizeOfOne = substring + ",\"search_after\": [\"2092542372492013\"]}";
 
-        sendRequestAndAssertResponseContainsReference(querySizeOfOne, "9454757880038200");
+        sendRequestAndAssertResponseContainsReference(querySizeOfOne, List.of("9454757880038200"));
     }
 
-    private void sendRequestAndAssertResponseContainsReference(String query, String caseReference) throws Exception {
+    private void sendRequestAndAssertResponseContainsReference(String query, List<String> caseReferences) throws Exception {
         Request request = new Request("GET", "_search");
 
         request.setJsonEntity(query);
@@ -122,7 +117,7 @@ class ElasticSearchQueryIT extends TestContainers {
         String responseEntity = EntityUtils.toString(response.getEntity());
 
         List<String> referencesFromResponse = JsonPath.read(responseEntity, "$.hits.hits..reference");
-        assertTrue(referencesFromResponse.containsAll(List.of(caseReference)));
+        assertTrue(referencesFromResponse.containsAll(caseReferences));
     }
 
     private CaseData createCaseData(String caseReference, LocalDateTime hearingDateTime) {
