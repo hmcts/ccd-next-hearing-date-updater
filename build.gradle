@@ -1,13 +1,15 @@
 plugins {
   id 'application'
+  id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+  id 'io.spring.dependency-management' version '1.0.12.RELEASE'
   id 'org.springframework.boot' version '2.7.1'
   id 'com.github.ben-manes.versions' version '0.42.0'
   id 'org.sonarqube' version '3.3'
   id 'uk.gov.hmcts.java' version '0.12.27'
   id 'com.github.hmcts.rse-cft-lib' version '0.19.260'
+  id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.23'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -59,6 +61,16 @@ configurations {
   smokeTestRuntimeOnly.extendsFrom runtimeOnly
 }
 
+idea {
+  module {
+    // config to allow Intellij to mark test source and resource files correctly to help linting tools
+    testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
+    testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
+    testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
+    testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
+  }
+}
+
 tasks.withType(JavaCompile) {
   options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
@@ -85,15 +97,65 @@ tasks.withType(Test) {
 }
 
 test {
+  generateCucumberReports.enabled = false
   failFast = true
 }
 
-task functional(type: Test) {
+task functional(type: JavaExec) {
+  doFirst {
+    boolean ciBuild = System.getenv().get("CI_BUILD") ?: false
+    if (!ciBuild) {
+      file('.env').readLines().each() {
+        def (key, value) = it.tokenize('=')
+        environment key, value
+      }
+    }
+  }
+
   description = "Runs functional tests"
   group = "Verification"
-  testClassesDirs = sourceSets.functionalTest.output.classesDirs
-  classpath = sourceSets.functionalTest.runtimeClasspath
+
+  generateCucumberReports.enabled = false
+  mainClass = 'uk.gov.hmcts.reform.next.hearing.date.updater.befta.ServiceBeftaMain'
+  classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
+  args = [
+    '--strict',
+    '--threads', '10',
+    '--plugin', "json:${rootDir}/target/cucumber.json",
+    '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
+    '--tags', 'not @Ignore',
+    '--glue', 'uk.gov.hmcts.befta.player', 'src/functionalTest/resources/features'
+  ]
+  // '--add-opens=...' added to suppress 'WARNING: An illegal reflective access operation has occurred' in uk.gov.hmcts.befta.util.CucumberStepAnnotationUtils
+  jvmArgs = [ '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED' ]
+
+  finalizedBy {
+    generateCucumberReports.enabled = true
+    generateCucumberReports {
+      doLast{
+        delete "${rootDir}/BEFTA Report for Functional Tests/"
+        new File("${rootDir}/BEFTA Report for Functional Tests").mkdirs()
+        file("${rootDir}/target/cucumber/cucumber-html-reports").renameTo(file("${rootDir}/BEFTA Report for Functional Tests"))
+        logger.quiet("Functional test report moved to ---> file://${rootDir}/BEFTA%20Report%20for%20Functional%20Tests/overview-features.html")
+      }
+    }
+  }
+
+  outputs.upToDateWhen { false }
 }
+
+cucumberReports {
+  outputDir = file("${rootDir}/target/cucumber")
+  reports = files("${rootDir}/target/cucumber.json")
+}
+
+task customCleanBeftaReports(type:Delete) {
+  delete "${rootDir}/BEFTA Report for Smoke Tests/"
+  delete "${rootDir}/BEFTA Report for Functional Tests/"
+  delete "${rootDir}/target/cucumber"
+  delete "${rootDir}/target/cucumber.json"
+}
+tasks.clean.dependsOn(tasks.customCleanBeftaReports)
 
 task integration(type: Test) {
   description = "Runs integration tests"
@@ -181,23 +243,32 @@ ext {
   reformLogging = '6.0.1'
   lombokVersion = '1.18.24'
   jacksonVersion = '2.13.3'
+  springFrameworkVersion = '5.3.22'
 }
 
 dependencies {
+  // Implementation dependencies
   implementation group: 'javax.inject', name: 'javax.inject', version: '1'
 
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+  implementation group: 'org.springframework', name:'spring-webmvc', version: springFrameworkVersion
 
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
-  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
-  implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+
+  // Application Insights to be address by HMAN-383.  The below dependencies attempt to run the application as a spring boot WEB application
+  //  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
+  //  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
+  //  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
+  //  implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+  //  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
+
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
+  implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
+  // Unit test dependencies
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
@@ -206,10 +277,14 @@ dependencies {
   }
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
-  implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
-
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
+
+  // Functional test dependencies
+  functionalTestImplementation sourceSets.main.runtimeClasspath
+  functionalTestImplementation sourceSets.test.runtimeClasspath
+  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.1'
+  functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
 }
 
 mainClassName = 'uk.gov.hmcts.reform.next.hearing.date.updater.ApplicationBootstrap'
@@ -224,6 +299,14 @@ bootJar {
 
 // Gradle 7.x issue, workaround from: https://github.com/gradle/gradle/issues/17236#issuecomment-894768083
 rootProject.tasks.named("processSmokeTestResources") {
+  duplicatesStrategy = 'include'
+}
+
+rootProject.tasks.named("processFunctionalTestResources") {
+  duplicatesStrategy = 'include'
+}
+
+rootProject.tasks.named("processIntegrationTestResources") {
   duplicatesStrategy = 'include'
 }
 

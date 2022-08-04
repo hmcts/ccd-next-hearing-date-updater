@@ -1,0 +1,9 @@
+{
+  "_guid_": "F-001_Verify",
+  "title": "must return a successful response when hitting the Healthcheck Operation",
+  "_extends_": "Health__Base",
+
+  "specs": [
+    "to verify"
+  ]
+}

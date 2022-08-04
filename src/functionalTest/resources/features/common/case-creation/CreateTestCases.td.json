@@ -1,0 +1,23 @@
+{
+  "_guid_": "CreateTestCases",
+  "_extends_": "Health__Base",
+
+  "specs": [
+    "to create test cases"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "BeftaMasterCaseworker"
+    }
+  },
+
+  "prerequisites": [
+    {
+      "Case1": "CreateTestCase_BeftaCaseType11",
+      "Case2": "CreateTestCase_BeftaCaseType11",
+      "Case3": "CreateTestCase_BeftaCaseType11"
+    }
+  ]
+
+}

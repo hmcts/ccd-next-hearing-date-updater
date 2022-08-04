@@ -16,9 +16,7 @@ def secrets = [
     secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_STORE_S2S_SECRET'),
     secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
     secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
-    secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET'),
-    secret('ccd-ELASTIC-SEARCH-URL', 'ELASTIC_SEARCH_HOSTS'),
-    secret('ccd-ELASTIC-SEARCH-DATA-NODES-URL', 'ELASTIC_SEARCH_DATA_NODES_HOSTS')
+    secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET')
   ]
 ]
 
@@ -39,6 +37,9 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
    envVariable: envVar
   ]
 }
+
+env.CI_BUILD = true
+env.CCD_DATA_STORE_API_URL = "http://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
 
 withPipeline(type, product, component) {
   after('test') {

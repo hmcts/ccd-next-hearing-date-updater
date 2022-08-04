@@ -1,0 +1,15 @@
+{
+  "_guid_": "Check_Datastore_Health",
+  "_extends_": "Health__Base",
+
+  "specs": [
+    "to check the health of datastore"
+  ],
+
+  "request": {
+    "headers": {
+      "_extends_": "Common_Request_Headers",
+      "X_TEST_HOOK": "${[scenarioContext][customValues][testHook]}"
+    }
+  }
+}

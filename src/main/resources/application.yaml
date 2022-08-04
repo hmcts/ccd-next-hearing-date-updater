@@ -16,9 +16,7 @@ csv:
 elasticsearch:
   host: "http://localhost:1234"
 
-ccd:
-  datastore:
-    host: "http://localhost:1234"
+ccd.datastore.host: "${CCD_DATA_STORE_API_URL:http://localhost:4452}"
 
 cronjob:
   enabled: true

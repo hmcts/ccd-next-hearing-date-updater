@@ -10,3 +10,7 @@ dependencies:
   - name: job
     version: ~0.7.3
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
+  - name: ccd
+    version: 6.0.0
+    repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
+    condition: ccd.enabled
