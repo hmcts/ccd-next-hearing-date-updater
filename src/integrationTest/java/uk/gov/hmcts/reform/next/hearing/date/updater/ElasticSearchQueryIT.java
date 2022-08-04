@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater;
 
 import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
 @ActiveProfiles("itest")
 @ComponentScan({"uk.gov.hmcts.reform.next.hearing.date.updater"})
+@Slf4j
 @SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage", "PMD.JUnitTestsShouldIncludeAssert"})
 class ElasticSearchQueryIT extends TestContainers {
     private static final String FT_NEXT_HEARING_DATE = "FT_NextHearingDate";
@@ -108,7 +110,8 @@ class ElasticSearchQueryIT extends TestContainers {
         sendRequestAndAssertResponseContainsReference(querySizeOfOne, List.of("9454757880038200"));
     }
 
-    private void sendRequestAndAssertResponseContainsReference(String query, List<String> caseReferences) throws Exception {
+    private void sendRequestAndAssertResponseContainsReference(String query, List<String> caseReferences)
+        throws Exception {
         Request request = new Request("GET", "_search");
 
         request.setJsonEntity(query);
@@ -117,6 +120,9 @@ class ElasticSearchQueryIT extends TestContainers {
         String responseEntity = EntityUtils.toString(response.getEntity());
 
         List<String> referencesFromResponse = JsonPath.read(responseEntity, "$.hits.hits..reference");
+
+        log.info("Expected {}, received{}", caseReferences, referencesFromResponse);
+
         assertTrue(referencesFromResponse.containsAll(caseReferences));
     }
 
