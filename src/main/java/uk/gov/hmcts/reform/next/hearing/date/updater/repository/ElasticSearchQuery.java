@@ -11,7 +11,7 @@ public class ElasticSearchQuery {
         + "    \"query\": {\n"
         + "        \"range\": {\n"
         + "            \"data.NextHearingDetails.hearingDateTime\": {\n"
-        + "                \"lte\": \"now\"\n"
+        + "                \"lt\": \"now\"\n"
         + "            }\n"
         + "        }\n"
         + "    },\n"
