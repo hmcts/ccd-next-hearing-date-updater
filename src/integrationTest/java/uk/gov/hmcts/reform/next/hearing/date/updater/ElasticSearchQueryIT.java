@@ -7,6 +7,7 @@ import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ComponentScan({"uk.gov.hmcts.reform.next.hearing.date.updater"})
 @Slf4j
 @SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage", "PMD.JUnitTestsShouldIncludeAssert"})
+@Disabled
 class ElasticSearchQueryIT extends TestContainers {
     private static final String FT_NEXT_HEARING_DATE = "FT_NextHearingDate";
 
