@@ -1,8 +1,25 @@
 spring:
+  main:
+    web-application-type: none
   config:
     import: "optional:configtree:/mnt/secrets/ccd/"
   application:
     name: CCD Next Hearing Date Updater
+
+idam:
+  api:
+    url: ${IDAM_API_URL:http://localhost:5000}
+  client:
+    id: ccd-next-hearing-date-updater
+    secret:  ${CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
+    redirect_uri: http://localhost:4561/oauth2redirect
+  nextHearingDateSystemUser:
+    username: ${IDAM_NEXT_HEARING_DATE_SYSTEM_USER:next.hearing.date.admin@gmail.com}
+    password: ${IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD:Pa55word11}
+  s2s-auth:
+    url: http://localhost:4502
+    totp_secret: AAAAAAAAAAAAAAAC
+    microservice: ccd-next-hearing-updater-service
 
 azure:
   application-insights:
@@ -10,13 +27,12 @@ azure:
 
 csv:
   caseReferences:
-    fileName: "${CSV_FILENAME:caseReferences.csv}"
-    fileLocation: "${FILE_LOCATION:/src/main/resources}"
+    fileName: ${CSV_FILENAME:caseReferences.csv}
+    fileLocation: ${FILE_LOCATION:/src/main/resources}
 
 elasticsearch:
   host: "http://localhost:1234"
 
-ccd.datastore.host: "${CCD_DATA_STORE_API_URL:http://localhost:4452}"
+core_case_data.api.url: ${CCD_DATA_STORE_API_URL:http://localhost:4452}
 
-cronjob:
-  enabled: true
+cronjob.enabled: ${CRON_JOB_ENABLED:true}

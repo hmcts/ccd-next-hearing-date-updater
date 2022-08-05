@@ -253,17 +253,22 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
   implementation group: 'org.springframework', name:'spring-webmvc', version: springFrameworkVersion
 
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
-
-  // Application Insights to be address by HMAN-383.  The below dependencies attempt to run the application as a spring boot WEB application
-  //  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
-  //  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
-  //  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
-  //  implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
-  //  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+  implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
 
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
+
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
+  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
+  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
+
+  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '9.3.1'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: 'v4.9.0_HMAN-319'
+
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.3'
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
@@ -276,8 +281,13 @@ dependencies {
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
+
+  // Integration test dependencies
+  integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
+  integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2'
 
   // Functional test dependencies
   functionalTestImplementation sourceSets.main.runtimeClasspath
@@ -316,5 +326,8 @@ wrapper {
 
 bootWithCCD {
   authMode = uk.gov.hmcts.rse.AuthMode.Local
+  environment("CRON_JOB_ENABLED", "false")
+  environment("DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd-next-hearing-updater-service")
   environment("RSE_LIB_S2S_PORT", 4502)
+  environment("TEST_STUB_SERVICE_BASE_URL", "http://localhost:5555")
 }
