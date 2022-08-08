@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.FileSource;
@@ -26,7 +25,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_OK;
 
-public class WiremockFixtures {
+public class WiremockFixtures extends WireMockBootstrap {
 
     private static final ObjectMapper OBJECT_MAPPER = new Jackson2ObjectMapperBuilder()
         .modules(new Jdk8Module(), new JavaTimeModule())
@@ -34,8 +33,8 @@ public class WiremockFixtures {
     public static final String ABOUT_TO_START_CALLBACK_URL = "/cases/%s/event-triggers/%s";
     public static final String SUBMIT_EVENT_URL = "/cases/%s/events";
 
-    public WiremockFixtures(final WireMockServer wireMockServer) {
-        WireMock.configureFor(wireMockServer.port());
+    public WiremockFixtures() {
+        WireMock.configureFor(WIRE_MOCK_SERVER.port());
     }
 
     // Same issue as here https://github.com/tomakehurst/wiremock/issues/97

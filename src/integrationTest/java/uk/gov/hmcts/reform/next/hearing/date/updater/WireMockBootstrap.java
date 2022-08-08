@@ -12,8 +12,8 @@ import org.springframework.test.context.support.TestPropertySourceUtils;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 @SuppressWarnings({"checkstyle:hideutilityclassconstructor"})
-@ContextConfiguration(initializers = {TestBootstrap.WireMockServerInitializer.class})
-public class TestBootstrap {
+@ContextConfiguration(initializers = {WireMockBootstrap.WireMockServerInitializer.class})
+public class WireMockBootstrap {
 
     protected static final WireMockServer WIRE_MOCK_SERVER = new WireMockServer(
         options().dynamicPort().withRootDirectory("classpath:/wiremock-stubs")

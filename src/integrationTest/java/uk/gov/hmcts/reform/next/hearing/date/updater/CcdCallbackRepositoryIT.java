@@ -28,7 +28,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallba
 @SpringBootTest()
 @ActiveProfiles("itest")
 @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
-class CcdCallbackRepositoryIT extends TestBootstrap {
+class CcdCallbackRepositoryIT {
 
     @Autowired
     private CcdCallbackRepository ccdCallbackRepository;
@@ -36,7 +36,7 @@ class CcdCallbackRepositoryIT extends TestBootstrap {
     @Autowired
     protected SecurityUtils securityUtils;
 
-    private final WiremockFixtures wiremockFixtures = new WiremockFixtures(WIRE_MOCK_SERVER);
+    private final WiremockFixtures wiremockFixtures = new WiremockFixtures();
 
     private static final String CASE_REFERENCE = "1658830998852951";
 
