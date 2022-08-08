@@ -1,52 +1,83 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.TooManyCsvRecordsException;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
-/**
- * HMAN-319
- *
- * read the CSV file
- *  - check if csv has more than 10,000 Case Reference numbers
- *  - check if the case reference numbers are valid.
- */
 public class CsvService {
+    public static final int MAX_NUM_CASE_REFERENCES = 10_000;
 
-    public List<String> getCaseReferences() {
+    @Value("${csv.caseReferences.fileLocation}")
+    private String fileLocation;
 
+    @Value("${csv.caseReferences.fileName}")
+    private String fileName;
+
+    @Value("#{'${csv.caseTypes}'.split(',')}")
+    private List<String> caseTypes;
+
+    public List<String> getCaseReferences() throws TooManyCsvRecordsException {
         List<String> caseReferences = getCaseReferencesFromCsvFile();
-
-        if (validateCaseRefsFile(caseReferences)) {
-            return caseReferences;
-        }
-
-        return Collections.emptyList();
-    }
-
-    public List<String> getCaseTypes() {
-        return Collections.emptyList();
+        validateCaseRefsFile(caseReferences);
+        return caseReferences;
     }
 
     private List<String> getCaseReferencesFromCsvFile() {
-        return Collections.emptyList();
+        List<String> caseReferences = Collections.emptyList();
+
+        final String fileToRead = fileLocation + File.separator + fileName;
+
+        try (Stream<String> lines = Files.lines(Paths.get(fileToRead))) {
+            caseReferences = lines.collect(Collectors.toList());
+        } catch (IOException ioException) {
+            log.error(String.format("Failed to read the CSV file at %s", fileToRead));
+        }
+
+        return caseReferences;
     }
 
-    private boolean validateCaseRefsFile(List<String> caseReferences) {
-        return isCsvCaseSizeValid(caseReferences) && areCaseReferencesValid(caseReferences);
+    private void validateCaseRefsFile(List<String> caseReferences) throws TooManyCsvRecordsException {
+        validateCsvCaseSizeLessThanMaximum(caseReferences);
+        logInvalidCaseReferences(caseReferences);
     }
 
-    private boolean isCsvCaseSizeValid(List<String> caseReferences) {
-        log.info(String.valueOf(caseReferences));
-        return true;
+    private void validateCsvCaseSizeLessThanMaximum(List<String> caseReferences) throws TooManyCsvRecordsException {
+        if (caseReferences != null && caseReferences.size() > MAX_NUM_CASE_REFERENCES) {
+            throw new TooManyCsvRecordsException();
+        }
     }
 
-    private boolean areCaseReferencesValid(List<String> caseReferences) {
-        log.info(String.valueOf(caseReferences));
-        return true;
+    private void logInvalidCaseReferences(List<String> caseReferences) {
+        Predicate<String> isInvalidCaseReference = caseRef -> !LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(caseRef);
+
+        caseReferences.stream()
+            .filter(isInvalidCaseReference)
+            .forEach(invalidCaseReference -> log.error("002 Invalid Case Reference number '{}' in CSV",
+                                                       invalidCaseReference));
+
+        caseReferences.removeIf(isInvalidCaseReference);
+    }
+
+    /**
+     * HMAN-320 Check the properties file for a new variable that will have caseTypes as a comma separated values.
+     *
+     * @return List of case types
+     */
+    public List<String> getCaseTypes() {
+        return caseTypes;
     }
 }

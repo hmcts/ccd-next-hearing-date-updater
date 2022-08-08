@@ -1,7 +1,9 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.TooManyCsvRecordsException;
 
 import java.util.List;
 
@@ -19,28 +21,46 @@ import java.util.List;
  *          paginated result set off case reference numbers. HMAN-320.
  *          For each case reference number present in the result set, a new Next Hearing Date needs to be set. HMAN-322.
  */
+@Slf4j
 @Service
 public class NextHearingDateUpdaterService {
 
-    @Autowired
-    private CsvService csvService;
+    private final CsvService csvService;
+
+    private final ElasticSearchService elasticSearchService;
+
+    private final CallBackService callBackService;
 
     @Autowired
-    private ElasticSearchService elasticSearchService;
-
-    @Autowired
-    private CallBackService callBackService;
+    public NextHearingDateUpdaterService(CsvService csvService,
+                                         ElasticSearchService elasticSearchService,
+                                         CallBackService callBackService) {
+        this.csvService = csvService;
+        this.elasticSearchService = elasticSearchService;
+        this.callBackService = callBackService;
+    }
 
     public void execute() {
-        List<String> caseReferences = csvService.getCaseReferences();
+        List<String> caseReferences;
+        try {
+            caseReferences = csvService.getCaseReferences();
 
-        if (caseReferences.isEmpty()) {
-            List<String> caseTypes = csvService.getCaseTypes();
+            if (caseReferences.isEmpty()) {
+                List<String> caseTypes = csvService.getCaseTypes();
 
-            //run elastic search/call service
-            caseReferences = elasticSearchService.findOutOfDateCaseReferencesByCaseType(caseTypes);
+                if (caseTypes == null || caseTypes.isEmpty()) {
+                    log.error("No case references or case types found");
+                } else {
+                    //run elastic search/call service
+                    caseReferences = elasticSearchService.findOutOfDateCaseReferencesByCaseType(caseTypes);
+                }
+            }
+
+            if (!caseReferences.isEmpty()) {
+                callBackService.performCallbacks(caseReferences);
+            }
+        } catch (TooManyCsvRecordsException tooManyCsvRecordsException) {
+            log.error("Failed to get case references", tooManyCsvRecordsException);
         }
-
-        callBackService.performCallbacks(caseReferences);
     }
 }

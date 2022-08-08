@@ -13,7 +13,7 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpda
 
 @Slf4j
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"uk.gov.hmcts.reform.idam"})
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 public class ApplicationBootstrap implements ApplicationRunner, CommandLineRunner {
 
@@ -37,7 +37,10 @@ public class ApplicationBootstrap implements ApplicationRunner, CommandLineRunne
             log.info("Starting the Next-Hearing-Date-Updater job triggered by cron job.");
             nextHearingDateUpdaterService.execute();
             log.info("Completed the Next-Hearing-Date-Updater job successfully triggered by cron job.");
+        } else {
+            log.info("Cron jon disabled, do nothing");
         }
+
     }
 
     @Override
@@ -46,6 +49,8 @@ public class ApplicationBootstrap implements ApplicationRunner, CommandLineRunne
             log.info("Starting the Next-Hearing-Date-Updater job from command line.");
             nextHearingDateUpdaterService.execute();
             log.info("Completed the Next-Hearing-Date-Updater job from command line successfully.");
+        } else {
+            log.info("Cron jon disabled, do nothing");
         }
     }
 }
