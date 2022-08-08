@@ -35,7 +35,7 @@ idam:
     url: ${IDAM_S2S_URL:http://localhost:4502}
     totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:AAAAAAAAAAAAAAAA}
     microservice: ccd-next-hearing-updater-service
-    
+
 azure:
   application-insights:
     instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
