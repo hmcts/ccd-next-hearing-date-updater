@@ -7,3 +7,17 @@ spring:
 azure:
   application-insights:
     instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+
+csv:
+  fileName: "${CSV_FILENAME:caseReferences.csv}"
+  fileLocation: "${FILE_LOCATION}:/src/main/resources"
+
+elasticsearch:
+  host: "http://localhost:1234"
+
+ccd:
+  datastore:
+    host: "http://localhost:1234"
+
+cronjob:
+  enabled: true
