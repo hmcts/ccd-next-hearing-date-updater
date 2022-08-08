@@ -10,22 +10,19 @@ def component = "next-hearing-date-updater"
 def branchesToSync = ['demo','perftest']
 
 GradleBuilder builder = new GradleBuilder(this, product)
-
 def secrets = [
+  'rpx-${env}': [
+    secret('mc-idam-client-secret', 'BEFTA_OAUTH2_CLIENT_SECRET_OF_XUIWEBAPP')
+  ],
   'ccd-${env}': [
-    secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_STORE_S2S_SECRET'),
-    secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
-    secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
-    secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET')
-  ]
-]
-
-def prSecrets = [
-  'ccd-aat': [
-    secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_STORE_S2S_SECRET'),
-    secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
-    secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
-    secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET')
+    secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
+    secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD')
+  ],
+  's2s-${env}': [
+    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
+    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
+    secret('microservicekey-ccd-definition', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DEFINITION'),
+    secret('microservicekey-ccd-data', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DATA')
   ]
 ]
 
@@ -60,30 +57,25 @@ env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
 
 withPipeline(type, product, component) {
   after('test') {
+    builder.gradle('integration')
+
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
 
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
   }
 
-  after('test') {
-    builder.gradle('integration')
-  }
-
   enableAksStagingDeployment()
   disableLegacyDeployment()
   nonServiceApp()
   syncBranchesWithMaster(branchesToSync)
+  loadVaultSecrets(secrets)
 
   onPR() {
-    echo "Loading PR secrets"
-    loadVaultSecrets(prSecrets)
     env.ENV='preview'
   }
 
   onNonPR() {
-    echo "Loading secrets"
-    loadVaultSecrets(secrets)
     env.ENV='aat'
   }
 
