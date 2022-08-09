@@ -11,13 +11,13 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.data.StartEventResult;
  */
 @Repository
 @SuppressWarnings("PMD.UnusedPrivateMethod")
-public class CcdCallbackRepository {
+public class CcdCaseEventRepository {
 
     private final DatastoreClient datastoreClient;
     private static final String EVENT_ID = "UpdateNextHearingInfo";
 
     @Autowired
-    public CcdCallbackRepository(DatastoreClient datastoreClient) {
+    public CcdCaseEventRepository(DatastoreClient datastoreClient) {
         this.datastoreClient = datastoreClient;
     }
 
@@ -29,7 +29,7 @@ public class CcdCallbackRepository {
         datastoreClient.createEvent(caseReference, new CaseDataContent());
     }
 
-    public void performCcdCallback(String caseReference) {
+    public void createCaseEvents(String caseReference) {
         // StartEventResult startEventResult = triggerAboutToStartCallback(caseReference);
 
         // String token = startEventResult.getToken();
