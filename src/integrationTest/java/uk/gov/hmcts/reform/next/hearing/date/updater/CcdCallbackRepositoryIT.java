@@ -28,7 +28,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallba
 @SpringBootTest()
 @ActiveProfiles("itest")
 @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
-class CcdCallbackRepositoryIT {
+class CcdCallbackRepositoryIT extends WireMockBootstrap {
 
     @Autowired
     private CcdCallbackRepository ccdCallbackRepository;

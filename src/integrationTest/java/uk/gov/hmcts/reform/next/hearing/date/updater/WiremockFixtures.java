@@ -24,8 +24,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_OK;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.WireMockBootstrap.WIRE_MOCK_SERVER;
 
-public class WiremockFixtures extends WireMockBootstrap {
+public class WiremockFixtures {
 
     private static final ObjectMapper OBJECT_MAPPER = new Jackson2ObjectMapperBuilder()
         .modules(new Jdk8Module(), new JavaTimeModule())
