@@ -18,7 +18,7 @@ public class ElasticSearchRepository {
 
     private final SecurityUtils securityUtils;
 
-    @Value("${elasticsearch.querySize}")
+    @Value("${next-hearing-date-updater.elasticsearch.querySize}")
     private int querySize;
 
     @Autowired

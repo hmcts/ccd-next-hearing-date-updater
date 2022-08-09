@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.next.hearing.date.updater.repository.ElasticSearchRepository;
 
@@ -32,12 +33,13 @@ class ElasticSearchServiceTest {
 
     @Test
     void testFindOutOfDateCaseReferencesByCaseTypeForSingleCaseType() {
+        ReflectionTestUtils.setField(elasticSearchService, "caseTypes", List.of(CASE_TYPE_1));
         List<CaseDetails> caseDetails = createCaseDetails(CASE_TYPE_1, 5);
         when(elasticSearchRepository.findCasesWithOutOfDateNextHearingDate(CASE_TYPE_1))
             .thenReturn(caseDetails);
 
         List<String> outOfDateCaseReferencesByCaseType =
-            elasticSearchService.findOutOfDateCaseReferencesByCaseType(List.of(CASE_TYPE_1));
+            elasticSearchService.findOutOfDateCaseReferencesByCaseType();
 
         assertNotNull(outOfDateCaseReferencesByCaseType);
         assertEquals(5, outOfDateCaseReferencesByCaseType.size());
@@ -48,6 +50,7 @@ class ElasticSearchServiceTest {
 
     @Test
     void testFindOutOfDateCaseReferencesByCaseTypeForMultipleCaseTypes() {
+        ReflectionTestUtils.setField(elasticSearchService, "caseTypes", List.of(CASE_TYPE_1, CASE_TYPE_2));
         List<CaseDetails> caseType1CaseDetails = createCaseDetails(CASE_TYPE_1, 5);
         when(elasticSearchRepository.findCasesWithOutOfDateNextHearingDate(CASE_TYPE_1))
             .thenReturn(caseType1CaseDetails);
@@ -57,7 +60,7 @@ class ElasticSearchServiceTest {
             .thenReturn(caseType2CaseDetails);
 
         List<String> outOfDateCaseReferencesByCaseType =
-            elasticSearchService.findOutOfDateCaseReferencesByCaseType(List.of(CASE_TYPE_1, CASE_TYPE_2));
+            elasticSearchService.findOutOfDateCaseReferencesByCaseType();
 
         List<CaseDetails> expectedCaseDetails = new ArrayList<>();
         expectedCaseDetails.addAll(caseType1CaseDetails);

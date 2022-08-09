@@ -6,16 +6,8 @@ spring:
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
-#  security:
-#    oauth2:
-#      client:
-#        provider:
-#          oidc:
-#            issuer-uri: ${IDAM_OIDC_URL:http://localhost:5000}/o
-#        registration:
-#          oidc:
-#            client-id: internal
-#            client-secret: internal
+  main:
+    web-application-type: NONE
   cache:
     cache-names: nextHearingDateAdminAccessTokenCache
     caffeine:
@@ -40,19 +32,19 @@ azure:
   application-insights:
     instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
 
+next-hearing-date-updater:
+  csv:
+    caseReferences:
+      fileLocation: ${FILE_LOCATION:}
+      maximumNumberOfCsvEntriesToProcess: ${MAX_CSV_RECORDS:10000}
+
+  elasticsearch:
+    querySize: ${ES_QUERY_SIZE:100}
+    caseTypes: ${CASE_TYPES:}
+
+  processing:
+    enabled: true
+
 core_case_data:
   api:
     url: ${CCD_DATA_STORE_API_BASE_URL:http://localhost:4452}
-
-csv:
-  caseReferences:
-    fileName: ${CSV_FILENAME:caseReferences.csv}
-    fileLocation: ${FILE_LOCATION:/src/main/resources}
-  caseTypes: ${CASE_TYPES:}
-
-elasticsearch:
-  querySize: ${ES_QUERY_SIZE:100}
-
-cronjob:
-  enabled: ${CRON_JOB_ENABLED:true}
-
