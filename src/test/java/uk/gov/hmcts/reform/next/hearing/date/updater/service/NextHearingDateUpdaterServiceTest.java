@@ -84,7 +84,7 @@ class NextHearingDateUpdaterServiceTest {
 
         assertThrows(InvalidConfigurationError.class, () -> nextHearingDateUpdaterService.execute());
 
-        verify(ccdCaseEventRepository, never()).createCaseEvents(any());
+        verify(ccdCaseEventRepository, never()).createCaseEvent(any());
     }
 
     @Test
@@ -94,6 +94,6 @@ class NextHearingDateUpdaterServiceTest {
 
         nextHearingDateUpdaterService.execute();
 
-        verify(ccdCaseEventRepository, never()).createCaseEvents(any());
+        verify(ccdCaseEventRepository, never()).createCaseEvent(any());
     }
 }

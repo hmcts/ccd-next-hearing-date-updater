@@ -14,6 +14,13 @@ public final class ErrorMessages {
         "Invalid Configuration: CSV file and Case Types are both specified";
     public static final String NO_REFERENCES_TO_PROCESS = "No Case References found to be processed";
 
+    public static final String HEARING_DATE_TIME_IN_PAST =
+        "003 hearingDateTime set is in the past '{}'";
+
+    public static final String NULL_HEARING_DATE_TIME_LOG_MESSAGE = "004 hearingDateTime set is null '{}'";
+
+    public static final String NULL_HEARING_ID_MESSAGE = "005 hearingID set is null '{}'";
+
     private ErrorMessages() {
 
     }
