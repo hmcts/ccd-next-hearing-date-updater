@@ -274,12 +274,19 @@ ccd:
         USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,rd_professional_api
         IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
         USER_PROFILE_DB_HOST: ${DATA_STORE_DB_HOST}
-        USER_PROFILE_DB_PORT: ${DATA_STORE_DB_PORT}
+      keyVaults: [ ]
+#        USER_PROFILE_DB_PORT: ${DATA_STORE_DB_PORT}
 #        USER_PROFILE_DB_USERNAME: ${DATA_STORE_DB_USERNAME}
 #        USER_PROFILE_DB_PASSWORD: ${DATA_STORE_DB_PASSWORD}
 #        USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified"
 #        USER_PROFILE_DB_NAME: ccd_user_profile
-      keyVaults: [ ]
+#      keyVaults:
+#        ccd:
+#          secrets:
+#            - name: user-profile-api-POSTGRES-USER
+#              alias: USER_PROFILE_DB_USERNAME
+#            - name: user-profile-api-POSTGRES-PASS
+#              alias: USER_PROFILE_DB_PASSWORD
 
   ccd-data-store-api:
     java:
