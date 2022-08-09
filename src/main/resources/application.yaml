@@ -19,7 +19,7 @@ idam:
   s2s-auth:
     url: ${IDAM_S2S_URL:http://localhost:4502}
     totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:AAAAAAAAAAAAAAAC}
-    microservice: ccd-next-hearing-updater-service
+    microservice: ccd_next_hearing_date_updater
 
 azure:
   application-insights:
