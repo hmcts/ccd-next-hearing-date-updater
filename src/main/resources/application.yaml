@@ -1,10 +1,14 @@
 spring:
-  main:
-    web-application-type: none
   config:
     import: "optional:configtree:/mnt/secrets/ccd/"
   application:
     name: CCD Next Hearing Date Updater
+  main:
+    web-application-type: NONE
+  cache:
+    cache-names: nextHearingDateAdminAccessTokenCache
+    caffeine:
+      spec: expireAfterWrite=1800s
 
 idam:
   api:
@@ -25,14 +29,19 @@ azure:
   application-insights:
     instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
 
-csv:
-  caseReferences:
-    fileName: ${CSV_FILENAME:caseReferences.csv}
-    fileLocation: ${FILE_LOCATION:/src/main/resources}
+next-hearing-date-updater:
+  csv:
+    caseReferences:
+      fileLocation: ${FILE_LOCATION:}
+      maximumNumberOfCsvEntriesToProcess: ${MAX_CSV_RECORDS:10000}
 
-elasticsearch:
-  host: "http://localhost:1234"
+  elasticsearch:
+    host: "http://localhost:1234"
+    caseTypes: ${CASE_TYPES:}
 
-core_case_data.api.url: ${CCD_DATA_STORE_API_URL:http://localhost:4452}
+  processing:
+    enabled: true
 
-cronjob.enabled: ${CRON_JOB_ENABLED:true}
+core_case_data:
+  api:
+    url: ${CCD_DATA_STORE_API_URL:http://localhost:4452}

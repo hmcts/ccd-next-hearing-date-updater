@@ -26,7 +26,7 @@ class ApplicationBootstrapTest {
 
     @Test
     void testShouldRunExecutor() throws Exception {
-        ReflectionTestUtils.setField(underTest, "cronJobEnabled", true);
+        ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
         doNothing().when(nextHearingDateUpdaterService).execute();
 
         underTest.run(applicationArguments);

@@ -12,15 +12,17 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails.HEARING_DATE_TIME_IN_PAST;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails.NULL_HEARING_DATE_TIME_LOG_MESSAGE;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails.NULL_HEARING_ID_MESSAGE;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.HEARING_DATE_TIME_IN_PAST;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.NULL_HEARING_DATE_TIME_LOG_MESSAGE;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.NULL_HEARING_ID_MESSAGE;
 
 @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
 class NextHearingDetailsTest {
 
     private static final String CASE_REFERENCE = "1111222233334444";
     private static final String HEARING_ID = "hearingId";
+
+    private static final String LOG_FORMAT_DELIMITER = "{}";
 
     private ListAppender<ILoggingEvent> listAppender;
 
@@ -37,7 +39,7 @@ class NextHearingDetailsTest {
     @Test
     void testValidateValuesNullHearingIdAndNullHearingDate() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder().caseReference(CASE_REFERENCE).build();
-        assertTrue(nextHearingDetails.validateValues());
+        assertTrue(nextHearingDetails.isValid());
 
         assertTrue(getLogs().isEmpty());
     }
@@ -48,11 +50,15 @@ class NextHearingDetailsTest {
             .caseReference(CASE_REFERENCE)
             .hearingId(HEARING_ID)
             .build();
-        assertFalse(nextHearingDetails.validateValues());
+        assertFalse(nextHearingDetails.isValid());
 
-        String formattedLog = NULL_HEARING_DATE_TIME_LOG_MESSAGE.replace("{}", CASE_REFERENCE);
+        String formattedLog = getFormattedLogMessage(NULL_HEARING_DATE_TIME_LOG_MESSAGE);
 
         assertLogMessages(List.of(formattedLog));
+    }
+
+    private String getFormattedLogMessage(String message) {
+        return message.replace(LOG_FORMAT_DELIMITER, CASE_REFERENCE);
     }
 
     @Test
@@ -61,9 +67,9 @@ class NextHearingDetailsTest {
             .caseReference(CASE_REFERENCE)
             .hearingDateTime(LocalDateTime.now().plusHours(1))
             .build();
-        assertFalse(nextHearingDetails.validateValues());
+        assertFalse(nextHearingDetails.isValid());
 
-        String formattedLog = NULL_HEARING_ID_MESSAGE.replace("{}", CASE_REFERENCE);
+        String formattedLog = getFormattedLogMessage(NULL_HEARING_ID_MESSAGE);
 
         assertLogMessages(List.of(formattedLog));
     }
@@ -75,9 +81,9 @@ class NextHearingDetailsTest {
             .hearingId(HEARING_ID)
             .hearingDateTime(LocalDateTime.now().minusDays(1))
             .build();
-        assertFalse(nextHearingDetails.validateValues());
+        assertFalse(nextHearingDetails.isValid());
 
-        String hearingDateInPast = HEARING_DATE_TIME_IN_PAST.replace("{}", CASE_REFERENCE);
+        String hearingDateInPast = getFormattedLogMessage(HEARING_DATE_TIME_IN_PAST);
 
         assertLogMessages(List.of(hearingDateInPast));
     }

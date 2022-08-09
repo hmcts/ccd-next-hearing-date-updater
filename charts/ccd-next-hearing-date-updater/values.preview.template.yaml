@@ -7,6 +7,7 @@ job:
   concurrencyPolicy: Forbid
   environment:
     APPLICATIONINSIGHTS_INSTRUMENTATIONKEY: "00000000-0000-0000-0000-000000000000"
+    NEXT-HEARING-DATE-UPDATER_PROCESSING_ENABLED: false
     DATA_STORE_DB_HOST: "{{ .Release.Name }}-postgresql"
     DATA_STORE_DB_PORT: 5432
     DATA_STORE_DB_NAME: "{{ .Values.postgresql.auth.database}}"

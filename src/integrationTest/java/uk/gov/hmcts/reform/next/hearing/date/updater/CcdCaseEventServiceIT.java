@@ -12,26 +12,28 @@ import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails;
-import uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallbackRepository;
+import uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository;
 import uk.gov.hmcts.reform.next.hearing.date.updater.security.SecurityUtils;
+import uk.gov.hmcts.reform.next.hearing.date.updater.service.CcdCaseEventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails.HEARING_DATE_TIME_IN_PAST;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallbackRepository.EVENT_ID;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallbackRepository.START_EVENT_ERROR;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallbackRepository.SUBMIT_EVENT_ERROR;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.EVENT_ID;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.NEXT_HEARING_DETAILS_FIELD_NAME;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.HEARING_DATE_TIME_IN_PAST;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository.START_EVENT_ERROR;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository.SUBMIT_EVENT_ERROR;
 
 @SpringBootTest()
 @ActiveProfiles("itest")
 @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
-class CcdCallbackRepositoryIT extends WireMockBootstrap {
+class CcdCaseEventServiceIT extends WireMockBootstrap {
 
     @Autowired
-    private CcdCallbackRepository ccdCallbackRepository;
+    private CcdCaseEventService ccdCaseEventService;
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -48,7 +50,7 @@ class CcdCallbackRepositoryIT extends WireMockBootstrap {
     void setup() {
         wiremockFixtures.stubIdam();
 
-        Logger ccdCallbackRepositoryLogger = (Logger) LoggerFactory.getLogger(CcdCallbackRepository.class);
+        Logger ccdCallbackRepositoryLogger = (Logger) LoggerFactory.getLogger(CcdCaseEventRepository.class);
 
         listAppender = new ListAppender<>();
         listAppender.start();
@@ -57,7 +59,7 @@ class CcdCallbackRepositoryIT extends WireMockBootstrap {
     }
 
     @Test
-    void performCcdCallback() {
+    void createCaseEvents() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
             .hearingId(HEARING_ID)
             .caseReference(CASE_REFERENCE)
@@ -66,7 +68,7 @@ class CcdCallbackRepositoryIT extends WireMockBootstrap {
 
         CaseDetails caseDetails = CaseDetails.builder()
             .id(Long.valueOf(CASE_REFERENCE))
-            .data(Map.of("NextHearingDetails", nextHearingDetails))
+            .data(Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
             .build();
 
         StartEventResponse startEventResponse = StartEventResponse.builder()
@@ -75,9 +77,9 @@ class CcdCallbackRepositoryIT extends WireMockBootstrap {
             .token("tokenValue")
             .build();
 
-        wiremockFixtures.stubReturn200TriggerAboutToStartCallback(CASE_REFERENCE, startEventResponse);
-        wiremockFixtures.stubReturn200TriggerStartEvent(CASE_REFERENCE);
-        ccdCallbackRepository.performCcdCallback(CASE_REFERENCE);
+        wiremockFixtures.stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
+        wiremockFixtures.stubReturn200SubmitCaseEvent(CASE_REFERENCE);
+        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
         assertTrue(getLogs().isEmpty());
     }
@@ -99,7 +101,7 @@ class CcdCallbackRepositoryIT extends WireMockBootstrap {
 
         CaseDetails caseDetails = CaseDetails.builder()
             .id(Long.valueOf(CASE_REFERENCE))
-            .data(Map.of("NextHearingDetails", nextHearingDetails))
+            .data(Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
             .build();
 
         StartEventResponse startEventResponse = StartEventResponse.builder()
@@ -108,8 +110,8 @@ class CcdCallbackRepositoryIT extends WireMockBootstrap {
             .token("tokenValue")
             .build();
 
-        wiremockFixtures.stubReturn200TriggerAboutToStartCallback(CASE_REFERENCE, startEventResponse);
-        ccdCallbackRepository.performCcdCallback(CASE_REFERENCE);
+        wiremockFixtures.stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
+        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
         String formattedLog = HEARING_DATE_TIME_IN_PAST.replace("{}", CASE_REFERENCE);
 
@@ -118,8 +120,8 @@ class CcdCallbackRepositoryIT extends WireMockBootstrap {
 
     @Test
     void performCcdAboutToStartCallbackStartErrors() {
-        wiremockFixtures.stubReturn404TriggerAboutToStartCallback(CASE_REFERENCE);
-        ccdCallbackRepository.performCcdCallback(CASE_REFERENCE);
+        wiremockFixtures.stubReturn404TriggerStartEvent(CASE_REFERENCE);
+        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
         String formattedLog = String.format(START_EVENT_ERROR, CASE_REFERENCE, EVENT_ID);
 
@@ -136,7 +138,7 @@ class CcdCallbackRepositoryIT extends WireMockBootstrap {
 
         CaseDetails caseDetails = CaseDetails.builder()
             .id(Long.valueOf(CASE_REFERENCE))
-            .data(Map.of("NextHearingDetails", nextHearingDetails))
+            .data(Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
             .build();
 
         StartEventResponse startEventResponse = StartEventResponse.builder()
@@ -145,9 +147,9 @@ class CcdCallbackRepositoryIT extends WireMockBootstrap {
             .token("tokenValue")
             .build();
 
-        wiremockFixtures.stubReturn200TriggerAboutToStartCallback(CASE_REFERENCE, startEventResponse);
-        wiremockFixtures.stubReturn404TriggerAboutToStartEvent(CASE_REFERENCE);
-        ccdCallbackRepository.performCcdCallback(CASE_REFERENCE);
+        wiremockFixtures.stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
+        wiremockFixtures.stubReturn404SubmitCaseEvent(CASE_REFERENCE);
+        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
         String formattedLog = String.format(SUBMIT_EVENT_ERROR, CASE_REFERENCE);
 

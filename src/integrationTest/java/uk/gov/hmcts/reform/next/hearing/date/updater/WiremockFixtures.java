@@ -15,7 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
-import uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallbackRepository;
+import uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -31,8 +31,9 @@ public class WiremockFixtures {
     private static final ObjectMapper OBJECT_MAPPER = new Jackson2ObjectMapperBuilder()
         .modules(new Jdk8Module(), new JavaTimeModule())
         .build();
-    public static final String ABOUT_TO_START_CALLBACK_URL = "/cases/%s/event-triggers/%s";
-    public static final String SUBMIT_EVENT_URL = "/cases/%s/events";
+    public static final String SUBMIT_CASE_EVENT_URL = "/cases/%s/events";
+
+    public static final String TRIGGER_START_EVENT_URL = "/cases/%s/event-triggers/%s";
 
     public WiremockFixtures() {
         WireMock.configureFor(WIRE_MOCK_SERVER.port());
@@ -81,31 +82,32 @@ public class WiremockFixtures {
                     ));
     }
 
-    public void stubReturn200TriggerAboutToStartCallback(String caseReference, StartEventResponse startEventResponse) {
+    public void stubReturn200TriggerStartEvent(String caseReference,
+                                                      StartEventResponse startEventResponse) {
         stubFor(WireMock.get(
-            urlEqualTo(String.format(ABOUT_TO_START_CALLBACK_URL, caseReference, CcdCallbackRepository.EVENT_ID)))
+            urlEqualTo(String.format(TRIGGER_START_EVENT_URL, caseReference, CaseEventConfig.EVENT_ID)))
                     .willReturn(aResponse()
                                     .withStatus(HTTP_OK)
                                     .withBody(getJsonString(startEventResponse))
                                     .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)));
     }
 
-    public void stubReturn200TriggerStartEvent(String caseReference) {
+    public void stubReturn200SubmitCaseEvent(String caseReference) {
         stubFor(WireMock.post(
-                urlEqualTo(String.format(SUBMIT_EVENT_URL, caseReference)))
+                urlEqualTo(String.format(SUBMIT_CASE_EVENT_URL, caseReference)))
                     .willReturn(aResponse().withStatus(HTTP_OK)));
     }
 
-    public void stubReturn404TriggerAboutToStartCallback(String caseReference) {
+    public void stubReturn404TriggerStartEvent(String caseReference) {
         stubFor(WireMock.get(
-                urlEqualTo(String.format(ABOUT_TO_START_CALLBACK_URL, caseReference, CcdCallbackRepository.EVENT_ID)))
+                urlEqualTo(String.format(TRIGGER_START_EVENT_URL, caseReference, CaseEventConfig.EVENT_ID)))
                     .willReturn(aResponse()
                                     .withStatus(HTTP_NOT_FOUND)));
     }
 
-    public void stubReturn404TriggerAboutToStartEvent(String caseReference) {
+    public void stubReturn404SubmitCaseEvent(String caseReference) {
         stubFor(WireMock.post(
-                urlEqualTo("/cases/" + caseReference + "/events"))
+                urlEqualTo(String.format(SUBMIT_CASE_EVENT_URL, caseReference)))
                     .willReturn(aResponse()
                                     .withStatus(HTTP_NOT_FOUND)));
     }
