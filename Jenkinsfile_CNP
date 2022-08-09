@@ -16,7 +16,17 @@ def secrets = [
     secret('ccd-caseworker-autotest-email', 'CCD_CASEWORKER_AUTOTEST_EMAIL'),
     secret('ccd-caseworker-autotest-password', 'CCD_CASEWORKER_AUTOTEST_PASSWORD'),
     secret('ccd-befta-caseworker-1-pwd', 'CCD_BEFTA_CASEWORKER_1_PWD'),
-    secret('ccd-befta-master-caseworker-pwd', 'CCD_BEFTA_MASTER_CASEWORKER_PWD')
+    secret('ccd-befta-master-caseworker-pwd', 'CCD_BEFTA_MASTER_CASEWORKER_PWD'),
+    secret('ccd-data-s2s-secret', 'IDAM_KEY_CCD_DATA_STORE'),
+    secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_STORE_S2S_SECRET'),
+    secret('data-store-api-POSTGRES-DATABASE', 'DATA_STORE_DB_NAME'),
+    secret('data-store-api-POSTGRES-USER', 'DATA_STORE_DB_USERNAME'),
+    secret('data-store-api-POSTGRES-PASS', 'DATA_STORE_DB_PASSWORD'),
+    secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
+    secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
+    secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET'),
+    secret('ccd-ELASTIC-SEARCH-URL', 'ELASTIC_SEARCH_HOSTS'),
+    secret('ccd-ELASTIC-SEARCH-DATA-NODES-URL', 'ELASTIC_SEARCH_DATA_NODES_HOSTS')
   ],
   's2s-${env}': [
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
