@@ -10,9 +10,9 @@ job:
     NEXT-HEARING-DATE-UPDATER_PROCESSING_ENABLED: false
     DATA_STORE_DB_HOST: "{{ .Release.Name }}-postgresql"
     DATA_STORE_DB_PORT: 5432
-    DATA_STORE_DB_NAME: "{{ .Values.postgresql.auth.database}}"
-    DATA_STORE_DB_USERNAME: "{{ .Values.postgresql.auth.username}}"
-    DATA_STORE_DB_PASSWORD: "{{ .Values.postgresql.auth.password}}"
+    DATA_STORE_DB_NAME: javadatabase
+    DATA_STORE_DB_USERNAME: javapostgres
+    DATA_STORE_DB_PASSWORD: javapassword
     DATA_STORE_DB_OPTIONS: "?sslmode=require"
 global:
   jobKind: CronJob
@@ -342,4 +342,13 @@ ccd:
         enabled: false
 
   postgresql:
+    image:
+      tag: '11.16.0'
     enabled: true
+    auth:
+      username: javapostgres
+      password: javapassword
+      database: javadatabase
+    primary:
+      persistence:
+        enabled: false
