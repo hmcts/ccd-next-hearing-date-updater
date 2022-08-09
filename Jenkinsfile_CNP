@@ -12,27 +12,21 @@ def branchesToSync = ['demo','perftest']
 GradleBuilder builder = new GradleBuilder(this, product)
 def secrets = [
   'ccd-${env}': [
-    secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
     secret('ccd-caseworker-autotest-email', 'CCD_CASEWORKER_AUTOTEST_EMAIL'),
     secret('ccd-caseworker-autotest-password', 'CCD_CASEWORKER_AUTOTEST_PASSWORD'),
-    secret('ccd-befta-caseworker-1-pwd', 'CCD_BEFTA_CASEWORKER_1_PWD'),
-    secret('ccd-befta-master-caseworker-pwd', 'CCD_BEFTA_MASTER_CASEWORKER_PWD'),
-    secret('ccd-data-s2s-secret', 'IDAM_KEY_CCD_DATA_STORE'),
-    secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_STORE_S2S_SECRET'),
-    secret('data-store-api-POSTGRES-DATABASE', 'DATA_STORE_DB_NAME'),
-    secret('data-store-api-POSTGRES-USER', 'DATA_STORE_DB_USERNAME'),
-    secret('data-store-api-POSTGRES-PASS', 'DATA_STORE_DB_PASSWORD'),
     secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
     secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
-    secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET'),
-    secret('ccd-ELASTIC-SEARCH-URL', 'ELASTIC_SEARCH_HOSTS'),
-    secret('ccd-ELASTIC-SEARCH-DATA-NODES-URL', 'ELASTIC_SEARCH_DATA_NODES_HOSTS')
+    secret('ccd-befta-caseworker-1-pwd', 'CCD_BEFTA_CASEWORKER_1_PWD'),
+    secret('ccd-befta-master-caseworker-pwd', 'CCD_BEFTA_MASTER_CASEWORKER_PWD'),
+    secret('idam-next-hearing-date-system-user-username', 'IDAM_NEXT_HEARING_DATE_SYSTEM_USER'),
+    secret('idam-next-hearing-date-system-user-password', 'IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD'),
+    secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
+    secret('idam-next-hearing-date-client-secret', 'CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET')
   ],
   's2s-${env}': [
-    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET'),
+    secret('microservicekey-ccd-gw', 'BEFTA_S2S_CLIENT_SECRET'),
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
-    secret('microservicekey-ccd-definition', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DEFINITION'),
-    secret('microservicekey-ccd-data', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DATA')
+    secret('microservicekey-ccd-next-hearing-date-updater', 'IDAM_KEY_NEXT_HEARING_UPDATER')
   ]
 ]
 
@@ -47,20 +41,22 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 
 env.CI_BUILD = true
 env.CCD_DATA_STORE_API_URL = "http://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+env.FILE_LOCATION = "/tmp"
 
 // Other env variables needed for BEFTA.
-env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
-env.BEFTA_S2S_CLIENT_ID = "xui_webapp"
-env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
+env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
 env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
-env.BEFTA_S2S_CLIENT_ID_OF_CCD_DEFINITION = "ccd_definition"
-env.BEFTA_S2S_CLIENT_ID_OF_CCD_DATA = "ccd_data"
 env.BEFTA_OAUTH2_CLIENT_ID_OF_XUIWEBAPP = "xuiwebapp"
 env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
 env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
 env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
+// the below may not be needed
+env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
 env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
+env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
 
 // temporary workaround for platform changes: turn BEFTA header checks to warning mode
 env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
