@@ -222,6 +222,10 @@ ccd:
       enabled: false
     ras:
       enabled: false
+    definitionStore:
+      enabled: false
+    userProfile:
+      enabled: false
 
   ingressHost: ${SERVICE_FQDN}
 
@@ -237,56 +241,56 @@ ccd:
     enableKeyVaults: true
     devMode: true
 
-  ccd-definition-store-api:
-    java:
-      image: hmctspublic.azurecr.io/ccd/definition-store-api:latest
-      ingressHost: ccd-definition-store-${SERVICE_FQDN}
-      imagePullPolicy: Always
-      environment:
-        ELASTIC_SEARCH_ENABLED: true
-        ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
-        ELASTIC_SEARCH_FAIL_ON_IMPORT: true
-        DEFINITION_STORE_DB_HOST: ${DATA_STORE_DB_HOST}
-        DEFINITION_STORE_DB_NAME: ccd_definition_store
-        DEFINITION_STORE_DB_PORT: ${DATA_STORE_DB_PORT}
-        DEFINITION_STORE_DB_USERNAME: ${DATA_STORE_DB_USERNAME}
-        DEFINITION_STORE_DB_PASSWORD: ${DATA_STORE_DB_PASSWORD}
-        DEFINITION_STORE_DB_USE_SSL: "true"
-        DEFINITION_STORE_IDAM_KEY: ${CCD_DEFINITION_STORE_S2S_SECRET}
-        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
-        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-        DEFINITION_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data
-        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/hmcts
-      devmemoryRequests: "1024Mi"
-      devmemoryLimits: "2048Mi"
-      keyVaults:
-        ccd:
-          secrets:
-            - name: ccd-definition-s2s-secret
-              alias: CCD_DEFINITION_STORE_S2S_SECRET
-
-  ccd-user-profile-api:
-    java:
-      image: hmctspublic.azurecr.io/ccd/user-profile-api:latest
-      ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
-      imagePullPolicy: Always
-      environment:
-        USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,rd_professional_api
-        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-        USER_PROFILE_DB_HOST: ${DATA_STORE_DB_HOST}
-      keyVaults: [ ]
-#        USER_PROFILE_DB_PORT: ${DATA_STORE_DB_PORT}
-#        USER_PROFILE_DB_USERNAME: ${DATA_STORE_DB_USERNAME}
-#        USER_PROFILE_DB_PASSWORD: ${DATA_STORE_DB_PASSWORD}
-#        USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified"
-#        USER_PROFILE_DB_NAME: ccd_user_profile
+#  ccd-definition-store-api:
+#    java:
+#      image: hmctspublic.azurecr.io/ccd/definition-store-api:latest
+#      ingressHost: ccd-definition-store-${SERVICE_FQDN}
+#      imagePullPolicy: Always
+#      environment:
+#        ELASTIC_SEARCH_ENABLED: true
+#        ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
+#        ELASTIC_SEARCH_FAIL_ON_IMPORT: true
+#        DEFINITION_STORE_DB_HOST: ${DATA_STORE_DB_HOST}
+#        DEFINITION_STORE_DB_NAME: ccd_definition_store
+#        DEFINITION_STORE_DB_PORT: ${DATA_STORE_DB_PORT}
+#        DEFINITION_STORE_DB_USERNAME: ${DATA_STORE_DB_USERNAME}
+#        DEFINITION_STORE_DB_PASSWORD: ${DATA_STORE_DB_PASSWORD}
+#        DEFINITION_STORE_DB_USE_SSL: "true"
+#        DEFINITION_STORE_IDAM_KEY: ${CCD_DEFINITION_STORE_S2S_SECRET}
+#        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
+#        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+#        DEFINITION_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data
+#        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/hmcts
+#      devmemoryRequests: "1024Mi"
+#      devmemoryLimits: "2048Mi"
 #      keyVaults:
 #        ccd:
 #          secrets:
-#            - name: user-profile-api-POSTGRES-USER
-#              alias: USER_PROFILE_DB_USERNAME
-#            - name: user-profile-api-POSTGRES-PASS
-#              alias: USER_PROFILE_DB_PASSWORD
+#            - name: ccd-definition-s2s-secret
+#              alias: CCD_DEFINITION_STORE_S2S_SECRET
+#
+#  ccd-user-profile-api:
+#    java:
+#      image: hmctspublic.azurecr.io/ccd/user-profile-api:latest
+#      ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
+#      imagePullPolicy: Always
+#      environment:
+#        USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,rd_professional_api
+#        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+#        USER_PROFILE_DB_HOST: ${DATA_STORE_DB_HOST}
+#      keyVaults: [ ]
+##        USER_PROFILE_DB_PORT: ${DATA_STORE_DB_PORT}
+##        USER_PROFILE_DB_USERNAME: ${DATA_STORE_DB_USERNAME}
+##        USER_PROFILE_DB_PASSWORD: ${DATA_STORE_DB_PASSWORD}
+##        USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified"
+##        USER_PROFILE_DB_NAME: ccd_user_profile
+##      keyVaults:
+##        ccd:
+##          secrets:
+##            - name: user-profile-api-POSTGRES-USER
+##              alias: USER_PROFILE_DB_USERNAME
+##            - name: user-profile-api-POSTGRES-PASS
+##              alias: USER_PROFILE_DB_PASSWORD
 
   ccd-data-store-api:
     java:
