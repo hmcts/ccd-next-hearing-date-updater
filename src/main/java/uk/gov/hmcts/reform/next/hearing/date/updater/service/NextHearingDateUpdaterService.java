@@ -3,9 +3,13 @@ package uk.gov.hmcts.reform.next.hearing.date.updater.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.TooManyCsvRecordsException;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.InvalidConfigurationError;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.INVALID_DATA_SOURCE_CONFIGURATION;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.NO_REFERENCES_TO_PROCESS;
 
 /**
  * HMAN-321.
@@ -29,32 +33,34 @@ public class NextHearingDateUpdaterService {
 
     private final ElasticSearchService elasticSearchService;
 
-    private final CallBackService callBackService;
+    private final CcdCaseEventService ccdCaseEventService;
 
     @Autowired
     public NextHearingDateUpdaterService(CsvService csvService,
                                          ElasticSearchService elasticSearchService,
-                                         CallBackService callBackService) {
+                                         CcdCaseEventService ccdCaseEventService) {
         this.csvService = csvService;
         this.elasticSearchService = elasticSearchService;
-        this.callBackService = callBackService;
+        this.ccdCaseEventService = ccdCaseEventService;
     }
 
     public void execute() {
-        List<String> caseReferences;
-        try {
-            caseReferences = csvService.getCaseReferences();
+        List<String> caseReferencesFromCsv = csvService.getCaseReferences();
+        List<String> caseReferencesFromCaseTypes = elasticSearchService.findOutOfDateCaseReferences();
 
-            if (caseReferences.isEmpty()) {
-                List<String> caseTypes = csvService.getCaseTypes();
+        if (!caseReferencesFromCsv.isEmpty() && !caseReferencesFromCaseTypes.isEmpty()) {
+            throw new InvalidConfigurationError(INVALID_DATA_SOURCE_CONFIGURATION);
+        }
 
-                //run elastic search/call service
-                caseReferences = elasticSearchService.findOutOfDateCaseReferencesByCaseType(caseTypes);
-            }
+        if (caseReferencesFromCsv.isEmpty() && caseReferencesFromCaseTypes.isEmpty()) {
+            log.info(NO_REFERENCES_TO_PROCESS);
+        } else {
+            List<String> caseReferences = new ArrayList<>();
 
-            callBackService.performCallbacks(caseReferences);
-        } catch (TooManyCsvRecordsException tooManyCsvRecordsException) {
-            log.error("Failed to get case references", tooManyCsvRecordsException);
+            caseReferences.addAll(caseReferencesFromCsv);
+            caseReferences.addAll(caseReferencesFromCaseTypes);
+
+            ccdCaseEventService.createCaseEvents(caseReferences);
         }
     }
 }

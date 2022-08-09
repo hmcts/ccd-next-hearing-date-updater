@@ -21,7 +21,7 @@ import java.util.Map;
 @Repository
 @Slf4j
 @SuppressWarnings("PMD.UnusedPrivateMethod")
-public class CcdCallbackRepository {
+public class CcdCaseEventRepository {
 
     public static final String SUBMIT_EVENT_ERROR =
         "Call to following downstream CCD endpoint failed: /cases/%s/events";
@@ -35,7 +35,7 @@ public class CcdCallbackRepository {
 
 
     @Autowired
-    public CcdCallbackRepository(CoreCaseDataApi datastoreClient, SecurityUtils securityUtils) {
+    public CcdCaseEventRepository(CoreCaseDataApi datastoreClient, SecurityUtils securityUtils) {
         this.datastoreClient = datastoreClient;
         this.securityUtils = securityUtils;
     }
@@ -54,7 +54,7 @@ public class CcdCallbackRepository {
         return startEventResponse;
     }
 
-    private CaseResource createEvent(StartEventResponse startEventResponse)  {
+    private CaseResource createCaseEvent(StartEventResponse startEventResponse)  {
         CaseDataContent caseDataContent = CaseDataContent.builder()
             .eventToken(startEventResponse.getToken())
             .event(Event.builder().id(EVENT_ID).build())
@@ -91,7 +91,7 @@ public class CcdCallbackRepository {
                 .build();
 
             if (nextHearingDetails.validateValues()) {
-                createEvent(startEventResult);
+                createCaseEvent(startEventResult);
             }
         }
     }
