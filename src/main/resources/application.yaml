@@ -6,6 +6,8 @@ spring:
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
+  main:
+    web-application-type: NONE
   cache:
     cache-names: nextHearingDateAdminAccessTokenCache
     caffeine:
@@ -30,17 +32,22 @@ azure:
   application-insights:
     instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
 
-csv:
-  fileName: "${CSV_FILENAME:caseReferences.csv}"
-  fileLocation: "${FILE_LOCATION}:/src/main/resources"
+next-hearing-date-updater:
+  csv:
+    caseReferences:
+      fileLocation: ${FILE_LOCATION:}
+      maximumNumberOfCsvEntriesToProcess: ${MAX_CSV_RECORDS:10000}
 
-elasticsearch:
-  host: "http://localhost:1234"
+  elasticsearch:
+    querySize: ${ES_QUERY_SIZE:100}
+    caseTypes: ${CASE_TYPES:}
 
+  processing:
+    enabled: true
 
-ccd:
-  datastore:
-    host: ${CCD_DATA_STORE_URL:http://localhost:4452}
+core_case_data:
+  api:
+    url: ${CCD_DATA_STORE_API_BASE_URL:http://localhost:4452}
 
 cronjob:
   enabled: ${HEARING_NEXT_DAY_CRON_JOB:true}

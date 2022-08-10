@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.TooManyCsvRecordsException;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.InvalidConfigurationError;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -24,17 +24,28 @@ class CsvServiceTest {
 
     private CsvService csvService;
 
-    private static final String FILE_NAME = "fileName";
+    private static final String FILE_LOCATION = "fileLocation";
+
+    private static final String TEST_RESOURCES = "src/test/resources/";
+
+    private ListAppender<ILoggingEvent> listAppender;
 
     @BeforeEach
     public void setup() {
         csvService = new CsvService();
-        ReflectionTestUtils.setField(csvService, "fileLocation", "src/test/resources");
-        ReflectionTestUtils.setField(csvService, FILE_NAME, "testCsv.csv");
+        ReflectionTestUtils.setField(csvService, FILE_LOCATION, TEST_RESOURCES + "testCsv.csv");
+        ReflectionTestUtils.setField(csvService, "maxNumCaseReferences", 10_000);
+
+        Logger csvServiceLogger = (Logger) LoggerFactory.getLogger(CsvService.class);
+
+        // create and start a ListAppender
+        listAppender = new ListAppender<>();
+        listAppender.start();
+        csvServiceLogger.addAppender(listAppender);
     }
 
     @Test
-    void getCaseReferencesWhenCsvIsPresent() throws Throwable {
+    void getCaseReferencesWhenCsvIsPresent() {
         List<String> caseReferences = csvService.getCaseReferences();
         assertNotNull(caseReferences);
         assertFalse(caseReferences.isEmpty());
@@ -42,8 +53,8 @@ class CsvServiceTest {
     }
 
     @Test
-    void getCaseReferencesReturnsEmptyCollectionWhenCsvIsNotPresent() throws Throwable {
-        ReflectionTestUtils.setField(csvService, FILE_NAME, null);
+    void getCaseReferencesReturnsEmptyCollectionWhenCsvIsNotPresent() {
+        ReflectionTestUtils.setField(csvService, FILE_LOCATION, null);
         List<String> caseReferences = csvService.getCaseReferences();
         assertNotNull(caseReferences);
         assertTrue(caseReferences.isEmpty());
@@ -51,28 +62,17 @@ class CsvServiceTest {
 
     @Test
     void getCaseReferencesShouldErrorIfSizeLimitExceeded() {
-        ReflectionTestUtils.setField(csvService, FILE_NAME, "tenthousandandonelines.csv");
+        final int maxNumCaseReferences = 3;
+        ReflectionTestUtils.setField(csvService, "maxNumCaseReferences", maxNumCaseReferences);
 
-        TooManyCsvRecordsException tooManyCsvRecordsException = assertThrows(
-            TooManyCsvRecordsException.class,
-            () -> csvService.getCaseReferences()
-        );
-
-        assertEquals(TooManyCsvRecordsException.ERROR_MESSAGE, tooManyCsvRecordsException.getMessage());
+        assertThrows(InvalidConfigurationError.class, () -> csvService.getCaseReferences());
     }
 
     @Test
-    void getCaseReferencesShouldRemoveAndLogInvalidCaseReferences() throws TooManyCsvRecordsException {
+    void getCaseReferencesShouldRemoveAndLogInvalidCaseReferences() {
 
-        Logger csvServiceLogger = (Logger) LoggerFactory.getLogger(CsvService.class);
-
-        // create and start a ListAppender
-        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
-        listAppender.start();
-
-        csvServiceLogger.addAppender(listAppender);
-
-        ReflectionTestUtils.setField(csvService, FILE_NAME, "testCsvContainingInvalidCaseRefs.csv");
+        ReflectionTestUtils.setField(csvService, FILE_LOCATION,
+                                     TEST_RESOURCES + "testCsvContainingInvalidCaseRefs.csv");
 
         List<String> caseReferences = csvService.getCaseReferences();
 

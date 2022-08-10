@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.CsvFileException;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.InvalidConfigurationError;
 import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.TooManyCsvRecordsException;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,35 +18,40 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.CSV_FILE_READ_ERROR;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.INVALID_CASE_REF_ERROR;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.NO_CSV_FILE;
+
 @Service
 @Slf4j
 public class CsvService {
-    public static final int MAX_NUM_CASE_REFERENCES = 10_000;
+    @Value("${next-hearing-date-updater.csv.caseReferences.maximumNumberOfCsvEntriesToProcess}")
+    public int maxNumCaseReferences;
 
-    @Value("${csv.caseReferences.fileLocation}")
+    @Value("${next-hearing-date-updater.csv.caseReferences.fileLocation}")
     private String fileLocation;
 
-    @Value("${csv.caseReferences.fileName}")
-    private String fileName;
-
-    @Value("#{'${csv.caseTypes}'.split(',')}")
-    private List<String> caseTypes;
-
-    public List<String> getCaseReferences() throws TooManyCsvRecordsException {
-        List<String> caseReferences = getCaseReferencesFromCsvFile();
-        validateCaseRefsFile(caseReferences);
-        return caseReferences;
+    public List<String> getCaseReferences() {
+        try {
+            List<String> caseReferences = getCaseReferencesFromCsvFile();
+            validateCaseRefsFile(caseReferences);
+            return caseReferences;
+        } catch (TooManyCsvRecordsException | CsvFileException exception) {
+            throw new InvalidConfigurationError(CSV_FILE_READ_ERROR, exception);
+        }
     }
 
-    private List<String> getCaseReferencesFromCsvFile() {
+    private List<String> getCaseReferencesFromCsvFile() throws CsvFileException {
         List<String> caseReferences = Collections.emptyList();
 
-        final String fileToRead = fileLocation + File.separator + fileName;
-
-        try (Stream<String> lines = Files.lines(Paths.get(fileToRead))) {
-            caseReferences = lines.collect(Collectors.toList());
-        } catch (IOException ioException) {
-            log.error(String.format("Failed to read the CSV file at %s", fileToRead));
+        if (ObjectUtils.isEmpty(fileLocation)) {
+            log.info(NO_CSV_FILE);
+        } else {
+            try (Stream<String> lines = Files.lines(Paths.get(fileLocation))) {
+                caseReferences = lines.collect(Collectors.toList());
+            } catch (IOException exception) {
+                throw new CsvFileException(exception);
+            }
         }
 
         return caseReferences;
@@ -56,8 +63,8 @@ public class CsvService {
     }
 
     private void validateCsvCaseSizeLessThanMaximum(List<String> caseReferences) throws TooManyCsvRecordsException {
-        if (caseReferences != null && caseReferences.size() > MAX_NUM_CASE_REFERENCES) {
-            throw new TooManyCsvRecordsException();
+        if (caseReferences != null && caseReferences.size() > maxNumCaseReferences) {
+            throw new TooManyCsvRecordsException(maxNumCaseReferences);
         }
     }
 
@@ -66,18 +73,8 @@ public class CsvService {
 
         caseReferences.stream()
             .filter(isInvalidCaseReference)
-            .forEach(invalidCaseReference -> log.error("002 Invalid Case Reference number '{}' in CSV",
-                                                       invalidCaseReference));
+            .forEach(invalidCaseReference -> log.error(INVALID_CASE_REF_ERROR, invalidCaseReference));
 
         caseReferences.removeIf(isInvalidCaseReference);
-    }
-
-    /**
-     * HMAN-320 Check the properties file for a new variable that will have caseTypes as a comma separated values.
-     *
-     * @return List of case types
-     */
-    public List<String> getCaseTypes() {
-        return caseTypes;
     }
 }

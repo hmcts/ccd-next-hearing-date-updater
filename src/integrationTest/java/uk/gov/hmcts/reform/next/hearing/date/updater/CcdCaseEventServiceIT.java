@@ -14,31 +14,33 @@ import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails;
-import uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallbackRepository;
+import uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository;
 import uk.gov.hmcts.reform.next.hearing.date.updater.security.SecurityUtils;
+import uk.gov.hmcts.reform.next.hearing.date.updater.service.CcdCaseEventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn200TriggerAboutToStartCallback;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn200SubmitCaseEvent;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn200TriggerStartEvent;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn404TriggerAboutToStartCallback;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn404TriggerAboutToStartEvent;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails.HEARING_DATE_TIME_IN_PAST;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallbackRepository.EVENT_ID;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallbackRepository.START_EVENT_ERROR;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCallbackRepository.SUBMIT_EVENT_ERROR;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn404SubmitCaseEvent;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn404TriggerStartEvent;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.EVENT_ID;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.NEXT_HEARING_DETAILS_FIELD_NAME;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.HEARING_DATE_TIME_IN_PAST;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository.START_EVENT_ERROR;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository.SUBMIT_EVENT_ERROR;
 
 @SpringBootTest()
 @AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
 @ActiveProfiles("itest")
 @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
-class CcdCallbackRepositoryIT {
+class CcdCaseEventServiceIT {
 
     @Autowired
-    private CcdCallbackRepository ccdCallbackRepository;
+    private CcdCaseEventService ccdCaseEventService;
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -54,7 +56,7 @@ class CcdCallbackRepositoryIT {
 
     @BeforeEach
     void setup() {
-        Logger ccdCallbackRepositoryLogger = (Logger) LoggerFactory.getLogger(CcdCallbackRepository.class);
+        Logger ccdCallbackRepositoryLogger = (Logger) LoggerFactory.getLogger(CcdCaseEventRepository.class);
 
         listAppender = new ListAppender<>();
         listAppender.start();
@@ -63,7 +65,7 @@ class CcdCallbackRepositoryIT {
     }
 
     @Test
-    void performCcdCallback() {
+    void createCaseEvents() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
             .hearingId(HEARING_ID)
             .caseReference(CASE_REFERENCE)
@@ -72,7 +74,7 @@ class CcdCallbackRepositoryIT {
 
         CaseDetails caseDetails = CaseDetails.builder()
             .id(Long.valueOf(CASE_REFERENCE))
-            .data(Map.of("NextHearingDetails", nextHearingDetails))
+            .data(Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
             .build();
 
         StartEventResponse startEventResponse = StartEventResponse.builder()
@@ -81,9 +83,9 @@ class CcdCallbackRepositoryIT {
             .token("tokenValue")
             .build();
 
-        stubReturn200TriggerAboutToStartCallback(CASE_REFERENCE, startEventResponse);
-        stubReturn200TriggerStartEvent(CASE_REFERENCE);
-        ccdCallbackRepository.performCcdCallback(CASE_REFERENCE);
+        stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
+        stubReturn200SubmitCaseEvent(CASE_REFERENCE);
+        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
         assertTrue(getLogs().isEmpty());
     }
@@ -105,7 +107,7 @@ class CcdCallbackRepositoryIT {
 
         CaseDetails caseDetails = CaseDetails.builder()
             .id(Long.valueOf(CASE_REFERENCE))
-            .data(Map.of("NextHearingDetails", nextHearingDetails))
+            .data(Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
             .build();
 
         StartEventResponse startEventResponse = StartEventResponse.builder()
@@ -114,8 +116,8 @@ class CcdCallbackRepositoryIT {
             .token("tokenValue")
             .build();
 
-        stubReturn200TriggerAboutToStartCallback(CASE_REFERENCE, startEventResponse);
-        ccdCallbackRepository.performCcdCallback(CASE_REFERENCE);
+        stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
+        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
         String formattedLog = HEARING_DATE_TIME_IN_PAST.replace("{}", CASE_REFERENCE);
 
@@ -124,8 +126,8 @@ class CcdCallbackRepositoryIT {
 
     @Test
     void performCcdAboutToStartCallbackStartErrors() {
-        stubReturn404TriggerAboutToStartCallback(CASE_REFERENCE);
-        ccdCallbackRepository.performCcdCallback(CASE_REFERENCE);
+        stubReturn404TriggerStartEvent(CASE_REFERENCE);
+        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
         String formattedLog = String.format(START_EVENT_ERROR, CASE_REFERENCE, EVENT_ID);
 
@@ -142,7 +144,7 @@ class CcdCallbackRepositoryIT {
 
         CaseDetails caseDetails = CaseDetails.builder()
             .id(Long.valueOf(CASE_REFERENCE))
-            .data(Map.of("NextHearingDetails", nextHearingDetails))
+            .data(Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
             .build();
 
         StartEventResponse startEventResponse = StartEventResponse.builder()
@@ -151,9 +153,9 @@ class CcdCallbackRepositoryIT {
             .token("tokenValue")
             .build();
 
-        stubReturn200TriggerAboutToStartCallback(CASE_REFERENCE, startEventResponse);
-        stubReturn404TriggerAboutToStartEvent(CASE_REFERENCE);
-        ccdCallbackRepository.performCcdCallback(CASE_REFERENCE);
+        stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
+        stubReturn404SubmitCaseEvent(CASE_REFERENCE);
+        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
         String formattedLog = String.format(SUBMIT_EVENT_ERROR, CASE_REFERENCE);
 
