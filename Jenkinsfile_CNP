@@ -40,8 +40,6 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 }
 
 env.CI_BUILD = true
-env.CCD_DATA_STORE_API_URL = "http://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
 env.FILE_LOCATION = "/tmp"
 
 // Other env variables needed for BEFTA.
@@ -79,7 +77,10 @@ withPipeline(type, product, component) {
   loadVaultSecrets(secrets)
 
   onPR() {
+    enableSlackNotifications('#ccd-pr-builds')
     env.ENV='preview'
+    env.CCD_DATA_STORE_API_URL = "http://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
   }
 
   onNonPR() {
@@ -87,7 +88,8 @@ withPipeline(type, product, component) {
   }
 
   after('akschartsinstall') {
-    // Set required environment variables to run functional tests apart from one in vaults.
+    echo "Just waiting a while to ensure that the pod has run the job"
+    sh "sleep 120s"
 
     // Execute functional tests
     echo "Verifying that functional test run correctly"

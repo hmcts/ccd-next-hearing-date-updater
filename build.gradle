@@ -244,6 +244,8 @@ ext {
   lombokVersion = '1.18.24'
   jacksonVersion = '2.13.3'
   springFrameworkVersion = '5.3.22'
+  cucumberVersion = '5.7.0'
+  wiremockVersion = '2.33.2'
 }
 
 dependencies {
@@ -284,12 +286,15 @@ dependencies {
 
   // Integration test dependencies
   integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
-  integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: '2.33.2'
+  integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: wiremockVersion
 
   // Functional test dependencies
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
+  functionalTestImplementation sourceSets.integrationTest.runtimeClasspath
+  functionalTestImplementation group: 'io.cucumber', name: 'cucumber-junit', version: cucumberVersion
+  functionalTestImplementation group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
+  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.5' // '9.0.0-CCD-3068.3'
   functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.1'
   functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
 }
