@@ -8,12 +8,7 @@ job:
   environment:
     APPLICATIONINSIGHTS_INSTRUMENTATIONKEY: "00000000-0000-0000-0000-000000000000"
     NEXT-HEARING-DATE-UPDATER_PROCESSING_ENABLED: false
-#    DATA_STORE_DB_HOST: "{{ .Release.Name }}-postgresql"
     DATA_STORE_DB_PORT: 5432
-#    DATA_STORE_DB_NAME: javadatabase
-#    DATA_STORE_DB_USERNAME: javapostgres
-#    DATA_STORE_DB_PASSWORD: javapassword
-#    DATA_STORE_DB_OPTIONS: "?sslmode=require"
 global:
   jobKind: CronJob
 
@@ -244,19 +239,12 @@ ccd:
 
   ccd-definition-store-api:
     java:
-#      image: hmctspublic.azurecr.io/ccd/definition-store-api:latest
       ingressHost: ccd-definition-store-${SERVICE_FQDN}
       imagePullPolicy: Always
       environment:
         ELASTIC_SEARCH_ENABLED: true
         ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
 #        ELASTIC_SEARCH_FAIL_ON_IMPORT: true
-#        DEFINITION_STORE_DB_HOST: ${DATA_STORE_DB_HOST}
-        ## This db name may be wrong, see https://github.com/hmcts/chart-ccd/blob/9a7a37a65447442aae4bc8829c911daaad395ebc/ccd/values.yaml#L206
-#        DEFINITION_STORE_DB_NAME: ccd_definition_store
-#        DEFINITION_STORE_DB_PORT: ${DATA_STORE_DB_PORT}
-#        DEFINITION_STORE_DB_USERNAME: ${DATA_STORE_DB_USERNAME}
-#        DEFINITION_STORE_DB_PASSWORD: ${DATA_STORE_DB_PASSWORD}
         DEFINITION_STORE_DB_USE_SSL: "true"
         DEFINITION_STORE_IDAM_KEY: ${CCD_DEFINITION_STORE_S2S_SECRET}
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
@@ -273,42 +261,20 @@ ccd:
 
   ccd-user-profile-api:
     java:
-#      image: hmctspublic.azurecr.io/ccd/user-profile-api:latest
       ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
       imagePullPolicy: Always
       environment:
         USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,rd_professional_api
         IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-#        USER_PROFILE_DB_HOST: ${DATA_STORE_DB_HOST}
       keyVaults: [ ]
-##        USER_PROFILE_DB_PORT: ${DATA_STORE_DB_PORT}
-##        USER_PROFILE_DB_USERNAME: ${DATA_STORE_DB_USERNAME}
-##        USER_PROFILE_DB_PASSWORD: ${DATA_STORE_DB_PASSWORD}
-##        USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified"
-##        USER_PROFILE_DB_NAME: ccd_user_profile
-##      keyVaults:
-##        ccd:
-##          secrets:
-##            - name: user-profile-api-POSTGRES-USER
-##              alias: USER_PROFILE_DB_USERNAME
-##            - name: user-profile-api-POSTGRES-PASS
-##              alias: USER_PROFILE_DB_PASSWORD
 
   ccd-data-store-api:
     java:
-#      image: hmctspublic.azurecr.io/ccd/data-store-api:latest
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
-#      imagePullPolicy: Always
       memoryRequests: '1524Mi'
       cpuRequests: '900m'
       environment:
-#        DATA_STORE_DB_HOST: ${DATA_STORE_DB_HOST}
         DATA_STORE_DB_PORT: ${DATA_STORE_DB_PORT}
-#        DATA_STORE_DB_NAME: ${DATA_STORE_DB_NAME}
-#        DATA_STORE_DB_USERNAME: ${DATA_STORE_DB_USERNAME}
-#        DATA_STORE_DB_PASSWORD: ${DATA_STORE_DB_PASSWORD}
-#        DATA_STORE_DB_OPTIONS: "?sslmode=require"
-#        DATA_STORE_IDAM_KEY: ${DATA_STORE_IDAM_KEY}
         DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
         IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
@@ -341,15 +307,3 @@ ccd:
               alias: IDAM_DATA_STORE_SYSTEM_USER_PASSWORD
       autoscaling:
         enabled: false
-
-#  postgresql:
-#    image:
-#      tag: '11.16.0'
-#    enabled: true
-#    auth:
-#      username: javapostgres
-#      password: javapassword
-#      database: javadatabase
-#    primary:
-#      persistence:
-#        enabled: false
