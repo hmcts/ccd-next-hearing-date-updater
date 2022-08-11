@@ -21,7 +21,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.FunctionalTestFixtur
 
 @SuppressWarnings("PMD")
 public class JobExecutionStepDefs {
-    private String filename;
+    private String filePath;
 
     private final BackEndFunctionalTestScenarioContext scenarioContext = BEAN_FACTORY.getScenarioContext();
 
@@ -34,7 +34,7 @@ public class JobExecutionStepDefs {
 
     @Given("the test csv contains case references from {string}")
     public void csvContainsCaseReferences(final String contextName) throws FunctionalTestException {
-        createCsvFile(contextName);
+        filePath = createCsvFile(contextName);
     }
 
     @When("the next hearing date update job executes")
@@ -42,12 +42,11 @@ public class JobExecutionStepDefs {
         final String executableJar = String.format("%s/build/libs/ccd-next-hearing-date-updater.jar",
                                                    System.getProperty("user.dir"));
 
-        final String locationParam = String.format("-DFILE_LOCATION=%s", LOCATION);
-        final String fileNameParam = String.format("-DCSV_FILENAME=%s", filename);
+        final String locationParam = String.format("-DFILE_LOCATION=%s", filePath);
 
         try {
             final Process process = new ProcessBuilder().inheritIO()
-                .command("java", "-jar", locationParam, fileNameParam, executableJar)
+                .command("java", "-jar", locationParam, executableJar)
                 .start();
             process.waitFor(1, TimeUnit.MINUTES);
         } catch (IOException | InterruptedException e) {
@@ -55,15 +54,15 @@ public class JobExecutionStepDefs {
         }
     }
 
-    private void createCsvFile(final String contextName) throws FunctionalTestException {
-        filename = getFilename();
+    private String createCsvFile(final String contextName) throws FunctionalTestException {
         final String csv = buildCsv(contextName);
-        final String filePath = LOCATION + File.separator + filename;
+        final String filePath = LOCATION + File.separator + getFilename();
         final Path path = Paths.get(filePath);
 
         try {
             BeftaUtils.defaultLog("Writing Case References CSV to ==> " + filePath);
             Files.writeString(path, csv);
+            return filePath;
         } catch (IOException e) {
             throw new FunctionalTestException(e.getMessage(), e.getCause());
         }
