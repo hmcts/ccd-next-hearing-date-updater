@@ -2,6 +2,7 @@
 
 @Library("Infrastructure")
 
+import uk.gov.hmcts.contino.AppPipelineDsl
 import uk.gov.hmcts.contino.GradleBuilder
 
 def type = "java"
@@ -40,11 +41,10 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 }
 
 env.CI_BUILD = true
-env.FILE_LOCATION = "/tmp"
 
 // Other env variables needed for BEFTA.
-env.IDAM_S2S_URL = "https://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-env.S2S_URL_BASE = "https://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
 env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
 env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
@@ -79,7 +79,7 @@ withPipeline(type, product, component) {
   onPR() {
     enableSlackNotifications('#ccd-pr-builds')
     env.ENV='preview'
-    env.CCD_DATA_STORE_API_URL = "http://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.CCD_DATA_STORE_API_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
   }
 
@@ -87,19 +87,19 @@ withPipeline(type, product, component) {
     env.ENV='aat'
   }
 
-  after('akschartsinstall') {
-    echo "Just waiting a while to ensure that the pod has run the job"
-    def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '250s' : '120s'
-    sh "sleep ${sleepTime}"
-
-    // Execute functional tests
-    echo "Verifying that functional test run correctly"
-    try {
-      builder.gradle('functional')
-    } finally {
-      junit '**/test-results/**/*.xml'
-    }
-  }
+//  after('akschartsinstall') {
+//    echo "Just waiting a while to ensure that the pod has run the job"
+//    def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '250s' : '120s'
+//    sh "sleep ${sleepTime}"
+//
+//    // Execute functional tests
+//    echo "Verifying that functional test run correctly"
+//    try {
+//      builder.gradle('functional')
+//    } finally {
+//      junit '**/test-results/**/*.xml'
+//    }
+//  }
 
   after('functionalTest:preview') {
     junit 'build/test-results/functional/**/*.xml'
