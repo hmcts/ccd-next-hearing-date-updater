@@ -1,9 +1,20 @@
 #!groovy
 
-@Library("Infrastructure")
-
 import uk.gov.hmcts.contino.AppPipelineDsl
 import uk.gov.hmcts.contino.GradleBuilder
+properties([
+  [
+    $class       : 'GithubProjectProperty',
+    displayName  : 'Next Hearing Date Updater',
+    projectUrlStr: 'https://github.com/hmcts/ccd-next-hearing-date-updater'
+  ],
+  pipelineTriggers([
+    [$class: 'GitHubPushTrigger']
+  ]),
+  disableConcurrentBuilds()
+])
+
+@Library("Infrastructure")
 
 def type = "java"
 def product = "ccd"
