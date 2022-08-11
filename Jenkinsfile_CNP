@@ -89,7 +89,8 @@ withPipeline(type, product, component) {
 
   after('akschartsinstall') {
     echo "Just waiting a while to ensure that the pod has run the job"
-    sh "sleep 120s"
+    def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '250s' : '120s'
+    sh "sleep ${sleepTime}"
 
     // Execute functional tests
     echo "Verifying that functional test run correctly"
@@ -97,34 +98,47 @@ withPipeline(type, product, component) {
       builder.gradle('functional')
     } finally {
       junit '**/test-results/**/*.xml'
+      junit 'build/test-results/functional/**/*.xml'
+      archiveArtifacts 'build/reports/tests/functional/index.html'
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/functional",
+        reportFiles          : "index.html",
+        reportName           : "ccd-next-hearing-date-updater Functional Test Report"
+      ]
     }
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/**/*'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/site/serenity/**/*'
   }
 
-  after('functionalTest:preview') {
-    junit 'build/test-results/functional/**/*.xml'
-    archiveArtifacts 'build/reports/tests/functional/index.html'
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/functional",
-      reportFiles          : "index.html",
-      reportName           : "ccd-next-hearing-date-updater Functional Test Report"
-    ]
-  }
-
-  after('functionalTest:aat') {
-    junit 'build/test-results/functional/**/*.xml'
-    archiveArtifacts 'build/reports/tests/functional/index.html'
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/functional",
-      reportFiles          : "index.html",
-      reportName           : "ccd-next-hearing-date-updater Functional Test Report"
-    ]
-  }
+//  after('functionalTest:preview') {
+//    junit 'build/test-results/functional/**/*.xml'
+//    archiveArtifacts 'build/reports/tests/functional/index.html'
+//
+//    publishHTML target: [
+//      allowMissing         : true,
+//      alwaysLinkToLastBuild: true,
+//      keepAll              : true,
+//      reportDir            : "build/reports/tests/functional",
+//      reportFiles          : "index.html",
+//      reportName           : "ccd-next-hearing-date-updater Functional Test Report"
+//    ]
+//  }
+//
+//  after('functionalTest:aat') {
+//    junit 'build/test-results/functional/**/*.xml'
+//    archiveArtifacts 'build/reports/tests/functional/index.html'
+//
+//    publishHTML target: [
+//      allowMissing         : true,
+//      alwaysLinkToLastBuild: true,
+//      keepAll              : true,
+//      reportDir            : "build/reports/tests/functional",
+//      reportFiles          : "index.html",
+//      reportName           : "ccd-next-hearing-date-updater Functional Test Report"
+//    ]
+//  }
 }
