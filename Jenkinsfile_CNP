@@ -1,7 +1,5 @@
 #!groovy
-
 import uk.gov.hmcts.contino.AppPipelineDsl
-import uk.gov.hmcts.contino.GradleBuilder
 properties([
   [
     $class       : 'GithubProjectProperty',
@@ -19,10 +17,13 @@ properties([
 def type = "java"
 def product = "ccd"
 def component = "next-hearing-date-updater"
-def branchesToSync = ['demo','perftest']
 
-GradleBuilder builder = new GradleBuilder(this, product)
 def secrets = [
+  's2s-${env}': [
+    secret('microservicekey-ccd-gw', 'BEFTA_S2S_CLIENT_SECRET'),
+    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
+//    secret('microservicekey-ccd-next-hearing-date-updater', 'IDAM_KEY_NEXT_HEARING_UPDATER')
+  ],
   'ccd-${env}': [
     secret('ccd-caseworker-autotest-email', 'CCD_CASEWORKER_AUTOTEST_EMAIL'),
     secret('ccd-caseworker-autotest-password', 'CCD_CASEWORKER_AUTOTEST_PASSWORD'),
@@ -34,11 +35,6 @@ def secrets = [
 //    secret('idam-next-hearing-date-system-user-username', 'IDAM_NEXT_HEARING_DATE_SYSTEM_USER'),
 //    secret('idam-next-hearing-date-system-user-password', 'IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD'),
 //    secret('idam-next-hearing-date-client-secret', 'CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET')
-  ],
-  's2s-${env}': [
-    secret('microservicekey-ccd-gw', 'BEFTA_S2S_CLIENT_SECRET'),
-    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
-//    secret('microservicekey-ccd-next-hearing-date-updater', 'IDAM_KEY_NEXT_HEARING_UPDATER')
   ]
 ]
 
@@ -71,64 +67,69 @@ env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
 // temporary workaround for platform changes: turn BEFTA header checks to warning mode
 env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
 
+
 withPipeline(type, product, component) {
-  after('test') {
-    builder.gradle('integration')
-
-    // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
-
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
-  }
-
-  enableAksStagingDeployment()
-  disableLegacyDeployment()
-  nonServiceApp()
-  syncBranchesWithMaster(branchesToSync)
   loadVaultSecrets(secrets)
 
-  onPR() {
+  onPR {
     enableSlackNotifications('#ccd-pr-builds')
     env.ENV='preview'
     env.CCD_DATA_STORE_API_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
   }
 
-  onNonPR() {
-    env.ENV='aat'
-  }
-
-//  after('akschartsinstall') {
-//    echo "Just waiting a while to ensure that the pod has run the job"
-//    def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '250s' : '120s'
-//    sh "sleep ${sleepTime}"
-//
-//    // Execute functional tests
-//    echo "Verifying that functional test run correctly"
-//    try {
-//      builder.gradle('functional')
-//    } finally {
-//      junit '**/test-results/**/*.xml'
-//    }
-//  }
-
-  after('functionalTest:preview') {
-    junit 'build/test-results/functional/**/*.xml'
-    archiveArtifacts 'build/reports/tests/functional/*'
+  after('test') {
 
     publishHTML target: [
       allowMissing         : true,
       alwaysLinkToLastBuild: true,
       keepAll              : true,
-      reportDir            : "build/reports/tests/functional",
-      reportFiles          : "overview-features.html",
-      reportName           : "ccd-next-hearing-date-updater Functional Test Report"
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "main.html",
+      reportName           : "Next Hearing Date Updater Checkstyle Main Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "test.html",
+      reportName           : "Next Hearing Date Updater Checkstyle Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/pmd",
+      reportFiles          : "main.html",
+      reportName           : "Next Hearing Date Updater PMD Main Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/test",
+      reportFiles          : "index.html",
+      reportName           : "Next Hearing Date Updater Unit Tests Report"
     ]
   }
 
+  after('functionalTest:preview') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/functional",
+      reportFiles          : "index.html",
+      reportName           : "Next Hearing Date Updater Functional Test Report"
+    ]
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
+  }
+
   after('functionalTest:aat') {
-    junit 'build/test-results/functional/**/*.xml'
-    archiveArtifacts 'build/reports/tests/functional/index.html'
 
     publishHTML target: [
       allowMissing         : true,
@@ -136,7 +137,10 @@ withPipeline(type, product, component) {
       keepAll              : true,
       reportDir            : "build/reports/tests/functional",
       reportFiles          : "index.html",
-      reportName           : "ccd-next-hearing-date-updater Functional Test Report"
+      reportName           : "Next Hearing Date Updater Functional Test Report"
     ]
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
   }
+
+  syncBranchesWithMaster(['demo', 'perftest'])
 }
