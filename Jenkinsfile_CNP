@@ -70,6 +70,7 @@ env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
 
 withPipeline(type, product, component) {
   loadVaultSecrets(secrets)
+  nonServiceApp()
 
   onPR {
     enableSlackNotifications('#ccd-pr-builds')
