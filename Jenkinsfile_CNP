@@ -78,7 +78,7 @@ withPipeline(type, product, component) {
   onPR {
     enableSlackNotifications('#ccd-pr-builds')
     env.ENV='preview'
-    env.CCD_DATA_STORE_API_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.CCD_DATA_STORE_API_URL = "http://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
   }
 
@@ -122,7 +122,7 @@ withPipeline(type, product, component) {
   }
   after('akschartsinstall') {
 
-    def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '120s' : '60s'
+    def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '120s' : '90s'
     sh "sleep ${sleepTime}"
 
     try {
@@ -130,44 +130,44 @@ withPipeline(type, product, component) {
     } finally {
       junit '**/test-results/**/*.xml'
       junit 'build/test-results/functional/**/*.xml'
-      archiveArtifacts 'build/reports/tests/functional/*'
+      archiveArtifacts 'build/reports/tests/functional/*.*'
 
-//      publishHTML target: [
-//        allowMissing         : true,
-//        alwaysLinkToLastBuild: true,
-//        keepAll              : true,
-//        reportDir            : "build/reports/tests/functional",
-//        reportFiles          : "overview-features.html",
-//        reportName           : "Next Hearing Date Updater Functional Test Report"
-//      ]
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/functional",
+        reportFiles          : "*.*",
+        reportName           : "Next Hearing Date Updater Functional Test Report"
+      ]
     }
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/**/*'
-  }
-
-  after('functionalTest:preview') {
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/functional",
-      reportFiles          : "*.*",
-      reportName           : "Next Hearing Date Updater Functional Test Report"
-    ]
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
   }
 
-  after('functionalTest:aat') {
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/functional",
-      reportFiles          : "index.html",
-      reportName           : "Next Hearing Date Updater Functional Test Report"
-    ]
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
-  }
+//  after('functionalTest:preview') {
+//    publishHTML target: [
+//      allowMissing         : true,
+//      alwaysLinkToLastBuild: true,
+//      keepAll              : true,
+//      reportDir            : "build/reports/tests/functional",
+//      reportFiles          : "*.*",
+//      reportName           : "Next Hearing Date Updater Functional Test Report"
+//    ]
+//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
+//  }
+//
+//  after('functionalTest:aat') {
+//
+//    publishHTML target: [
+//      allowMissing         : true,
+//      alwaysLinkToLastBuild: true,
+//      keepAll              : true,
+//      reportDir            : "build/reports/tests/functional",
+//      reportFiles          : "*.*",
+//      reportName           : "Next Hearing Date Updater Functional Test Report"
+//    ]
+//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
+//  }
 
   syncBranchesWithMaster(['demo', 'perftest'])
 }
