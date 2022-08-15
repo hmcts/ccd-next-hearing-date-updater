@@ -246,7 +246,7 @@ ccd:
         ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
 #        ELASTIC_SEARCH_FAIL_ON_IMPORT: true
         DEFINITION_STORE_DB_USE_SSL: "true"
-        DEFINITION_STORE_IDAM_KEY: ${CCD_DEFINITION_STORE_S2S_SECRET}
+#        DEFINITION_STORE_IDAM_KEY: ${CCD_DEFINITION_STORE_S2S_SECRET}
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
         IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
         DEFINITION_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data
@@ -256,8 +256,8 @@ ccd:
       keyVaults:
         ccd:
           secrets:
-            - name: ccd-definition-s2s-secret
-              alias: CCD_DEFINITION_STORE_S2S_SECRET
+            - ccd-definition-s2s-secret
+#              alias: CCD_DEFINITION_STORE_S2S_SECRET
 
   ccd-user-profile-api:
     java:
