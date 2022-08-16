@@ -21,9 +21,7 @@
   },
 
   "expectedResponse": {
-    "responseCode": 200,
-    "responseMessage": "OK",
-    "headers": "[[ANYTHING_PRESENT]]",
+    "_extends_": "Simple_200_Response",
     "body": {
       "status": "UP",
       "components": {
