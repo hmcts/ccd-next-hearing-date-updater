@@ -130,9 +130,6 @@ withPipeline(type, product, component) {
     sh "sleep ${sleepTime}"
 
     try {
-      sh "echo ========================== ENV VARS =========================="
-      sh 'env'
-      sh "echo =============================================================="
       builder.gradle('functional')
     } finally {
       junit '**/test-results/**/*.xml'
