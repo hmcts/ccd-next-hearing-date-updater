@@ -233,7 +233,7 @@ ccd:
     idamApiUrl: https://idam-api.aat.platform.hmcts.net
     idamWebUrl: https://idam-web-public.aat.platform.hmcts.net
     s2sUrl: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-    ccdApiGatewayIngress: gateway-${SERVICE_FQDN}
+#    ccdApiGatewayIngress: gateway-${SERVICE_FQDN}
     enableKeyVaults: true
     devMode: true
 
@@ -244,28 +244,25 @@ ccd:
       environment:
         ELASTIC_SEARCH_ENABLED: true
         ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
-#        ELASTIC_SEARCH_FAIL_ON_IMPORT: true
         DEFINITION_STORE_DB_USE_SSL: "true"
-#        DEFINITION_STORE_IDAM_KEY: ${CCD_DEFINITION_STORE_S2S_SECRET}
-        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
-        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
-        DEFINITION_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data
-        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/hmcts
+#        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
+#        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+#        DEFINITION_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data
+#        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat2.internal:8443/openam/oauth2/hmcts
       devmemoryRequests: "1024Mi"
       devmemoryLimits: "2048Mi"
       keyVaults:
         ccd:
           secrets:
             - ccd-definition-s2s-secret
-#              alias: CCD_DEFINITION_STORE_S2S_SECRET
 
   ccd-user-profile-api:
     java:
       ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
       imagePullPolicy: Always
-      environment:
-        USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,rd_professional_api
-        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+#      environment:
+#        USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,rd_professional_api
+#        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
       keyVaults: [ ]
 
   ccd-data-store-api:
@@ -276,10 +273,10 @@ ccd:
       environment:
         DATA_STORE_DB_PORT: ${DATA_STORE_DB_PORT}
         DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater
-        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
-        IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
-        IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net
-        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+#        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
+#        IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
+#        IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net
+#        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
         CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES: ccd_gw,ccd_gateway,ccd_data
         ELASTIC_SEARCH_ENABLED: true
         ELASTIC_SEARCH_HOSTS: ${SERVICE_NAME}-es-master:9200
@@ -289,11 +286,11 @@ ccd:
         HTTP_CLIENT_MAX_CLIENT_PER_ROUTE: '30'
         DATA_STORE_DB_MAX_POOL_SIZE: 80
         CCD_DOCUMENT_URL_PATTERN: 'http://dm-store.*'
-        CASE_DOCUMENT_AM_URL: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
+#        CASE_DOCUMENT_AM_URL: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
         IDAM_DATA_STORE_SYSTEM_USER_USERNAME: ${IDAM_DATA_STORE_SYSTEM_USER_USERNAME}
         IDAM_DATA_STORE_SYSTEM_USER_PASSWORD: ${IDAM_DATA_STORE_SYSTEM_USER_PASSWORD}
         IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET: ${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET}
-        ROLE_ASSIGNMENT_URL: http://am-role-assignment-service-aat.service.core-compute-aat.internal
+#        ROLE_ASSIGNMENT_URL: http://am-role-assignment-service-aat.service.core-compute-aat.internal
       keyVaults:
         ccd:
           secrets:
