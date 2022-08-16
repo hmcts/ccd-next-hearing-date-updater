@@ -198,7 +198,6 @@ logstash:
       }
 
 
-
 ccd:
   enabled: true
   ccd:
@@ -244,7 +243,7 @@ ccd:
       environment:
         ELASTIC_SEARCH_ENABLED: true
         ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
-        DEFINITION_STORE_DB_USE_SSL: "true"
+#        DEFINITION_STORE_DB_USE_SSL: "true"
 #        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
 #        IDAM_S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
 #        DEFINITION_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data
@@ -281,11 +280,11 @@ ccd:
         ELASTIC_SEARCH_ENABLED: true
         ELASTIC_SEARCH_HOSTS: ${SERVICE_NAME}-es-master:9200
         ELASTIC_SEARCH_DATA_NODES_HOSTS: http://${SERVICE_NAME}-es-master:9200
-        HTTP_CLIENT_READ_TIMEOUT: '120000'
-        HTTP_CLIENT_MAX_TOTAL: '300'
-        HTTP_CLIENT_MAX_CLIENT_PER_ROUTE: '30'
-        DATA_STORE_DB_MAX_POOL_SIZE: 80
-        CCD_DOCUMENT_URL_PATTERN: 'http://dm-store.*'
+#        HTTP_CLIENT_READ_TIMEOUT: '120000'
+#        HTTP_CLIENT_MAX_TOTAL: '300'
+#        HTTP_CLIENT_MAX_CLIENT_PER_ROUTE: '30'
+#        DATA_STORE_DB_MAX_POOL_SIZE: 80
+#        CCD_DOCUMENT_URL_PATTERN: 'http://dm-store.*'
 #        CASE_DOCUMENT_AM_URL: http://ccd-case-document-am-api-aat.service.core-compute-aat.internal
         IDAM_DATA_STORE_SYSTEM_USER_USERNAME: ${IDAM_DATA_STORE_SYSTEM_USER_USERNAME}
         IDAM_DATA_STORE_SYSTEM_USER_PASSWORD: ${IDAM_DATA_STORE_SYSTEM_USER_PASSWORD}
