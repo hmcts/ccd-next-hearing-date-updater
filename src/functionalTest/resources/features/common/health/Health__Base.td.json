@@ -25,9 +25,7 @@
     "body": {
       "status": "UP",
       "components": {
-        "caseDocumentManagement": {
-          "status": "UP"
-        },
+        "caseDocumentManagement": "[[ANY_OBJECT_NULLABLE]]",
         "db": {
           "status": "UP",
           "details": {
