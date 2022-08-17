@@ -14,7 +14,7 @@ idam:
   api:
     url: ${IDAM_API_URL:http://localhost:5000}
   client:
-    id: ccd-next-hearing-date-updater
+    id: ccd_next_hearing_date_updater
     secret:  ${CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
     redirect_uri: http://localhost:4561/oauth2redirect
   nextHearingDateSystemUser:

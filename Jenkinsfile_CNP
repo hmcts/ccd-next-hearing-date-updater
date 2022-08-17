@@ -129,7 +129,7 @@ withPipeline(type, product, component) {
     def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '120s' : '90s'
     sh "sleep ${sleepTime}"
 
-    sh "curl -k $CCD_DATA_STORE_API_URL/health"
+    sh "curl -k $CCD_DATA_STORE_API_URL/health | jq"
 
     try {
       builder.gradle('functional')

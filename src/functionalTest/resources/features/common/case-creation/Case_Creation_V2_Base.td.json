@@ -5,7 +5,7 @@
   "operationName": "Submit case creation as Case worker (V2)",
 
   "method": "POST",
-  "uri": "http://localhost:4452/case-types/{CaseTypeID}/cases",
+  "uri": "{{CCD_DATA_STORE_API_URL}}/case-types/{CaseTypeID}/cases",
 
   "specs": [
     "to create a full case (V2)"
