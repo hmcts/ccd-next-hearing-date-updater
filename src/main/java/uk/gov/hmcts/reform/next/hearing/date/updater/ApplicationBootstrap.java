@@ -15,37 +15,9 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpda
 @SpringBootApplication
 @EnableFeignClients
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
-public class ApplicationBootstrap implements ApplicationRunner, CommandLineRunner {
-
-    @Value("${cronjob.enabled}")
-    private boolean cronJobEnabled;
-
-    private final NextHearingDateUpdaterService nextHearingDateUpdaterService;
-
-    @Autowired
-    public ApplicationBootstrap(NextHearingDateUpdaterService nextHearingDateUpdaterService) {
-        this.nextHearingDateUpdaterService = nextHearingDateUpdaterService;
-    }
+public class ApplicationBootstrap {
 
     public static void main(final String[] args) {
         SpringApplication.run(ApplicationBootstrap.class, args);
-    }
-
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        if (cronJobEnabled) {
-            log.info("Starting the Next-Hearing-Date-Updater job triggered by cron job.");
-            nextHearingDateUpdaterService.execute();
-            log.info("Completed the Next-Hearing-Date-Updater job successfully triggered by cron job.");
-        }
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        if (cronJobEnabled) {
-            log.info("Starting the Next-Hearing-Date-Updater job from command line.");
-            nextHearingDateUpdaterService.execute();
-            log.info("Completed the Next-Hearing-Date-Updater job from command line successfully.");
-        }
     }
 }
