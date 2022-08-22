@@ -9,10 +9,6 @@ job:
     APPLICATIONINSIGHTS_INSTRUMENTATIONKEY: "00000000-0000-0000-0000-000000000000"
     NEXT-HEARING-DATE-UPDATER_PROCESSING_ENABLED: false
     DATA_STORE_DB_PORT: 5432
-#    DATA_STORE_DB_USERNAME: hmcts
-#    DATA_STORE_DB_PASSWORD: hmcts
-#    DEFINITION_STORE_HOST: http://${SERVICE_NAME}-ccd-definition-store
-#    USER_PROFILE_HOST: http://${SERVICE_NAME}-ccd-user-profile-api
 global:
   jobKind: CronJob
 
@@ -270,19 +266,11 @@ ccd:
         ELASTIC_SEARCH_ENABLED: true
         ELASTIC_SEARCH_HOSTS: ${SERVICE_NAME}-es-master:9200
         ELASTIC_SEARCH_DATA_NODES_HOSTS: http://${SERVICE_NAME}-es-master:9200
-#        IDAM_DATA_STORE_SYSTEM_USER_USERNAME: ${IDAM_DATA_STORE_SYSTEM_USER_USERNAME}
-#        IDAM_DATA_STORE_SYSTEM_USER_PASSWORD: ${IDAM_DATA_STORE_SYSTEM_USER_PASSWORD}
-#        IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET: ${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET}
-      keyVaults: [ ]
-#        ccd:
-#          secrets:
-#            - name: ccd-data-s2s-secret
-#              alias: DATA_STORE_IDAM_KEY
-#            - name: idam-data-store-client-secret
-#              alias: IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET
-#            - name: idam-data-store-system-user-username
-#              alias: IDAM_DATA_STORE_SYSTEM_USER_USERNAME
-#            - name: idam-data-store-system-user-password
-#              alias: IDAM_DATA_STORE_SYSTEM_USER_PASSWORD
+        DATA_STORE_IDAM_KEY: ${CCD_DATA_S2S_SECRET}
+      keyVaults:
+        ccd:
+          secrets:
+            - name: ccd-data-s2s-secret
+              alias: CCD_DATA_S2S_SECRET
       autoscaling:
         enabled: false
