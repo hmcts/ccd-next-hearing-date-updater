@@ -9,6 +9,13 @@ job:
     APPLICATIONINSIGHTS_INSTRUMENTATIONKEY: "00000000-0000-0000-0000-000000000000"
     NEXT-HEARING-DATE-UPDATER_PROCESSING_ENABLED: false
     DATA_STORE_DB_PORT: 5432
+    DATA_STORE_IDAM_KEY: ${CCD_DATA_S2S_SECRET}
+  keyVaults:
+    ccd:
+      secrets:
+        - name: ccd-data-s2s-secret
+          alias: CCD_DATA_S2S_SECRET
+
 global:
   jobKind: CronJob
 
@@ -266,11 +273,11 @@ ccd:
         ELASTIC_SEARCH_ENABLED: true
         ELASTIC_SEARCH_HOSTS: ${SERVICE_NAME}-es-master:9200
         ELASTIC_SEARCH_DATA_NODES_HOSTS: http://${SERVICE_NAME}-es-master:9200
-        DATA_STORE_IDAM_KEY: ${CCD_DATA_S2S_SECRET}
-      keyVaults:
-        ccd:
-          secrets:
-            - name: ccd-data-s2s-secret
-              alias: CCD_DATA_S2S_SECRET
+        DATA_STORE_IDAM_KEY: ${DATA_STORE_IDAM_KEY}
+      keyVaults: []
+#        ccd:
+#          secrets:
+#            - name: ccd-data-s2s-secret
+#              alias: CCD_DATA_S2S_SECRET
       autoscaling:
         enabled: false
