@@ -40,7 +40,7 @@ next-hearing-date-updater:
     caseTypes: ${CASE_TYPES:}
 
   processing:
-    enabled: true
+    enabled: ${PROCESSING_ENABLED:false}
 
 core_case_data:
   api:
