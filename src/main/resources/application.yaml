@@ -17,7 +17,7 @@ idam:
   api:
     url: ${IDAM_API_URL:http://localhost:5000}
   client:
-    id: ccd_next_hearing_updater_service
+    id: ccd_next_hearing_updater
     secret:  ${CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
     redirect_uri: http://ccd-next-hearing-updater-service/oauth2redirect
   nextHearingDateSystemUser:
@@ -26,7 +26,7 @@ idam:
   s2s-auth:
     url: ${IDAM_S2S_URL:http://localhost:4502}
     totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:AAAAAAAAAAAAAAAA}
-    microservice: ccd_next_hearing_updater_service
+    microservice: ccd_next_hearing_updater
 
 azure:
   application-insights:
