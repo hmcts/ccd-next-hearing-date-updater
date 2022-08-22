@@ -1,21 +1,24 @@
 {
-	"_guid_": "Case_Creation_V2_Data_Base",
-  "_extends_": "Case_Creation_V2_Base",
+	"_guid_": "CreateTestCase__Base",
 
-  "users": {
-    "invokingUser": {
-      "_extends_": "BeftaMasterCaseworker"
-    }
-  },
+  "productName": "CCD Data Store",
+  "operationName": "Submit case creation (V2)",
+
+  "method": "POST",
+  "uri": "{{CCD_DATA_STORE_API_URL}}/case-types/{CaseTypeID}/cases",
 
   "request": {
 		"headers": {
+      "_extends_": "Common_Request_Headers",
       "Content-Type": "application/json;charset=UTF-8",
       "experimental": true
 		},
+    "pathVariables": {
+      "CaseTypeID": "OVERRIDE"
+    },
 		"body": {
 			"event": {
-				"id": "CREATE",
+				"id": "OVERRIDE",
 				"summary": "",
 				"description": ""
 			},
@@ -35,13 +38,15 @@
       "created_on" : "[[ANY_TIMESTAMP_NOT_NULLABLE]]",
       "last_modified_on" : "[[ANY_TIMESTAMP_NOT_NULLABLE]]",
       "last_state_modified_on" : "[[ANY_TIMESTAMP_NOT_NULLABLE]]",
-      "state" : "TODO",
+      "state" : "[[ANYTHING_PRESENT]]",
       "security_classification" : "PUBLIC",
       "after_submit_callback_response" : null,
       "callback_response_status_code" : null,
       "callback_response_status" : null,
       "delete_draft_response_status_code" : null,
-      "delete_draft_response_status" : null
+      "delete_draft_response_status" : null,
+      "data_classification": "[[ANYTHING_PRESENT]]",
+      "_links": "[[ANYTHING_PRESENT]]"
     }
 	}
 }

@@ -1,0 +1,45 @@
+{
+  "_guid_": "CreateTestCase_NextHearingDate",
+  "_extends_": "CreateTestCase__Base",
+
+  "specs": [
+    "to create the test case",
+    "As a prerequisite"
+  ],
+
+  "prerequisites": [
+    {
+      "Token_Creation": "GetCreateToken_NextHearingDate"
+    }
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "BeftaMasterCaseworker"
+    }
+  },
+
+  "request": {
+    "pathVariables": {
+      "CaseTypeID": "FT_NextHearingDate"
+    },
+    "body": {
+      "event": {
+        "id": "CREATE"
+      },
+      "security_classification": "PUBLIC",
+      "event_token": "${[scenarioContext][childContexts][Token_Creation][testData][actualResponse][body][token]}",
+      "ignore_warning": true
+    }
+  },
+
+  "expectedResponse": {
+    "body": {
+      "jurisdiction": "BEFTA_MASTER",
+      "case_type": "FT_NextHearingDate",
+
+      "data": {
+      }
+    }
+  }
+}

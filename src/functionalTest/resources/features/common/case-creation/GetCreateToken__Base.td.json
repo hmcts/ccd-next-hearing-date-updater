@@ -1,5 +1,5 @@
 {
-	"_guid_": "Standard_Token_Creation_Data_For_Case_Creation",
+	"_guid_": "GetCreateToken__Base",
 
 	"productName": "CCD Data Store",
 	"operationName": "Start event creation as Case worker",
@@ -7,25 +7,15 @@
 	"method": "GET",
 	"uri": "{{CCD_DATA_STORE_API_URL}}/caseworkers/{uid}/jurisdictions/{jid}/case-types/{ctid}/event-triggers/{etid}/token",
 
-	"specs": [
-		"to create a token for case creation"
-	],
-
-	"users": {
-		"invokingUser": {
-      "_extends_": "CaseworkerAutotest"
-		}
-	},
-
 	"request": {
 		"headers": {
 			"_extends_": "Common_Request_Headers"
 		},
 		"pathVariables": {
 			"uid": "[[DEFAULT_AUTO_VALUE]]",
-			"jid": "AUTOTEST1",
-			"ctid": "AAT_AUTH_15",
-			"etid": "CREATE"
+			"jid": "OVERRIDE",
+			"ctid": "OVERRIDE",
+			"etid": "OVERRIDE"
 		}
 	},
 
@@ -57,7 +47,7 @@
 				"delete_draft_response_status": null,
 				"security_classifications": {}
 			},
-			"event_id": "CREATE"
+			"event_id": "OVERRIDE"
 		}
 	}
 }
