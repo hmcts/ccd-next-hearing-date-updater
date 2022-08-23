@@ -297,7 +297,7 @@ dependencies {
   functionalTestImplementation group: 'io.cucumber', name: 'cucumber-junit', version: cucumberVersion
   functionalTestImplementation group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
   functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.5'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.4-HMAN-368'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.3'//'7.19.4-HMAN-368'
   functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
 }
 
