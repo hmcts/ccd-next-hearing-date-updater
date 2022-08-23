@@ -16,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.next.hearing.date.updater.config.es.TestContainers;
 import uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails;
+import uk.gov.hmcts.reform.next.hearing.date.updater.repository.ElasticSearchQuery;
 import uk.gov.hmcts.reform.next.hearing.date.updater.utils.CaseData;
 import uk.gov.hmcts.reform.next.hearing.date.updater.utils.ElasticSearchIntegrationTestUtils;
 
@@ -31,7 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ActiveProfiles("itest")
 @ComponentScan({"uk.gov.hmcts.reform.next.hearing.date.updater"})
 @Slf4j
-@SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage", "PMD.JUnitTestsShouldIncludeAssert"})
+@SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage",
+    "PMD.JUnitTestsShouldIncludeAssert",
+    "PMD.AvoidDuplicateLiterals"})
 @Disabled
 class ElasticSearchQueryIT extends TestContainers {
     private static final String FT_NEXT_HEARING_DATE = "FT_NextHearingDate";
@@ -41,36 +44,6 @@ class ElasticSearchQueryIT extends TestContainers {
 
     @Autowired
     private RestHighLevelClient elasticsearchClient;
-
-    String query = "{\n"
-        + "    \"_source\": [\n"
-        + "        \"reference\"\n"
-        + "    ],\n"
-        + "    \"query\": {\n"
-        + "        \"bool\": {\n"
-        + "            \"must\": [\n"
-        + "                {\n"
-        + "                    \"match\": {\n"
-        + "                        \"case_type_id\": \"FT_NextHearingDate\"\n"
-        + "                    }\n"
-        + "                },\n"
-        + "                {\n"
-        + "                    \"range\": {\n"
-        + "                        \"data.NextHearingDetails.hearingDateTime\": {\n"
-        + "                            \"lt\": \"now\"\n"
-        + "                        }\n"
-        + "                    }\n"
-        + "                }\n"
-        + "            ]\n"
-        + "        }\n"
-        + "    },\n"
-        + "    \"sort\": [\n"
-        +  "        {\n"
-        + "            \"reference.keyword\": \"asc\"\n"
-        + "        }\n"
-        + "    ],\n"
-        + "    \"size\": %s\n"
-        + "}";
 
     Map<String, List<CaseData>> caseTypesToCaseReferencesMap;
 
@@ -94,22 +67,31 @@ class ElasticSearchQueryIT extends TestContainers {
 
     @Test
     void testQueryReturnsHearingDatesInPast() throws Exception {
-        String querySizeOfTen = String.format(query,10);
+        ElasticSearchQuery query = ElasticSearchQuery.builder()
+            .initialSearch(true)
+            .size(10)
+            .build();
 
-        sendRequestAndAssertResponseContainsReference(querySizeOfTen, List.of("2092542372492013", "9454757880038200"));
+        sendRequestAndAssertResponseContainsReference(query.getQuery(),
+                                                      List.of("2092542372492013", "9454757880038200"));
     }
 
     @Test
     void testQueryReturnsSingleHearingDateInPastUsingSearchAfter() throws Exception {
-        String querySizeOfOne = String.format(query, 1);
+        ElasticSearchQuery querySizeOfOne = ElasticSearchQuery.builder()
+            .initialSearch(true)
+            .size(1)
+            .build();
 
-        sendRequestAndAssertResponseContainsReference(querySizeOfOne, List.of("2092542372492013"));
+        sendRequestAndAssertResponseContainsReference(querySizeOfOne.getQuery(), List.of("2092542372492013"));
 
-        int insertPosition = querySizeOfOne.lastIndexOf('}');
-        String substring = querySizeOfOne.substring(0, insertPosition);
-        querySizeOfOne = substring + ",\"search_after\": [\"2092542372492013\"]}";
+        ElasticSearchQuery subsequentQuery = ElasticSearchQuery.builder()
+            .initialSearch(false)
+            .size(1)
+            .searchAfterValue("2092542372492013")
+            .build();
 
-        sendRequestAndAssertResponseContainsReference(querySizeOfOne, List.of("9454757880038200"));
+        sendRequestAndAssertResponseContainsReference(subsequentQuery.getQuery(), List.of("9454757880038200"));
     }
 
     private void sendRequestAndAssertResponseContainsReference(String query, List<String> caseReferences)
