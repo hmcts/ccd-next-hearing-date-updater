@@ -22,6 +22,8 @@ def component = "next-hearing-date-updater"
 
 def secrets = [
   's2s-${env}': [
+    secret('microservicekey-ccd-data', 'DATA_STORE_S2S_KEY'),
+    secret('microservicekey-ccd-definition', 'DEFINITION_STORE_S2S_KEY'),
     secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
     secret('microservicekey-ccd-gw', 'BEFTA_S2S_CLIENT_SECRET'),
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
