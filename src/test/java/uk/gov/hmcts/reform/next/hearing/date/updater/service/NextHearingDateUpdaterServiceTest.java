@@ -54,71 +54,90 @@ class NextHearingDateUpdaterServiceTest {
 
     @Test
     void executeCaseReferencesFromCsvMaxCaseReferencesExceeded() {
+        // GIVEN
         when(csvService.getCaseReferences())
             .thenThrow(new InvalidConfigurationError(ErrorMessages.CSV_FILE_READ_ERROR,
                                                      new TooManyCsvRecordsException(2)));
 
+        // WHEN
         try {
             nextHearingDateUpdaterService.execute();
             fail("Exception not thrown");
         } catch (Exception exception) {
             assertNotNull(exception);
         }
+
+        // THEN
         verify(ccdCaseEventService, never()).createCaseEvents(any());
     }
 
     @Test
     void executeCaseReferencesFromCaseType() {
+        // GIVEN
         when(csvService.getCaseReferences()).thenReturn(Collections.emptyList());
         List<String> caseRefs = List.of("123");
         when(elasticSearchService.findOutOfDateCaseReferencesByCaseType()).thenReturn(caseRefs);
+
+        // WHEN
         nextHearingDateUpdaterService.execute();
 
+        // THEN
         verify(elasticSearchService).findOutOfDateCaseReferencesByCaseType();
         verify(ccdCaseEventService).createCaseEvents(caseRefs);
     }
 
     @Test
     void executeThrowsErrorIfCaseRefsFoundFromCsvAndCaseTypes() {
+        // GIVEN
         List<String> caseRefs = List.of("123");
         when(csvService.getCaseReferences()).thenReturn(caseRefs);
         when(elasticSearchService.findOutOfDateCaseReferencesByCaseType()).thenReturn(caseRefs);
 
+        // WHEN
         assertThrows(InvalidConfigurationError.class, () -> nextHearingDateUpdaterService.execute());
 
+        // THEN
         verify(ccdCaseEventRepository, never()).createCaseEvent(any());
     }
 
     @Test
     void executeDoesNotProcessIfNoCaseReferencesExist() {
+        // GIVEN
         when(csvService.getCaseReferences()).thenReturn(Collections.emptyList());
         when(elasticSearchService.findOutOfDateCaseReferencesByCaseType()).thenReturn(Collections.emptyList());
 
+        // WHEN
         nextHearingDateUpdaterService.execute();
 
+        // THEN
         verify(ccdCaseEventRepository, never()).createCaseEvent(any());
     }
 
     @Test
     void executeCaseReferencesFromElasticSearchQueryNoCaseTypesPresent() {
+        // GIVEN
         ReflectionTestUtils.setField(elasticSearchService, "caseTypes", Collections.emptyList());
         when(csvService.getCaseReferences()).thenReturn(Collections.emptyList());
 
+        // WHEN
         nextHearingDateUpdaterService.execute();
 
+        // THEN
         verify(ccdCaseEventService, never()).createCaseEvents(any());
     }
 
     @Test
     void executeCaseReferencesFromElasticSearchQueryCaseTypesPresent() {
+        // GIVEN
         when(csvService.getCaseReferences()).thenReturn(Collections.emptyList());
 
         List<String> caseReferences = List.of("caseRef1", "caseRef2", "caseRef3", "caseRef4", "caseRef5", "caseRef6");
-
-
         when(elasticSearchService.findOutOfDateCaseReferencesByCaseType()).thenReturn(caseReferences);
+
+        // WHEN
         nextHearingDateUpdaterService.execute();
 
+        // THEN
         verify(elasticSearchService).findOutOfDateCaseReferencesByCaseType();
         verify(ccdCaseEventService).createCaseEvents(caseReferences);
     }

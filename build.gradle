@@ -234,8 +234,8 @@ dependencies {
 
   integrationTestImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
   integrationTestImplementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.4'
-  implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '7.17.4'
-  implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.17.4'
+  integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '7.17.4'
+  integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.17.4'
 
   testImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.5.1'
 

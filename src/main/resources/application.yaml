@@ -17,16 +17,16 @@ idam:
   api:
     url: ${IDAM_API_URL:http://localhost:5000}
   client:
-    id: ccd-next-hearing-date-updater
+    id: ccd_next_hearing_date_updater
     secret:  ${CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
-    redirect_uri: http://localhost:4561/oauth2redirect
+    redirect_uri: http://ccd-next-hearing-updater-service/oauth2redirect
   nextHearingDateSystemUser:
     username: ${IDAM_NEXT_HEARING_DATE_SYSTEM_USER:next.hearing.date.admin@gmail.com}
     password: ${IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD:Pa55word11}
   s2s-auth:
     url: ${IDAM_S2S_URL:http://localhost:4502}
     totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:AAAAAAAAAAAAAAAA}
-    microservice: ccd-next-hearing-updater-service
+    microservice: ccd_next_hearing_updater_service
 
 azure:
   application-insights:
@@ -43,7 +43,7 @@ next-hearing-date-updater:
     caseTypes: ${CASE_TYPES:}
 
   processing:
-    enabled: true
+    enabled: ${HEARING_NEXT_DAY_CRON_JOB_PROCESSING_ENABLED:true}
 
 core_case_data:
   api:
