@@ -246,9 +246,6 @@ ccd:
       devmemoryRequests: "1024Mi"
       devmemoryLimits: "2048Mi"
       keyVaults: []
-#        ccd:
-#          secrets:
-#            - ccd-definition-s2s-secret
 
   ccd-user-profile-api:
     java:
