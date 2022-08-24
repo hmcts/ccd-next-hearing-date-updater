@@ -1,0 +1,13 @@
+core_case_data:
+  api:
+    url: http://localhost:${wiremock.server.port:4452}
+
+next-hearing-date-updater:
+  processing:
+    enabled: false
+
+idam:
+  api:
+    url: http://localhost:${wiremock.server.port:5000}
+  s2s-auth:
+    url: http://localhost:${wiremock.server.port:5000}/s2s

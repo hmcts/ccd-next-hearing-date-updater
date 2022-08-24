@@ -12,7 +12,7 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpda
 
 @Slf4j
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"uk.gov.hmcts.reform.idam"})
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 public class ApplicationBootstrap implements ApplicationRunner {
 

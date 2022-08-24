@@ -15,11 +15,16 @@ public class CftLibConfig implements CFTLibConfigurer {
 
     private void createCcdRoles(CFTLib lib) {
         lib.createRoles(
+            "caseworker",
+            "caseworker-autotest1",
+            "ccd-import",
             "next-hearing-date-admin"
         );
     }
 
     private void createIdamUsers(CFTLib lib) {
+        lib.createIdamUser("ccd.docker.default@hmcts.net", "ccd-import");
+        lib.createIdamUser("auto.test.cnp@gmail.com", "caseworker", "caseworker-autotest1", "ccd-import");
         lib.createIdamUser("next.hearing.date.admin@gmail.com", "next-hearing-date-admin");
     }
 }

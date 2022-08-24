@@ -2,19 +2,19 @@ package uk.gov.hmcts.reform.next.hearing.date.updater.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import uk.gov.hmcts.reform.next.hearing.date.updater.clients.ElasticSearchClient;
+import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 
 @Repository
 public class ElasticSearchRepository {
 
-    private final ElasticSearchClient elasticSearchClient;
+    private final CoreCaseDataApi coreCaseDataApi;
 
     @Autowired
-    public ElasticSearchRepository(ElasticSearchClient elasticSearchClient) {
-        this.elasticSearchClient = elasticSearchClient;
+    public ElasticSearchRepository(CoreCaseDataApi coreCaseDataApi) {
+        this.coreCaseDataApi = coreCaseDataApi;
     }
 
     public void findOutOfDateNextHearingDate() {
-        elasticSearchClient.callEndpoint();
+        coreCaseDataApi.searchCases("", "", "", "");
     }
 }
