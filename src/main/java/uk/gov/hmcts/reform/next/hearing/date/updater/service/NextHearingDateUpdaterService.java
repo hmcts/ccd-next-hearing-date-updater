@@ -46,7 +46,7 @@ public class NextHearingDateUpdaterService {
 
     public void execute() {
         List<String> caseReferencesFromCsv = csvService.getCaseReferences();
-        List<String> caseReferencesFromCaseTypes = elasticSearchService.findOutOfDateCaseReferences();
+        List<String> caseReferencesFromCaseTypes = elasticSearchService.findOutOfDateCaseReferencesByCaseType();
 
         if (!caseReferencesFromCsv.isEmpty() && !caseReferencesFromCaseTypes.isEmpty()) {
             throw new InvalidConfigurationError(INVALID_DATA_SOURCE_CONFIGURATION);
