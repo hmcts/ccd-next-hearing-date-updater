@@ -3,21 +3,27 @@ spring:
     import: "optional:configtree:/mnt/secrets/ccd/"
   application:
     name: CCD Next Hearing Date Updater
+  main:
+    web-application-type: NONE
 
 azure:
   application-insights:
     instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
 
-csv:
-  fileName: "${CSV_FILENAME:caseReferences.csv}"
-  fileLocation: "${FILE_LOCATION}:/src/main/resources"
+next-hearing-date-updater:
+  csv:
+    caseReferences:
+      fileLocation: ${FILE_LOCATION:}
+      maximumNumberOfCsvEntriesToProcess: ${MAX_CSV_RECORDS:10000}
 
-elasticsearch:
-  host: "http://localhost:1234"
+  elasticsearch:
+    host: "http://localhost:1234"
+    caseTypes: ${CASE_TYPES:}
+
+  processing:
+    enabled: true
 
 ccd:
   datastore:
     host: "http://localhost:1234"
 
-cronjob:
-  enabled: true

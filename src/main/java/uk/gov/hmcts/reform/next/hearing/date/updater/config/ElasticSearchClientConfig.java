@@ -11,13 +11,5 @@ public class ElasticSearchClientConfig {
 //    public static final String LATEST_VERSION
 //        = "api/data/case-type/{ctid}/version";
 //
-//    @Bean
-//    public SystemUserAuthHeadersInterceptor systemUserAuthHeadersInterceptor(SecurityUtils securityUtils) {
-//        return new SystemUserAuthHeadersInterceptor(securityUtils);
-//    }
-//
-//    @Bean
-//    public Retryer retryer() {
-//        return Retryer.NEVER_RETRY;
-//    }
+
 }

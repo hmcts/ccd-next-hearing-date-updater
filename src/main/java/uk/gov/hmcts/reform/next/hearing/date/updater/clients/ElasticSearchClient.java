@@ -9,7 +9,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.config.DatastoreClie
 
 @FeignClient(
     name = "elastic-search",
-    url = "${elasticsearch.host}",
+    url = "${next-hearing-date-updater.elasticsearch.host}",
     configuration = ElasticSearchClientConfig.class)
 public interface ElasticSearchClient {
     @GetMapping(value = GET_EVENT_TRIGGER_BY_EVENT_ID, consumes = APPLICATION_JSON_VALUE)

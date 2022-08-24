@@ -1,9 +1,15 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.InvalidConfigurationError;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.INVALID_DATA_SOURCE_CONFIGURATION;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.NO_REFERENCES_TO_PROCESS;
 
 /**
  * HMAN-321.
@@ -19,28 +25,42 @@ import java.util.List;
  *          paginated result set off case reference numbers. HMAN-320.
  *          For each case reference number present in the result set, a new Next Hearing Date needs to be set. HMAN-322.
  */
+@Slf4j
 @Service
 public class NextHearingDateUpdaterService {
 
-    @Autowired
-    private CsvService csvService;
+    private final CsvService csvService;
+
+    private final ElasticSearchService elasticSearchService;
+
+    private final CcdCaseEventService ccdCaseEventService;
 
     @Autowired
-    private ElasticSearchService elasticSearchService;
-
-    @Autowired
-    private CallBackService callBackService;
+    public NextHearingDateUpdaterService(CsvService csvService,
+                                         ElasticSearchService elasticSearchService,
+                                         CcdCaseEventService ccdCaseEventService) {
+        this.csvService = csvService;
+        this.elasticSearchService = elasticSearchService;
+        this.ccdCaseEventService = ccdCaseEventService;
+    }
 
     public void execute() {
-        List<String> caseReferences = csvService.getCaseReferences();
+        List<String> caseReferencesFromCsv = csvService.getCaseReferences();
+        List<String> caseReferencesFromCaseTypes = elasticSearchService.findOutOfDateCaseReferences();
 
-        if (caseReferences.isEmpty()) {
-            List<String> caseTypes = csvService.getCaseTypes();
-
-            //run elastic search/call service
-            caseReferences = elasticSearchService.findOutOfDateCaseReferencesByCaseType(caseTypes);
+        if (!caseReferencesFromCsv.isEmpty() && !caseReferencesFromCaseTypes.isEmpty()) {
+            throw new InvalidConfigurationError(INVALID_DATA_SOURCE_CONFIGURATION);
         }
 
-        callBackService.performCallbacks(caseReferences);
+        if (caseReferencesFromCsv.isEmpty() && caseReferencesFromCaseTypes.isEmpty()) {
+            log.info(NO_REFERENCES_TO_PROCESS);
+        } else {
+            List<String> caseReferences = new ArrayList<>();
+
+            caseReferences.addAll(caseReferencesFromCsv);
+            caseReferences.addAll(caseReferencesFromCaseTypes);
+
+            ccdCaseEventService.createCaseEvents(caseReferences);
+        }
     }
 }

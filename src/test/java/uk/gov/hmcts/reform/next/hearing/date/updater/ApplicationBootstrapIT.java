@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest(properties = "cronjob.enabled=false")
+@SpringBootTest(properties = "next-hearing-date-updater.processing.enabled=false")
 class ApplicationBootstrapIT {
 
     @Test
