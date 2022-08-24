@@ -104,6 +104,8 @@ test {
 }
 
 task functional(type: JavaExec) {
+  dependsOn 'bootJar'
+
   doFirst {
     boolean ciBuild = System.getenv().get("CI_BUILD") ?: false
     if (!ciBuild) {
@@ -285,6 +287,10 @@ dependencies {
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
   cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
+  cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
 
   // Integration test dependencies
   integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
@@ -329,6 +335,13 @@ wrapper {
 }
 
 bootWithCCD {
+  doFirst {
+    delete "befta_recent_executions_info_LOCAL.json"
+
+    // This flag recreates CFTLib containers
+    environment "RSE_LIB_CLEAN_BOOT", true
+  }
+
   authMode = uk.gov.hmcts.rse.AuthMode.Local
   environment("PROCESSING_ENABLED", "false")
   environment("DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater")

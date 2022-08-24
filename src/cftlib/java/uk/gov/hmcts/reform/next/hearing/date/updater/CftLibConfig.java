@@ -19,7 +19,6 @@ public class CftLibConfig implements CFTLibConfigurer {
 
     private void createCcdRoles(CFTLib lib) {
         LOGGER.info("About to create roles......................");
-        System.out.println("About to create roles......................");
         lib.createRoles(
             "caseworker",
             "caseworker-autotest1",
@@ -27,7 +26,6 @@ public class CftLibConfig implements CFTLibConfigurer {
             "ccd-import",
             "next-hearing-date-admin"
         );
-        System.out.println("Finished creating roles......................");
         LOGGER.info("Finished creating roles......................");
     }
 
