@@ -59,7 +59,7 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
     }
 
     @Test
-    void createCaseEvents() {
+    void createCaseEventsWhenStartEventResponseHasHearingDateInFuture() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
             .hearingId(HEARING_ID)
             .caseReference(CASE_REFERENCE)
@@ -81,11 +81,14 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
         wiremockFixtures.stubReturn200SubmitCaseEvent(CASE_REFERENCE);
         ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
+        wiremockFixtures.verifyGetRequest(String.format("/cases/%s/event-triggers/%s", CASE_REFERENCE, EVENT_ID));
+        wiremockFixtures.verifyPostRequest(String.format("/cases/%s/events", CASE_REFERENCE));
+
         assertTrue(getLogs().isEmpty());
     }
 
     @Test
-    void performCcdCallbackHearingDateIsInPast() {
+    void createCaseEventsWhenStartEventResponseHasHearingDateInPast() {
 
         Logger nextHearingDetailsLogger = (Logger) LoggerFactory.getLogger(NextHearingDetails.class);
         listAppender = new ListAppender<>();
@@ -113,13 +116,18 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
         wiremockFixtures.stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
         ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
+        wiremockFixtures.verifyGetRequest(String.format("/cases/%s/event-triggers/%s", CASE_REFERENCE, EVENT_ID));
+
+        // this endpoint will never be called if the NextHearingDate date is not valid - i.e in the past
+        wiremockFixtures.verifyPostRequest(String.format("/cases/%s/events", CASE_REFERENCE));
+
         String formattedLog = HEARING_DATE_TIME_IN_PAST.replace("{}", CASE_REFERENCE);
 
         assertLogMessages(List.of(formattedLog));
     }
 
     @Test
-    void performCcdAboutToStartCallbackStartErrors() {
+    void errosLoggedWhenStartEventFails() {
         wiremockFixtures.stubReturn404TriggerStartEvent(CASE_REFERENCE);
         ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
@@ -129,7 +137,7 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
     }
 
     @Test
-    void performCcdSubmitEventErrors() {
+    void errorsLoggedWhenCreateEventFails() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
             .hearingId(HEARING_ID)
             .caseReference(CASE_REFERENCE)

@@ -19,9 +19,12 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.WireMockBootstrap.WIRE_MOCK_SERVER;
@@ -110,6 +113,14 @@ public class WiremockFixtures {
                 urlEqualTo(String.format(SUBMIT_CASE_EVENT_URL, caseReference)))
                     .willReturn(aResponse()
                                     .withStatus(HTTP_NOT_FOUND)));
+    }
+
+    public void verifyGetRequest(String path) {
+        verify(getRequestedFor(urlEqualTo(path)));
+    }
+
+    public void verifyPostRequest(String path) {
+        verify(postRequestedFor(urlEqualTo(path)));
     }
 
     @SuppressWarnings({"PMD.AvoidThrowingRawExceptionTypes", "squid:S112"})

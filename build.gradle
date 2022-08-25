@@ -250,6 +250,8 @@ ext {
   springFrameworkVersion = '5.3.22'
   cucumberVersion = '5.7.0'
   wiremockVersion = '2.33.2'
+  elasticsearchVersion = '7.17.4'
+  testcontainersVersion = '1.16.0'
 }
 
 dependencies {
@@ -295,6 +297,14 @@ dependencies {
   // Integration test dependencies
   integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
   integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: wiremockVersion
+  integrationTestImplementation group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearchVersion
+  integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: elasticsearchVersion
+  integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: elasticsearchVersion
+  integrationTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: testcontainersVersion
+  integrationTestImplementation group: 'org.testcontainers', name: 'elasticsearch', version: testcontainersVersion
+  integrationTestImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.5.1'
+  integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  integrationTestImplementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
   // Functional test dependencies
   functionalTestImplementation sourceSets.main.runtimeClasspath
@@ -343,7 +353,6 @@ bootWithCCD {
   }
 
   authMode = uk.gov.hmcts.rse.AuthMode.Local
-  environment("PROCESSING_ENABLED", "false")
   environment("DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater")
   environment("RSE_LIB_S2S_PORT", 4502)
   environment("TEST_STUB_SERVICE_BASE_URL", "http://localhost:5555")

@@ -10,7 +10,7 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 public class TestBootstrap extends CftlibTest {
 
     @Test
-    void bootsWithCCD() {
+    void bootsWithCcd() {
         // CFTLib system will stay up UNTIL terminated with 'Control C'
     }
 }

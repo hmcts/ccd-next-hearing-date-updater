@@ -3,6 +3,9 @@ spring:
     import: "optional:configtree:/mnt/secrets/ccd/"
   application:
     name: CCD Next Hearing Date Updater
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
   main:
     web-application-type: NONE
   cache:
@@ -16,13 +19,13 @@ idam:
   client:
     id: ccd_next_hearing_date_updater
     secret:  ${CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
-    redirect_uri: http://localhost:4561/oauth2redirect
+    redirect_uri: http://ccd-next-hearing-updater-service/oauth2redirect
   nextHearingDateSystemUser:
     username: ${IDAM_NEXT_HEARING_DATE_SYSTEM_USER:next.hearing.date.admin@gmail.com}
     password: ${IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD:Pa55word11}
   s2s-auth:
     url: ${IDAM_S2S_URL:http://localhost:4502}
-    totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:AAAAAAAAAAAAAAAC}
+    totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:AAAAAAAAAAAAAAAA}
     microservice: ccd_next_hearing_date_updater
 
 azure:
@@ -36,11 +39,11 @@ next-hearing-date-updater:
       maximumNumberOfCsvEntriesToProcess: ${MAX_CSV_RECORDS:10000}
 
   elasticsearch:
-    host: "http://localhost:1234"
+    querySize: ${ES_QUERY_SIZE:100}
     caseTypes: ${CASE_TYPES:}
 
   processing:
-    enabled: ${PROCESSING_ENABLED:false}
+    enabled: ${HEARING_NEXT_DAY_CRON_JOB_PROCESSING_ENABLED:true}
 
 core_case_data:
   api:

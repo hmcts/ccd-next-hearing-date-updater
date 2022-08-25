@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.next.hearing.date.updater.repository.ElasticSearchRepository;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,7 +12,6 @@ import java.util.List;
  *
  */
 @Service
-@SuppressWarnings("PMD.UnusedPrivateField")
 public class ElasticSearchService {
 
     @Value("#{'${next-hearing-date-updater.elasticsearch.caseTypes}'.split(',')}")
@@ -31,8 +29,10 @@ public class ElasticSearchService {
      *
      * @return paginated result set of case references
      */
-    public List<String> findOutOfDateCaseReferences() {
-        elasticSearchRepository.findOutOfDateNextHearingDate();
-        return Collections.emptyList();
+    public List<String> findOutOfDateCaseReferencesByCaseType() {
+        return caseTypes.stream()
+            .flatMap(caseType -> elasticSearchRepository.findCasesWithOutOfDateNextHearingDate(caseType).stream())
+            .map(caseDetails -> caseDetails.getId().toString())
+            .toList();
     }
 }
