@@ -1,0 +1,19 @@
+{
+  "_guid_": "GetCaseDetails__Base",
+
+  "productName": "CCD Data Store",
+  "operationName": "retrieve a case by id",
+
+  "method": "GET",
+  "uri": "{{CCD_DATA_STORE_API_URL}}/cases/{cid}",
+
+  "request": {
+    "headers": {
+      "_extends_": "Common_Request_Headers",
+      "experimental": "true"
+    },
+    "pathVariables": {
+      "cid": "OVERRIDE"
+    }
+  }
+}

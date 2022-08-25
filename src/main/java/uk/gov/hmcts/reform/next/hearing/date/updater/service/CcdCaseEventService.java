@@ -35,11 +35,11 @@ public class CcdCaseEventService {
             Map nextHearingDetailsJson = (Map) startEventResult.getCaseDetails().getData().get(
                 NEXT_HEARING_DETAILS_FIELD_NAME);
 
-            LocalDateTime hearingDate = LocalDateTime.parse(nextHearingDetailsJson.get("hearingDateTime").toString());
+            LocalDateTime hearingDate = LocalDateTime.parse(nextHearingDetailsJson.get("HearingDate").toString());
 
             NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
                 .caseReference(caseReference)
-                .hearingId(nextHearingDetailsJson.get("hearingId").toString())
+                .hearingId(nextHearingDetailsJson.get("HearingId").toString())
                 .hearingDateTime(hearingDate)
                 .build();
 

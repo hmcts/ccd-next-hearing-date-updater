@@ -27,7 +27,7 @@ def secrets = [
     secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
     secret('microservicekey-ccd-gw', 'BEFTA_S2S_CLIENT_SECRET'),
     secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
-//    secret('microservicekey-ccd-next-hearing-date-updater', 'IDAM_KEY_NEXT_HEARING_UPDATER')
+//    secret('microservicekey-ccd-next-hearing-date-updater', 'IDAM_KEY_NEXT_HEARING_DATE_UPDATER')
   ],
   'ccd-${env}': [
     secret('ccd-caseworker-autotest-email', 'CCD_CASEWORKER_AUTOTEST_EMAIL'),
