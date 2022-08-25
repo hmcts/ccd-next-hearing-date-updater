@@ -86,7 +86,7 @@ public class WiremockFixtures {
     }
 
     public void stubReturn200TriggerStartEvent(String caseReference,
-                                                      StartEventResponse startEventResponse) {
+                                               StartEventResponse startEventResponse) {
         stubFor(WireMock.get(
             urlEqualTo(String.format(TRIGGER_START_EVENT_URL, caseReference, CaseEventConfig.EVENT_ID)))
                     .willReturn(aResponse()

@@ -31,9 +31,9 @@
       "event_token": "${[scenarioContext][childContexts][Token_Creation][testData][actualResponse][body][token]}",
       "ignore_warning": true,
       "data": {
-        "NextHearingDetails": {
-          "HearingId": "1234",
-          "HearingDate": "2023-07-22T10:00:00.000"
+        "nextHearingDetails": {
+          "hearingID": 1234,
+          "hearingDateTime": "2023-07-22T10:00:00.000"
         }
       }
     }
@@ -44,9 +44,9 @@
       "jurisdiction": "BEFTA_MASTER",
       "case_type": "FT_NextHearingDate",
       "data": {
-        "NextHearingDetails": {
-          "HearingId": "1234",
-          "HearingDate": "2023-07-22T10:00:00.000"
+        "nextHearingDetails": {
+          "hearingID": 1234,
+          "hearingDateTime": "2023-07-22T10:00:00.000"
         }
       }
     }

@@ -32,14 +32,17 @@ public class CcdCaseEventService {
         StartEventResponse startEventResult = ccdCaseEventRepository.triggerAboutToStartEvent(caseReference);
 
         if (startEventResult != null) {
-            Map nextHearingDetailsJson = (Map) startEventResult.getCaseDetails().getData().get(
-                NEXT_HEARING_DETAILS_FIELD_NAME);
+            Map nextHearingDetailsJson = (Map) startEventResult.getCaseDetails()
+                .getData()
+                .get(NEXT_HEARING_DETAILS_FIELD_NAME);
 
-            LocalDateTime hearingDate = LocalDateTime.parse(nextHearingDetailsJson.get("HearingDate").toString());
+            LocalDateTime hearingDate = LocalDateTime.parse(nextHearingDetailsJson
+                                                                .get(NextHearingDetails.HEARING_DATE_TIME)
+                                                                .toString());
 
             NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
                 .caseReference(caseReference)
-                .hearingId(nextHearingDetailsJson.get("HearingId").toString())
+                .hearingId(Long.valueOf(nextHearingDetailsJson.get(NextHearingDetails.HEARING_ID).toString()))
                 .hearingDateTime(hearingDate)
                 .build();
 

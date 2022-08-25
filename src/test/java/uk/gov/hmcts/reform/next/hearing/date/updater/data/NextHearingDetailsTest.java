@@ -20,7 +20,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMess
 class NextHearingDetailsTest {
 
     private static final String CASE_REFERENCE = "1111222233334444";
-    private static final String HEARING_ID = "hearingId";
+    private static final Long HEARING_ID = 224_474L;
 
     private static final String LOG_FORMAT_DELIMITER = "{}";
 

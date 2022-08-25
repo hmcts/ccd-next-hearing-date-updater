@@ -23,9 +23,9 @@
       "jurisdiction": "BEFTA_MASTER",
       "case_type": "FT_NextHearingDate",
       "data": {
-        "NextHearingDetails": {
-          "HearingId": "123456",
-          "HearingDate": "2030-04-23T10:00:00.000"
+        "nextHearingDetails": {
+          "hearingID": 123456,
+          "hearingDateTime": "2030-04-23T10:00:00.000"
         }
       }
     }

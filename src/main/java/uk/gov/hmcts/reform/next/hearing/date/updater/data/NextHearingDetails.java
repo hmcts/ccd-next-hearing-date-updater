@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -18,8 +19,13 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMess
 @Builder
 @Data
 public class NextHearingDetails {
-    private String hearingId;
+    public static final String HEARING_ID = "hearingID";
+    public static final String HEARING_DATE_TIME = "hearingDateTime";
 
+    @JsonProperty(HEARING_ID)
+    private Long hearingId;
+
+    @JsonProperty(HEARING_DATE_TIME)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime hearingDateTime;
