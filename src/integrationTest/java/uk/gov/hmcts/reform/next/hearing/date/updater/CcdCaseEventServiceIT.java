@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.next.hearing.date.updater;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn200SubmitCaseEvent;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn200TriggerStartEvent;
@@ -36,7 +42,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEv
 @SpringBootTest()
 @AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
 @ActiveProfiles("itest")
-@SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
+@SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage", "PMD.ExcessiveImports"})
 class CcdCaseEventServiceIT {
 
     @Autowired
@@ -47,6 +53,9 @@ class CcdCaseEventServiceIT {
 
     @Value("${wiremock.server.port}")
     protected Integer wiremockPort;
+
+    @Autowired
+    private WireMockServer wireMockServer;
 
     private static final String CASE_REFERENCE = "1658830998852951";
 
@@ -62,10 +71,11 @@ class CcdCaseEventServiceIT {
         listAppender.start();
 
         ccdCallbackRepositoryLogger.addAppender(listAppender);
+        wireMockServer.resetRequests();
     }
 
     @Test
-    void createCaseEvents() {
+    void createCaseEventsWhenStartEventResponseHasHearingDateInFuture() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
             .hearingId(HEARING_ID)
             .caseReference(CASE_REFERENCE)
@@ -85,13 +95,19 @@ class CcdCaseEventServiceIT {
 
         stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
         stubReturn200SubmitCaseEvent(CASE_REFERENCE);
+
         ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
+
+        verify(getRequestedFor(
+            urlEqualTo(String.format("/cases/%s/event-triggers/%s", CASE_REFERENCE, EVENT_ID))));
+        verify(postRequestedFor(urlEqualTo(
+            String.format("/cases/%s/events", CASE_REFERENCE))));
 
         assertTrue(getLogs().isEmpty());
     }
 
     @Test
-    void performCcdCallbackHearingDateIsInPast() {
+    void createCaseEventsWhenStartEventResponseHasHearingDateInPast() {
 
         Logger nextHearingDetailsLogger = (Logger) LoggerFactory.getLogger(NextHearingDetails.class);
         listAppender = new ListAppender<>();
@@ -119,13 +135,21 @@ class CcdCaseEventServiceIT {
         stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
         ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
+        verify(getRequestedFor(
+            urlEqualTo(String.format("/cases/%s/event-triggers/%s", CASE_REFERENCE, EVENT_ID))));
+
+
+        // this endpoint will never be called if the NextHearingDate date is not valid - i.e in the past
+        verify(exactly(0), postRequestedFor(urlEqualTo(
+            String.format("/cases/%s/events", CASE_REFERENCE))));
+
         String formattedLog = HEARING_DATE_TIME_IN_PAST.replace("{}", CASE_REFERENCE);
 
         assertLogMessages(List.of(formattedLog));
     }
 
     @Test
-    void performCcdAboutToStartCallbackStartErrors() {
+    void errosLoggedWhenStartEventFails() {
         stubReturn404TriggerStartEvent(CASE_REFERENCE);
         ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
 
@@ -135,7 +159,7 @@ class CcdCaseEventServiceIT {
     }
 
     @Test
-    void performCcdSubmitEventErrors() {
+    void errorsLoggedWhenCreateEventFails() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
             .hearingId(HEARING_ID)
             .caseReference(CASE_REFERENCE)
