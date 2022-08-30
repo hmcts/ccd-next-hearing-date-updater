@@ -109,9 +109,19 @@ task functional(type: JavaExec) {
   doFirst {
     boolean ciBuild = System.getenv().get("CI_BUILD") ?: false
     if (!ciBuild) {
+      delete "befta_recent_executions_info_LOCAL.json"
+
       file('.befta.local.env').readLines().each() {
         def (key, value) = it.tokenize('=')
         environment key, value
+      }
+
+      // Override environment variables set by '.befta.local.env' above
+      if (file('/tmp/.test.stub.service.env').exists()) {
+        file('/tmp/.test.stub.service.env').readLines().each() {
+          def (key, value) = it.tokenize('=')
+          environment key, value
+        }
       }
     }
   }
@@ -288,7 +298,9 @@ dependencies {
   }
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
-  cftlibImplementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
+  // CFTLib
+  cftlibImplementation group: 'org.testcontainers', name: 'testcontainers', version: testcontainersVersion
+
   cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -315,6 +327,7 @@ dependencies {
   functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.5'
   functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.5_HMAN-368'
   functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
+  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.4.0'
 }
 
 mainClassName = 'uk.gov.hmcts.reform.next.hearing.date.updater.ApplicationBootstrap'
@@ -348,8 +361,8 @@ bootWithCCD {
   doFirst {
     delete "befta_recent_executions_info_LOCAL.json"
 
-    // This flag recreates CFTLib containers
-    environment "RSE_LIB_CLEAN_BOOT", true
+    // Set this flag to 'true', if you want the CFTLib containers to be recreates each time
+    environment "RSE_LIB_CLEAN_BOOT", false
   }
 
   authMode = uk.gov.hmcts.rse.AuthMode.Local

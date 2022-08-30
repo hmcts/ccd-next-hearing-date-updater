@@ -56,7 +56,7 @@ public class JobExecutionStepDefs {
 
     private String createCsvFile(final String contextName) throws FunctionalTestException {
         final String csv = buildCsv(contextName);
-        final String filePath = LOCATION + File.separator + getFilename();
+        final String filePath = LOCATION + "/" + getFilename();
         final Path path = Paths.get(filePath);
 
         try {

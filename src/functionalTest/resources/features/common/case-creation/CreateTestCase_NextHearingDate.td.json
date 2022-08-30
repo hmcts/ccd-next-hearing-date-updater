@@ -33,7 +33,7 @@
       "data": {
         "nextHearingDetails": {
           "hearingID": 1234,
-          "hearingDateTime": "2023-07-22T10:00:00.000"
+          "hearingDateTime": "2022-07-22T10:00:00.000"
         }
       }
     }
@@ -46,7 +46,7 @@
       "data": {
         "nextHearingDetails": {
           "hearingID": 1234,
-          "hearingDateTime": "2023-07-22T10:00:00.000"
+          "hearingDateTime": "2022-07-22T10:00:00.000"
         }
       }
     }

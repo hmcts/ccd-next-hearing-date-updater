@@ -7,7 +7,7 @@ import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 
 @Component
-public class CftLibConfig implements CFTLibConfigurer {
+public class CftLibConfig extends ContainersBootstrap implements CFTLibConfigurer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CftLibConfig.class);
 
