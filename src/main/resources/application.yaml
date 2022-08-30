@@ -40,7 +40,7 @@ next-hearing-date-updater:
 
   elasticsearch:
     querySize: ${ES_QUERY_SIZE:100}
-    caseTypes: ${CASE_TYPES:}
+    caseTypes: ${CASE_TYPES:FT_NextHearingDate}
 
   processing:
     enabled: ${HEARING_NEXT_DAY_CRON_JOB_PROCESSING_ENABLED:true}
