@@ -1,5 +1,5 @@
 {
-  "_guid_": "F-001_Verify_Next_Hearing_Date_Updated__Base",
+  "_guid_": "Verify_Next_Hearing_Date_Updated__Base",
   "_extends_": "GetCaseDetails__PositiveResponse_Base",
 
   "specs": [

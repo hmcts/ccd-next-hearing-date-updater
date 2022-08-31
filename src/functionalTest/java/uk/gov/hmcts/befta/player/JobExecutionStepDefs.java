@@ -33,34 +33,56 @@ public class JobExecutionStepDefs {
 
     @Given("the test csv contains case references from {string}")
     public void csvContainsCaseReferences(final String contextName) throws FunctionalTestException {
-        filePath = createCsvFile(contextName);
+        final String content = buildCsv(contextName);
+        filePath = createCsvFile(content);
+    }
+
+    @Given("the test csv is empty")
+    public void csvIsEmpty() throws FunctionalTestException {
+        final String content = "";
+        filePath = createCsvFile(content);
     }
 
     @When("the next hearing date update job executes")
-    public void executeJobStep() throws FunctionalTestException {
+    public void theNextHearingDateUpdateJobExecutesForCsv() throws FunctionalTestException {
+        final String locationParam = String.format("-DFILE_LOCATION=%s", filePath);
+
+        executeJob(locationParam);
+    }
+
+    @When("the next hearing date update job executes for {string}")
+    public void theNextHearingDateUpdateJobExecutesFor(final String caseType) {
+        final String caseTypesParam = String.format("-DCASE_TYPES=%s", caseType);
+
+        executeJob(caseTypesParam);
+    }
+
+    private void executeJob(final String param) {
+        BeftaUtils.defaultLog("===================== About to execute "
+                                  + "ccd-next-hearing-date-updater =====================");
+
         final String executableJar = String.format("%s/build/libs/ccd-next-hearing-date-updater.jar",
                                                    System.getProperty("user.dir"));
 
-        final String locationParam = String.format("-DFILE_LOCATION=%s", filePath);
-
         try {
             final Process process = new ProcessBuilder().inheritIO()
-                .command("java", "-jar", locationParam, executableJar)
+                .command("java", "-jar", param, executableJar)
                 .start();
             process.waitFor(1, TimeUnit.MINUTES);
         } catch (IOException | InterruptedException e) {
             throw new FunctionalTestException(e.getMessage(), e.getCause());
         }
+        BeftaUtils.defaultLog("===================== Finished executing "
+                                  + "ccd-next-hearing-date-updater =====================");
     }
 
-    private String createCsvFile(final String contextName) throws FunctionalTestException {
-        final String csv = buildCsv(contextName);
+    private String createCsvFile(final String content) throws FunctionalTestException {
         final String filePath = LOCATION + "/" + getFilename();
         final Path path = Paths.get(filePath);
 
         try {
             BeftaUtils.defaultLog("Writing Case References CSV to ==> " + filePath);
-            Files.writeString(path, csv);
+            Files.writeString(path, content);
             return filePath;
         } catch (IOException e) {
             throw new FunctionalTestException(e.getMessage(), e.getCause());
