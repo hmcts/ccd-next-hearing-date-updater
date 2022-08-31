@@ -23,6 +23,7 @@ import javax.annotation.PostConstruct;
 
 import static uk.gov.hmcts.befta.dse.ccd.DataLoaderToDefinitionStore.VALID_CCD_TEST_DEFINITIONS_PATH;
 
+@SuppressWarnings("PMD")
 public class ServiceTestAutomationAdapter extends DefaultTestAutomationAdapter {
     private final List<CustomValueHandler> customValueHandlers = List.of(
         new TestHookHandler()
@@ -34,7 +35,6 @@ public class ServiceTestAutomationAdapter extends DefaultTestAutomationAdapter {
     }
 
     @Override
-    @SuppressWarnings("PMD")
     public synchronized Object calculateCustomValue(BackEndFunctionalTestScenarioContext scenarioContext, Object key) {
         return customValueHandlers.stream()
             .filter(candidate -> candidate.matches(CustomValueKey.getEnum(key.toString())))
