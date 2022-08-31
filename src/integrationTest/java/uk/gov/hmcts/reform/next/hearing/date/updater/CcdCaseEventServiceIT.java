@@ -77,7 +77,7 @@ class CcdCaseEventServiceIT {
     @Test
     void createCaseEventsWhenStartEventResponseHasHearingDateInFuture() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
-            .hearingId(HEARING_ID)
+            .hearingID(HEARING_ID)
             .caseReference(CASE_REFERENCE)
             .hearingDateTime(LocalDateTime.now().plusDays(10))
             .build();
@@ -116,7 +116,7 @@ class CcdCaseEventServiceIT {
         nextHearingDetailsLogger.addAppender(listAppender);
 
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
-            .hearingId(HEARING_ID)
+            .hearingID(HEARING_ID)
             .caseReference(CASE_REFERENCE)
             .hearingDateTime(LocalDateTime.now().minusDays(10))
             .build();
@@ -161,7 +161,7 @@ class CcdCaseEventServiceIT {
     @Test
     void errorsLoggedWhenCreateEventFails() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
-            .hearingId(HEARING_ID)
+            .hearingID(HEARING_ID)
             .caseReference(CASE_REFERENCE)
             .hearingDateTime(LocalDateTime.now().plusDays(10))
             .build();
