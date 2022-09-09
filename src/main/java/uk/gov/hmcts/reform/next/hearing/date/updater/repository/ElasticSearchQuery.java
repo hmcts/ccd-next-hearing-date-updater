@@ -10,7 +10,7 @@ public class ElasticSearchQuery {
         + "    ],\n"
         + "    \"query\": {\n"
         + "        \"range\": {\n"
-        + "            \"data.NextHearingDetails.hearingDateTime\": {\n"
+        + "            \"data.nextHearingDetails.hearingDateTime\": {\n"
         + "                \"lt\": \"now\"\n"
         + "            }\n"
         + "        }\n"

@@ -113,7 +113,7 @@ class ElasticSearchQueryIT extends TestContainers {
     private CaseData createCaseData(String caseReference, LocalDateTime hearingDateTime) {
 
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
-            .hearingId(hearingDateTime == null ? null : UUID.randomUUID().toString())
+            .hearingID(hearingDateTime == null ? null : UUID.randomUUID().toString())
             .caseReference(caseReference)
             .hearingDateTime(hearingDateTime)
             .build();
