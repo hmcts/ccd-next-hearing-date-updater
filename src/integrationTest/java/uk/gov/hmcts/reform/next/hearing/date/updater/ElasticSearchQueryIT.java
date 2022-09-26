@@ -22,7 +22,7 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.utils.ElasticSearchIntegrat
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -109,10 +109,9 @@ class ElasticSearchQueryIT extends TestContainers {
     }
 
     private CaseData createCaseData(String caseReference, LocalDateTime hearingDateTime) {
-        final Random random = new Random();
 
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
-            .hearingId(hearingDateTime == null ? null : random.nextLong(1000, 10_000))
+            .hearingID(hearingDateTime == null ? null : UUID.randomUUID().toString())
             .caseReference(caseReference)
             .hearingDateTime(hearingDateTime)
             .build();

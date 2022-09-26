@@ -17,6 +17,8 @@ job:
       secrets:
         - name: AppInsightsInstrumentationKey
           alias: azure.application-insights.instrumentation-key
+        - name: ccd-next-hearing-date-updater-s2s-secret
+          alias: IDAM_KEY_NEXT_HEARING_UPDATER
 #        - name: idam-next-hearing-date-system-user-username
 #          alias: IDAM_NEXT_HEARING_DATE_SYSTEM_USER
 #        - name: idam-next-hearing-date-system-user-password

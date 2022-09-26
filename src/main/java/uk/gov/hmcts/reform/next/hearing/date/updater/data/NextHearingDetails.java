@@ -23,7 +23,7 @@ public class NextHearingDetails {
     public static final String HEARING_DATE_TIME = "hearingDateTime";
 
     @JsonProperty(HEARING_ID)
-    private Long hearingId;
+    private String hearingID;
 
     @JsonProperty(HEARING_DATE_TIME)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -37,12 +37,12 @@ public class NextHearingDetails {
             return false;
         }
 
-        if (hearingId != null && hearingDateTime == null) {
+        if (hearingID != null && hearingDateTime == null) {
             log.error(NULL_HEARING_DATE_TIME_LOG_MESSAGE, caseReference);
             return false;
         }
 
-        if (hearingId == null && hearingDateTime != null) {
+        if (hearingID == null && hearingDateTime != null) {
             log.error(NULL_HEARING_ID_MESSAGE, caseReference);
             return false;
         }
