@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,7 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.security.SecurityUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Repository
 public class ElasticSearchRepository {
 
@@ -32,6 +34,8 @@ public class ElasticSearchRepository {
             .initialSearch(true)
             .size(querySize)
             .build();
+
+        log.info("Processing the Next-Hearing-Date-Updater search for case type {}.",caseType);
 
         SearchResult searchResult = coreCaseDataApi.searchCases(securityUtils.getNextHearingDateAdminAccessToken(),
                                                                 securityUtils.getS2SToken(),
@@ -70,7 +74,7 @@ public class ElasticSearchRepository {
 
             } while (keepSearching);
         }
-
+        log.info("The Next-Hearing-Date-Updater has processed caseDetails {}.",caseDetails.size());
         return caseDetails;
     }
 }

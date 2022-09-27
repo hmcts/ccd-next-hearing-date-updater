@@ -18,7 +18,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMess
 @Builder
 @Data
 public class NextHearingDetails {
-    private String hearingId;
+    private String hearingID;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -31,12 +31,12 @@ public class NextHearingDetails {
             return false;
         }
 
-        if (hearingId != null && hearingDateTime == null) {
+        if (hearingID != null && hearingDateTime == null) {
             log.error(NULL_HEARING_DATE_TIME_LOG_MESSAGE, caseReference);
             return false;
         }
 
-        if (hearingId == null && hearingDateTime != null) {
+        if (hearingID == null && hearingDateTime != null) {
             log.error(NULL_HEARING_ID_MESSAGE, caseReference);
             return false;
         }
