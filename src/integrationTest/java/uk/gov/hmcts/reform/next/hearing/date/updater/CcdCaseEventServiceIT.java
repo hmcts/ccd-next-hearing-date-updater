@@ -38,7 +38,7 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
 
     private static final String CASE_REFERENCE = "1658830998852951";
 
-    private static final Long HEARING_ID = 12_345L;
+    private static final String HEARING_ID = "12345";
 
     private ListAppender<ILoggingEvent> listAppender;
 
@@ -57,7 +57,7 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
     @Test
     void createCaseEventsWhenStartEventResponseHasHearingDateInFuture() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
-            .hearingId(HEARING_ID)
+            .hearingID(HEARING_ID)
             .caseReference(CASE_REFERENCE)
             .hearingDateTime(LocalDateTime.now().plusDays(10))
             .build();
@@ -94,7 +94,7 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
         nextHearingDetailsLogger.addAppender(listAppender);
 
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
-            .hearingId(HEARING_ID)
+            .hearingID(HEARING_ID)
             .caseReference(CASE_REFERENCE)
             .hearingDateTime(LocalDateTime.now().minusDays(10))
             .build();
@@ -136,7 +136,7 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
     @Test
     void errorsLoggedWhenCreateEventFails() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
-            .hearingId(HEARING_ID)
+            .hearingID(HEARING_ID)
             .caseReference(CASE_REFERENCE)
             .hearingDateTime(LocalDateTime.now().plusDays(10))
             .build();

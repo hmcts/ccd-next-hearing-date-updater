@@ -20,7 +20,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMess
 class NextHearingDetailsTest {
 
     private static final String CASE_REFERENCE = "1111222233334444";
-    private static final Long HEARING_ID = 224_474L;
+    private static final String HEARING_ID = "hearingID";
 
     private static final String LOG_FORMAT_DELIMITER = "{}";
 
@@ -48,7 +48,7 @@ class NextHearingDetailsTest {
     void testValidateValuesNullHearingDateAndNonNullHearingId() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
             .caseReference(CASE_REFERENCE)
-            .hearingId(HEARING_ID)
+            .hearingID(HEARING_ID)
             .build();
         assertFalse(nextHearingDetails.isValid());
 
@@ -78,7 +78,7 @@ class NextHearingDetailsTest {
     void testValidateValuesHearingDateInPast() {
         NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
             .caseReference(CASE_REFERENCE)
-            .hearingId(HEARING_ID)
+            .hearingID(HEARING_ID)
             .hearingDateTime(LocalDateTime.now().minusDays(1))
             .build();
         assertFalse(nextHearingDetails.isValid());

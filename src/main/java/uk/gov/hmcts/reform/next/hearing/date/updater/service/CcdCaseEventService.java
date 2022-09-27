@@ -42,7 +42,7 @@ public class CcdCaseEventService {
 
             NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
                 .caseReference(caseReference)
-                .hearingId(Long.valueOf(nextHearingDetailsJson.get(NextHearingDetails.HEARING_ID).toString()))
+                .hearingID(nextHearingDetailsJson.get(NextHearingDetails.HEARING_ID).toString())
                 .hearingDateTime(hearingDate)
                 .build();
 
