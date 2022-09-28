@@ -5,7 +5,7 @@
   "operationName": "retrieve a case by id",
 
   "method": "GET",
-  "uri": "{{CCD_DATA_STORE_API_URL}}/cases/{cid}",
+  "uri": "{{CCD_DATA_STORE_API_BASE_URL}}/cases/{cid}",
 
   "request": {
     "headers": {
