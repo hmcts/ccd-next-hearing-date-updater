@@ -15,7 +15,6 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.utils.ElasticSearchIntegrat
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.elasticsearch.client.RequestOptions.DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,8 +32,9 @@ public class ElasticSearchIndexCreator {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public void insertDataIntoElasticsearch(final String indexName, final List<CaseData> caseDataEntities)
-        throws IOException, InterruptedException {
+    public void insertDataIntoElasticsearch(final String indexName,
+                                            final List<CaseData> caseDataEntities) throws IOException {
+
         final String caseIndex = elasticSearchIntegrationTestUtils.getIndexName(indexName);
 
         final BulkRequest bulkRequest = buildBulkRequest(caseIndex, caseDataEntities);
@@ -42,8 +42,6 @@ public class ElasticSearchIndexCreator {
         final BulkResponse bulkResponse = elasticsearchClient.bulk(bulkRequest, DEFAULT);
 
         assertFalse(bulkResponse.hasFailures());
-
-        TimeUnit.MINUTES.sleep(1);
 
         refreshIndex(caseIndex);
     }
