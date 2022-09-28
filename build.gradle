@@ -3,7 +3,7 @@ plugins {
   id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+  id 'io.spring.dependency-management' version '1.0.12.RELEASE'
   id 'org.springframework.boot' version '2.7.1'
   id 'com.github.ben-manes.versions' version '0.42.0'
   id 'org.sonarqube' version '3.3'
@@ -283,6 +283,6 @@ wrapper {
 
 bootWithCCD {
   authMode = uk.gov.hmcts.rse.AuthMode.Local
-  environment("DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd-next-hearing-updater-service")
+  environment("DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater")
   environment("RSE_LIB_S2S_PORT", 4502)
 }
