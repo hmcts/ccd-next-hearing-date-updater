@@ -66,6 +66,7 @@ configurations {
 idea {
   module {
     // config to allow Intellij to mark test source and resource files correctly to help linting tools
+    testSourceDirs += project.sourceSets.cftlibTest.java.srcDirs
     testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
     testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
     testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
@@ -217,8 +218,6 @@ sonarqube {
     property "sonar.projectName", "Reform :: ccd-next-hearing-date-updater"
     property "sonar.projectKey", "uk.gov.hmcts.reform:ccd-next-hearing-date-updater"
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
-    property "sonar.exclusions",
-      "src/main/java/uk/gov/hmcts/reform/next/hearing/date/updater/**/*.java"
   }
 }
 
@@ -265,6 +264,7 @@ ext {
 }
 
 dependencies {
+
   // Implementation dependencies
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
   implementation group: 'org.springframework', name:'spring-webmvc', version: springFrameworkVersion
@@ -282,12 +282,13 @@ dependencies {
 
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.3'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: 'v4.9.1'
 
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '9.3.1'
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: 'v4.9.0_HMAN-319'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
 
   // Unit test dependencies
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
@@ -298,13 +299,15 @@ dependencies {
   }
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
-  // CFTLib
+
+  // CFTLib dependencies
   cftlibImplementation group: 'org.testcontainers', name: 'testcontainers', version: testcontainersVersion
 
   cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+
 
   // Integration test dependencies
   integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
@@ -318,6 +321,7 @@ dependencies {
   integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   integrationTestImplementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
+
   // Functional test dependencies
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
@@ -328,6 +332,7 @@ dependencies {
   functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.5_HMAN-368'
   functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.4.0'
+
 }
 
 mainClassName = 'uk.gov.hmcts.reform.next.hearing.date.updater.ApplicationBootstrap'

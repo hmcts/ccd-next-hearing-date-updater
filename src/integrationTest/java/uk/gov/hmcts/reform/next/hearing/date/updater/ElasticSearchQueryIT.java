@@ -7,7 +7,6 @@ import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.NEXT_HEARING_DETAILS_FIELD_NAME;
 
 @SpringBootTest
 @ActiveProfiles("itest")
@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage",
     "PMD.JUnitTestsShouldIncludeAssert",
     "PMD.AvoidDuplicateLiterals"})
-@Disabled
 class ElasticSearchQueryIT extends TestContainers {
     private static final String FT_NEXT_HEARING_DATE = "FT_NextHearingDate";
 
@@ -119,7 +118,7 @@ class ElasticSearchQueryIT extends TestContainers {
         return CaseData.builder()
             .reference(caseReference)
             .caseType(FT_NEXT_HEARING_DATE)
-            .nextHearingDetails(Map.of("NextHearingDetails", nextHearingDetails))
+            .nextHearingDetails(Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
             .build();
     }
 }

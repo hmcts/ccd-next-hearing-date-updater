@@ -16,6 +16,9 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +33,20 @@ class ElasticSearchServiceTest {
 
     private static final String CASE_TYPE_1 = "FT_TestCaseType1";
     private static final String CASE_TYPE_2 = "FT_TestCaseType2";
+
+    @Test
+    void testFindOutOfDateCaseReferencesByCaseTypeForNoCaseTypes() {
+        // NB: empty case types CSV =>  case type list of 1 empty string
+        ReflectionTestUtils.setField(elasticSearchService, "caseTypes", List.of(""));
+
+        List<String> outOfDateCaseReferencesByCaseType =
+            elasticSearchService.findOutOfDateCaseReferencesByCaseType();
+
+        assertNotNull(outOfDateCaseReferencesByCaseType);
+        assertEquals(0, outOfDateCaseReferencesByCaseType.size());
+        // verify no search is performed
+        verify(elasticSearchRepository, never()).findCasesWithOutOfDateNextHearingDate(anyString());
+    }
 
     @Test
     void testFindOutOfDateCaseReferencesByCaseTypeForSingleCaseType() {
@@ -51,7 +68,7 @@ class ElasticSearchServiceTest {
     @Test
     void testFindOutOfDateCaseReferencesByCaseTypeForMultipleCaseTypes() {
         ReflectionTestUtils.setField(elasticSearchService, "caseTypes", List.of(CASE_TYPE_1, CASE_TYPE_2));
-        List<CaseDetails> caseType1CaseDetails = createCaseDetails(CASE_TYPE_1, 5);
+        List<CaseDetails> caseType1CaseDetails = createCaseDetails(CASE_TYPE_1, 4);
         when(elasticSearchRepository.findCasesWithOutOfDateNextHearingDate(CASE_TYPE_1))
             .thenReturn(caseType1CaseDetails);
 

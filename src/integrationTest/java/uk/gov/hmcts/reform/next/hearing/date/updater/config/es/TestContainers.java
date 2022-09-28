@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ContextConfiguration(initializers = {TestContainers.ElasticsearchInitializer.class})
 public class TestContainers {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestContainers.class);
-    private static final String IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:7.17.1";
+    private static final String IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:7.17.4";
     private static final ElasticsearchContainer ELASTICSEARCH_CONTAINER = new ElasticsearchContainer(IMAGE)
         .withLogConsumer(new Slf4jLogConsumer(LOGGER))
         .waitingFor(Wait.forListeningPort());
