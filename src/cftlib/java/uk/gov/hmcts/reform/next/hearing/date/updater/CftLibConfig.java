@@ -13,7 +13,7 @@ public class CftLibConfig extends ContainersBootstrap implements CFTLibConfigure
 
     private static final String ROLE_CASEWORKER = "caseworker";
     private static final String ROLE_CASEWORKER_AT1 = "caseworker-autotest1";
-    private static final String ROLE_CASEWORKER_BM = "caseworker-autotest1";
+    private static final String ROLE_CASEWORKER_BM = "caseworker-befta_master";
     private static final String ROLE_CCD_IMPORT = "ccd-import";
     private static final String ROLE_NHD_ADMIN = "next-hearing-date-admin";
 
