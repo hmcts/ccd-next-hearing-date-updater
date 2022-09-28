@@ -64,7 +64,7 @@ public class CsvService {
     }
 
     private void validateCsvCaseSizeLessThanMaximum(List<String> caseReferences) throws TooManyCsvRecordsException {
-        if (caseReferences != null && caseReferences.size() > maxNumCaseReferences) {
+        if (caseReferences.size() > maxNumCaseReferences) {
             throw new TooManyCsvRecordsException(maxNumCaseReferences);
         }
     }
