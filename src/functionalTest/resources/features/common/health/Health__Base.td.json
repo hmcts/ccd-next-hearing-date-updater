@@ -6,7 +6,7 @@
   "operationName": "Healthcheck",
 
   "method": "GET",
-  "uri": "{{CCD_DATA_STORE_API_URL}}/health",
+  "uri": "{{CCD_DATA_STORE_API_BASE_URL}}/health",
 
   "users": {
     "invokingUser": {

@@ -16,7 +16,7 @@ import javax.annotation.PreDestroy;
 
 public class ContainersBootstrap {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContainersBootstrap.class);
-    private static final String IMAGE = "hmctspublic.azurecr.io/ccd/test-stubs-service:pr-178";
+    private static final String IMAGE = "hmctspublic.azurecr.io/ccd/test-stubs-service:latest";
     protected static final GenericContainer<?> TEST_STUBS_CONTAINER = new GenericContainer<>(IMAGE)
         .withExposedPorts(5555)
         .withLogConsumer(new Slf4jLogConsumer(LOGGER))

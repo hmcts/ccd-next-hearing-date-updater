@@ -5,7 +5,7 @@
   "operationName": "Submit case creation (V2)",
 
   "method": "POST",
-  "uri": "{{CCD_DATA_STORE_API_URL}}/case-types/{CaseTypeID}/cases",
+  "uri": "{{CCD_DATA_STORE_API_BASE_URL}}/case-types/{CaseTypeID}/cases",
 
   "request": {
 		"headers": {

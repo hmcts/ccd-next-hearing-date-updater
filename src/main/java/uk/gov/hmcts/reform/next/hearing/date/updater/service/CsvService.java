@@ -41,6 +41,7 @@ public class CsvService {
         }
     }
 
+    @SuppressWarnings("java:S6204")
     private List<String> getCaseReferencesFromCsvFile() throws CsvFileException {
         List<String> caseReferences = Collections.emptyList();
 
@@ -48,7 +49,7 @@ public class CsvService {
             log.info(NO_CSV_FILE);
         } else {
             try (Stream<String> lines = Files.lines(Paths.get(fileLocation))) {
-                caseReferences = lines.collect(Collectors.toList());
+                caseReferences = lines.collect(Collectors.toList()); // Compliant, the list needs to be mutable
             } catch (IOException exception) {
                 throw new CsvFileException(exception);
             }
@@ -63,7 +64,7 @@ public class CsvService {
     }
 
     private void validateCsvCaseSizeLessThanMaximum(List<String> caseReferences) throws TooManyCsvRecordsException {
-        if (caseReferences != null && caseReferences.size() > maxNumCaseReferences) {
+        if (caseReferences.size() > maxNumCaseReferences) {
             throw new TooManyCsvRecordsException(maxNumCaseReferences);
         }
     }

@@ -29,6 +29,7 @@ public class NextHearingDetails {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime hearingDateTime;
+
     private String caseReference;
 
     public boolean isValid() {

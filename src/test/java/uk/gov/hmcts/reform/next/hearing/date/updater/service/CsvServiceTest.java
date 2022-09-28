@@ -7,8 +7,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.CsvFileException;
 import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.InvalidConfigurationError;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -92,5 +94,18 @@ class CsvServiceTest {
                 format("002 Invalid Case Reference number 'invalidCaseRef%s' in CSV", i)));
 
         assertTrue(anyMatch);
+    }
+
+    @Test
+    void getCaseReferencesShouldErrorIfIoExceptionThrownWhenReadingCsvFile() {
+        ReflectionTestUtils.setField(csvService, FILE_LOCATION, TEST_RESOURCES + "doesnotexist.csv");
+
+        InvalidConfigurationError invalidConfigurationError = assertThrows(
+            InvalidConfigurationError.class,
+            () -> csvService.getCaseReferences()
+        );
+
+        assertTrue(invalidConfigurationError.getCause() instanceof CsvFileException);
+        assertTrue(invalidConfigurationError.getCause().getCause() instanceof IOException);
     }
 }
