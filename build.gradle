@@ -195,7 +195,7 @@ ext {
   jacksonVersion = '2.13.3'
   springFrameworkVersion = '5.3.22'
   wiremockVersion = '2.33.2'
-  elasticsearchVersion = '7.17.3'
+  elasticsearchVersion = '7.17.6'
   testcontainersVersion = '1.17.3'
 }
 
