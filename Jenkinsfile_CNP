@@ -87,33 +87,19 @@ withPipeline(type, product, component) {
   }
 
   after('test') {
+    // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
 
     publishHTML target: [
       allowMissing         : true,
       alwaysLinkToLastBuild: true,
       keepAll              : true,
-      reportDir            : "build/reports/checkstyle",
-      reportFiles          : "main.html",
-      reportName           : "Next Hearing Date Updater Checkstyle Main Report"
+      reportDir            : "build/reports/tests/integration",
+      reportFiles          : "index.html",
+      reportName           : "Next Hearing Date Updater Integration Tests Report"
     ]
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/checkstyle",
-      reportFiles          : "test.html",
-      reportName           : "Next Hearing Date Updater Checkstyle Test Report"
-    ]
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/pmd",
-      reportFiles          : "main.html",
-      reportName           : "Next Hearing Date Updater PMD Main Report"
-    ]
+    junit '**/test-results/integration/*.xml'
 
     publishHTML target: [
       allowMissing         : true,
@@ -123,7 +109,9 @@ withPipeline(type, product, component) {
       reportFiles          : "index.html",
       reportName           : "Next Hearing Date Updater Unit Tests Report"
     ]
+    junit '**/test-results/test/*.xml'
   }
+
   after('akschartsinstall') {
 
     // for restful api deployments, the pipeline calls the `/health` in a loop until it gets SUCCESS or TIMEOUT

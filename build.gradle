@@ -259,7 +259,7 @@ ext {
   springFrameworkVersion = '5.3.22'
   cucumberVersion = '5.7.0'
   wiremockVersion = '2.33.2'
-  elasticsearchVersion = '7.17.4'
+  elasticsearchVersion = '7.17.6'
   testcontainersVersion = '1.17.3'
 }
 
