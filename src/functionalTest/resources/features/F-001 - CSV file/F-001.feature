@@ -5,17 +5,21 @@ Feature: F-001: Update cases in CSV file
 
   Background:
     Given an appropriate test context as detailed in the test data source
-    And a successful call [to check the health of datastore] as in [Check_Datastore_Health]
+     And a successful call [to check the health of datastore] as in [Check_Datastore_Health]
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @S-001.1
   Scenario: CSV file contains only valid case references
+
     Given a successful call [to create test cases] as in [F-001-CreateTestCases]
-    And the test csv contains case references from "F-001-CreateTestCases"
-    When  the next hearing date update job executes
-    Then  a successful call [to verify next hearing date for Case1] as in [F-001_Verify_Case1]
-    Then  a successful call [to verify next hearing date for Case2] as in [F-001_Verify_Case2]
-    Then  a successful call [to verify next hearing date for Case3] as in [F-001_Verify_Case3]
+      And the test csv contains case references from "F-001-CreateTestCases"
+
+     When the next hearing date update job executes
+
+     Then a success exit value is received
+      And a successful call [to verify next hearing date for Case1] as in [F-001_Verify_Case1]
+      And a successful call [to verify next hearing date for Case2] as in [F-001_Verify_Case2]
+      And a successful call [to verify next hearing date for Case3] as in [F-001_Verify_Case3]
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @Ignore
