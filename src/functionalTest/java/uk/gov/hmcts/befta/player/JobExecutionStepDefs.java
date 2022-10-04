@@ -10,6 +10,7 @@ import org.junit.Assert;
 import uk.gov.hmcts.befta.data.ResponseData;
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.util.BeftaUtils;
+import uk.gov.hmcts.befta.util.EnvironmentVariableUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.utils.StreamGobbler;
 
 import java.io.IOException;
@@ -28,6 +29,8 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.FunctionalTestFixtur
 
 @SuppressWarnings("PMD")
 public class JobExecutionStepDefs {
+
+    private static final String ALT_JAVA_HOME = EnvironmentVariableUtils.getOptionalVariable("ALT_JAVA_HOME");
 
     private static final int EXIT_SUCCESS = 0;
 
@@ -106,12 +109,7 @@ public class JobExecutionStepDefs {
                           found);
     }
 
-    private void executeJob(final String param) {
-        BeftaUtils.defaultLog("===================== About to execute "
-                                  + "ccd-next-hearing-date-updater =====================");
-
-        final String executableJar = String.format("%s/build/libs/ccd-next-hearing-date-updater.jar",
-                                                   System.getProperty("user.dir"));
+    private ResponseData executeCommand(final String... command) {
 
         try {
 
@@ -120,7 +118,7 @@ public class JobExecutionStepDefs {
             final Consumer<String> logger = logString -> textBuilder.append(logString).append("\n");
 
             final Process process = new ProcessBuilder()
-                .command("java", "-jar", param, executableJar)
+                .command(command)
                 .start();
 
             // consume output streams from process
@@ -136,15 +134,36 @@ public class JobExecutionStepDefs {
             ResponseData response = new ResponseData();
             response.setResponseCode(exitVal);
             response.setResponseMessage(output);
-            this.scenarioContext.setTheResponse(response);
 
-            // log output to both console and scenario (i.e. report output)
-            BeftaUtils.defaultLog(scenario,
-                                  "ccd-next-hearing-date-update output:\n" + output + "\nExitValue: " + exitVal);
+            return response;
 
         } catch (IOException | InterruptedException e) {
             throw new FunctionalTestException(e.getMessage(), e.getCause());
         }
+    }
+
+    private void executeJob(final String param) {
+        BeftaUtils.defaultLog("===================== About to execute "
+                                  + "ccd-next-hearing-date-updater =====================");
+
+        final String executableJar = String.format("%s/build/libs/ccd-next-hearing-date-updater.jar",
+                                                   System.getProperty("user.dir"));
+
+        // log java version information
+        ResponseData versionResponse = executeCommand(getJavaPath(), "-version");
+        BeftaUtils.defaultLog("java -version\n" + versionResponse.getResponseMessage());
+        Assert.assertEquals("Java version check failed with exit value '" + versionResponse.getResponseCode() + "'.",
+                            EXIT_SUCCESS, versionResponse.getResponseCode());
+
+        // run job direct from jar
+        ResponseData jobResponse = executeCommand(getJavaPath(), "-jar", param, executableJar);
+
+        // record output response to scenarioContext for verification later
+        this.scenarioContext.setTheResponse(jobResponse);
+
+        // log output to both console and scenario (i.e. report output)
+        BeftaUtils.defaultLog(scenario, "ccd-next-hearing-date-update output:\n" + jobResponse.getResponseMessage()
+            + "\nExit value: " + jobResponse.getResponseCode());
 
         BeftaUtils.defaultLog("===================== Finished executing "
                                   + "ccd-next-hearing-date-updater =====================\n");
@@ -185,4 +204,13 @@ public class JobExecutionStepDefs {
     private String getFilename() {
         return scenarioContext.getParentContext().getCurrentScenarioTag() + ".csv";
     }
+
+    private String getJavaPath() {
+        if (ALT_JAVA_HOME == null) {
+            return "java";
+        } else {
+            return ALT_JAVA_HOME + "/bin/java";
+        }
+    }
+
 }

@@ -108,6 +108,10 @@ task functional(type: JavaExec) {
   dependsOn 'bootJar'
 
   doFirst {
+    // clear away any previous report output to prevent it being re-processed after a pre-cucumber error
+    delete "${rootDir}/target/cucumber"
+    delete "${rootDir}/target/cucumber.json"
+
     boolean ciBuild = System.getenv().get("CI_BUILD") ?: false
     if (!ciBuild) {
 
