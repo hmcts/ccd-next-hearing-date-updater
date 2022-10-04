@@ -55,10 +55,9 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 env.CI_BUILD = true
 
 // Other env variables needed for BEFTA.
-env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal" // for JAR
-env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal" // for BEFTA
-env.IDAM_API_URL = "https://idam-api.aat.platform.hmcts.net" // for JAR
-env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net" // for BEFTA
+env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
 env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
 env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
 env.BEFTA_OAUTH2_CLIENT_ID_OF_XUIWEBAPP = "xuiwebapp"
@@ -126,6 +125,9 @@ withPipeline(type, product, component) {
     sh "curl -k $CCD_DATA_STORE_API_BASE_URL/health | jq"
 
     try {
+      // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
+      env.IDAM_API_URL = env.IDAM_API_URL_BASE
+
       builder.gradle('functional')
     } finally {
 
