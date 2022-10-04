@@ -124,46 +124,20 @@ withPipeline(type, product, component) {
     try {
       builder.gradle('functional')
     } finally {
-      junit '**/test-results/**/*.xml'
-      junit 'build/test-results/functional/**/*.xml'
-      archiveArtifacts 'build/reports/tests/functional/*.*'
+      steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
 
       publishHTML target: [
         allowMissing         : true,
         alwaysLinkToLastBuild: true,
         keepAll              : true,
         reportDir            : "build/reports/tests/functional",
-        reportFiles          : "*.*",
+        reportFiles          : "overview-features.html,overview-failures.html,",
+        reportTitles         : "Features,Failures",
         reportName           : "Next Hearing Date Updater Functional Test Report"
       ]
+      junit '**/test-results/functional/*.xml'
     }
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
   }
-
-//  after('functionalTest:preview') {
-//    publishHTML target: [
-//      allowMissing         : true,
-//      alwaysLinkToLastBuild: true,
-//      keepAll              : true,
-//      reportDir            : "build/reports/tests/functional",
-//      reportFiles          : "*.*",
-//      reportName           : "Next Hearing Date Updater Functional Test Report"
-//    ]
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
-//  }
-//
-//  after('functionalTest:aat') {
-//
-//    publishHTML target: [
-//      allowMissing         : true,
-//      alwaysLinkToLastBuild: true,
-//      keepAll              : true,
-//      reportDir            : "build/reports/tests/functional",
-//      reportFiles          : "*.*",
-//      reportName           : "Next Hearing Date Updater Functional Test Report"
-//    ]
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
-//  }
 
   syncBranchesWithMaster(['demo', 'perftest'])
 }
