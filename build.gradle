@@ -110,7 +110,6 @@ task functional(type: JavaExec) {
   doFirst {
     boolean ciBuild = System.getenv().get("CI_BUILD") ?: false
     if (!ciBuild) {
-      delete "befta_recent_executions_info_LOCAL.json"
 
       file('.befta.local.env').readLines().each() {
         def (key, value) = it.tokenize('=')
@@ -364,6 +363,7 @@ wrapper {
 
 bootWithCCD {
   doFirst {
+    // NB: must delete befta local run details to force re-import of def file with updated test stub URL
     delete "befta_recent_executions_info_LOCAL.json"
 
     // Set this flag to 'true', if you want the CFTLib containers to be recreates each time

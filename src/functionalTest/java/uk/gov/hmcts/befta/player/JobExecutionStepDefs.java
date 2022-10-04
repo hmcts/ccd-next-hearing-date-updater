@@ -29,7 +29,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.FunctionalTestFixtur
 @SuppressWarnings("PMD")
 public class JobExecutionStepDefs {
 
-    private final static int EXIT_SUCCESS = 0;
+    private static final int EXIT_SUCCESS = 0;
 
     private String filePath;
 
