@@ -8,7 +8,6 @@ job:
   environment:
     APPLICATIONINSIGHTS_INSTRUMENTATIONKEY: "00000000-0000-0000-0000-000000000000"
     NEXT-HEARING-DATE-UPDATER_PROCESSING_ENABLED: false
-    DATA_STORE_DB_PORT: 5432
 
 global:
   jobKind: CronJob
@@ -75,7 +74,7 @@ logstash:
     01_input.conf: |
       input  {
         jdbc {
-          jdbc_connection_string => "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/javadatabase?stringtype=unspecified"
+          jdbc_connection_string => "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/data-store?stringtype=unspecified"
           jdbc_user => "${DATA_STORE_DB_USERNAME}"
           jdbc_password => "${DATA_STORE_DB_PASSWORD}"
           jdbc_validate_connection => true
@@ -260,7 +259,6 @@ ccd:
       memoryRequests: '1524Mi'
       cpuRequests: '900m'
       environment:
-        DATA_STORE_DB_PORT: ${DATA_STORE_DB_PORT}
         DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater
         CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES: ccd_gw,ccd_gateway,ccd_data
         ELASTIC_SEARCH_ENABLED: true
