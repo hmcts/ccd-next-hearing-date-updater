@@ -128,6 +128,9 @@ withPipeline(type, product, component) {
       // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
       env.IDAM_API_URL = env.IDAM_API_URL_BASE
 
+      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true` 
+      env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
+
       builder.gradle('functional')
     } finally {
 
