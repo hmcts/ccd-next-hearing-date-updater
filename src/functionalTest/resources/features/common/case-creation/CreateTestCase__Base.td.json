@@ -1,5 +1,5 @@
 {
-	"_guid_": "CreateTestCase__Base",
+  "_guid_": "CreateTestCase__Base",
 
   "productName": "CCD Data Store",
   "operationName": "Submit case creation (V2)",
@@ -7,27 +7,30 @@
   "method": "POST",
   "uri": "{{CCD_DATA_STORE_API_BASE_URL}}/case-types/{CaseTypeID}/cases",
 
+  "s2sClientId": "xui_webapp",
+  "userTokenClientId": "xuiwebapp",
+
   "request": {
-		"headers": {
+    "headers": {
       "_extends_": "Common_Request_Headers",
       "Content-Type": "application/json;charset=UTF-8",
       "experimental": true
-		},
+    },
     "pathVariables": {
       "CaseTypeID": "OVERRIDE"
     },
-		"body": {
-			"event": {
-				"id": "OVERRIDE",
-				"summary": "",
-				"description": ""
-			},
-			"ignore_warning": false,
-			"draft_id": null
-		}
-	},
+    "body": {
+      "event": {
+        "id": "OVERRIDE",
+        "summary": "",
+        "description": ""
+      },
+      "ignore_warning": false,
+      "draft_id": null
+    }
+  },
 
-	"expectedResponse": {
+  "expectedResponse": {
     "_extends_": "Common_201_Response",
     "headers": {
       "Content-Type" : "application/json;charset=UTF-8",
@@ -48,5 +51,5 @@
       "data_classification": "[[ANYTHING_PRESENT]]",
       "_links": "[[ANYTHING_PRESENT]]"
     }
-	}
+  }
 }

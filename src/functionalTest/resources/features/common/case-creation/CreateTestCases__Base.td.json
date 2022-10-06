@@ -1,0 +1,22 @@
+{
+  "_guid_": "CreateTestCases__Base",
+  "_extends_": "Health__Base",
+
+  "specs": [
+    "to create test cases",
+
+    "INFO: S2S, Auth & User config added here to allow pre-authentication before prerequisites run."
+  ],
+
+  "s2sClientId": "xui_webapp",
+  "userTokenClientId": "xuiwebapp",
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "BeftaMasterCaseworker"
+    }
+  },
+
+  "prerequisites": [
+  ]
+}

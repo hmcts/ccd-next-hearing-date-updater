@@ -10,7 +10,6 @@
 
   "request": {
     "headers": {
-      "_extends_": "Common_Request_Headers",
       "X_TEST_HOOK": "${[scenarioContext][customValues][testHook]}"
     }
   }
