@@ -259,7 +259,7 @@ ccd:
       memoryRequests: '1524Mi'
       cpuRequests: '900m'
       environment:
-        DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater
+        DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_gw,ccd_gateway,ccd_data,xui_webapp,ccd_next_hearing_date_updater
         CCD_S2S_AUTHORISED_SERVICES_CASE_USER_ROLES: ccd_gw,ccd_gateway,ccd_data
         ELASTIC_SEARCH_ENABLED: true
         ELASTIC_SEARCH_NODES_DISCOVERY_ENABLED: true
