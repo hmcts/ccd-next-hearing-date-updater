@@ -229,7 +229,7 @@ dependencies {
   integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2'
 
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
-  testImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.16.0'
+  testImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.17.5'
   testImplementation group: 'org.testcontainers', name: 'elasticsearch', version: '1.16.0'
 
   integrationTestImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
