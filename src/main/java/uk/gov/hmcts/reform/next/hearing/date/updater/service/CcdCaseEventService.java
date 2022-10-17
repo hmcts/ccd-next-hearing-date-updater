@@ -17,7 +17,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConf
 @Service
 public class CcdCaseEventService {
 
-    public CcdCaseEventRepository ccdCaseEventRepository;
+    private final CcdCaseEventRepository ccdCaseEventRepository;
 
     @Autowired
     public CcdCaseEventService(CcdCaseEventRepository ccdCaseEventRepository) {
@@ -32,14 +32,18 @@ public class CcdCaseEventService {
         StartEventResponse startEventResult = ccdCaseEventRepository.triggerAboutToStartEvent(caseReference);
 
         if (startEventResult != null) {
-            Map nextHearingDetailsJson = (Map) startEventResult.getCaseDetails().getData().get(
-                NEXT_HEARING_DETAILS_FIELD_NAME);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> nextHearingDetailsJson = (Map<String, Object>) startEventResult.getCaseDetails()
+                .getData()
+                .get(NEXT_HEARING_DETAILS_FIELD_NAME);
 
-            LocalDateTime hearingDate = LocalDateTime.parse(nextHearingDetailsJson.get("hearingDateTime").toString());
+            LocalDateTime hearingDate = LocalDateTime.parse(nextHearingDetailsJson
+                                                                .get(NextHearingDetails.HEARING_DATE_TIME)
+                                                                .toString());
 
             NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
                 .caseReference(caseReference)
-                .hearingID(nextHearingDetailsJson.get("hearingID").toString())
+                .hearingID(nextHearingDetailsJson.get(NextHearingDetails.HEARING_ID).toString())
                 .hearingDateTime(hearingDate)
                 .build();
 

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.next.hearing.date.updater.config.es.TestContainers;
@@ -26,16 +25,16 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.NEXT_HEARING_DETAILS_FIELD_NAME;
 
 @SpringBootTest
-@AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
 @ActiveProfiles("itest")
 @ComponentScan({"uk.gov.hmcts.reform.next.hearing.date.updater"})
 @Slf4j
 @SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage",
     "PMD.JUnitTestsShouldIncludeAssert",
     "PMD.AvoidDuplicateLiterals"})
-@Disabled
+@Disabled // tests not working in pipeline
 class ElasticSearchQueryIT extends TestContainers {
     private static final String FT_NEXT_HEARING_DATE = "FT_NextHearingDate";
 
@@ -121,7 +120,7 @@ class ElasticSearchQueryIT extends TestContainers {
         return CaseData.builder()
             .reference(caseReference)
             .caseType(FT_NEXT_HEARING_DATE)
-            .nextHearingDetails(Map.of("NextHearingDetails", nextHearingDetails))
+            .nextHearingDetails(Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
             .build();
     }
 }

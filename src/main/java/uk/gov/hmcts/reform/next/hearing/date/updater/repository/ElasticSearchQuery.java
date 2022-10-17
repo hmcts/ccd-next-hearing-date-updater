@@ -2,6 +2,9 @@ package uk.gov.hmcts.reform.next.hearing.date.updater.repository;
 
 import lombok.Builder;
 
+import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.NEXT_HEARING_DETAILS_FIELD_NAME;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails.HEARING_DATE_TIME;
+
 @Builder
 public class ElasticSearchQuery {
     private static final String START_QUERY = "{\n"
@@ -10,7 +13,7 @@ public class ElasticSearchQuery {
         + "    ],\n"
         + "    \"query\": {\n"
         + "        \"range\": {\n"
-        + "            \"data.nextHearingDetails.hearingDateTime\": {\n"
+        + "            \"data." + NEXT_HEARING_DETAILS_FIELD_NAME + "." + HEARING_DATE_TIME + "\": {\n"
         + "                \"lt\": \"now\"\n"
         + "            }\n"
         + "        }\n"

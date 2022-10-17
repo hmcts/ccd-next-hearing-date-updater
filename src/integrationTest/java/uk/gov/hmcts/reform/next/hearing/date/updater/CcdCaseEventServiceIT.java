@@ -3,36 +3,23 @@ package uk.gov.hmcts.reform.next.hearing.date.updater;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails;
 import uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository;
-import uk.gov.hmcts.reform.next.hearing.date.updater.security.SecurityUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.service.CcdCaseEventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn200SubmitCaseEvent;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn200TriggerStartEvent;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn404SubmitCaseEvent;
-import static uk.gov.hmcts.reform.next.hearing.date.updater.WiremockFixtures.stubReturn404TriggerStartEvent;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.EVENT_ID;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.NEXT_HEARING_DETAILS_FIELD_NAME;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.HEARING_DATE_TIME_IN_PAST;
@@ -40,22 +27,14 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEv
 import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository.SUBMIT_EVENT_ERROR;
 
 @SpringBootTest()
-@AutoConfigureWireMock(port = 0, stubs = "classpath:/wiremock-stubs")
 @ActiveProfiles("itest")
-@SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage", "PMD.ExcessiveImports"})
-class CcdCaseEventServiceIT {
+@SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
+class CcdCaseEventServiceIT extends WireMockBootstrap {
 
     @Autowired
-    private CcdCaseEventService ccdCaseEventService;
+    private CcdCaseEventService underTest;
 
-    @Autowired
-    protected SecurityUtils securityUtils;
-
-    @Value("${wiremock.server.port}")
-    protected Integer wiremockPort;
-
-    @Autowired
-    private WireMockServer wireMockServer;
+    private final WiremockFixtures wiremockFixtures = new WiremockFixtures();
 
     private static final String CASE_REFERENCE = "1658830998852951";
 
@@ -65,13 +44,14 @@ class CcdCaseEventServiceIT {
 
     @BeforeEach
     void setup() {
+        wiremockFixtures.stubIdam();
+
         Logger ccdCallbackRepositoryLogger = (Logger) LoggerFactory.getLogger(CcdCaseEventRepository.class);
 
         listAppender = new ListAppender<>();
         listAppender.start();
 
         ccdCallbackRepositoryLogger.addAppender(listAppender);
-        wireMockServer.resetRequests();
     }
 
     @Test
@@ -93,15 +73,13 @@ class CcdCaseEventServiceIT {
             .token("tokenValue")
             .build();
 
-        stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
-        stubReturn200SubmitCaseEvent(CASE_REFERENCE);
+        wiremockFixtures.stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
+        wiremockFixtures.stubReturn200SubmitCaseEvent(CASE_REFERENCE);
 
-        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
+        underTest.createCaseEvents(List.of(CASE_REFERENCE));
 
-        verify(getRequestedFor(
-            urlEqualTo(String.format("/cases/%s/event-triggers/%s", CASE_REFERENCE, EVENT_ID))));
-        verify(postRequestedFor(urlEqualTo(
-            String.format("/cases/%s/events", CASE_REFERENCE))));
+        wiremockFixtures.verifyGetRequest(String.format("/cases/%s/event-triggers/%s", CASE_REFERENCE, EVENT_ID));
+        wiremockFixtures.verifyPostRequest(String.format("/cases/%s/events", CASE_REFERENCE));
 
         assertTrue(getLogs().isEmpty());
     }
@@ -132,16 +110,13 @@ class CcdCaseEventServiceIT {
             .token("tokenValue")
             .build();
 
-        stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
-        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
+        wiremockFixtures.stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
+        underTest.createCaseEvents(List.of(CASE_REFERENCE));
 
-        verify(getRequestedFor(
-            urlEqualTo(String.format("/cases/%s/event-triggers/%s", CASE_REFERENCE, EVENT_ID))));
-
+        wiremockFixtures.verifyGetRequest(String.format("/cases/%s/event-triggers/%s", CASE_REFERENCE, EVENT_ID));
 
         // this endpoint will never be called if the NextHearingDate date is not valid - i.e in the past
-        verify(exactly(0), postRequestedFor(urlEqualTo(
-            String.format("/cases/%s/events", CASE_REFERENCE))));
+        wiremockFixtures.verifyPostRequest(String.format("/cases/%s/events", CASE_REFERENCE));
 
         String formattedLog = HEARING_DATE_TIME_IN_PAST.replace("{}", CASE_REFERENCE);
 
@@ -150,8 +125,8 @@ class CcdCaseEventServiceIT {
 
     @Test
     void errosLoggedWhenStartEventFails() {
-        stubReturn404TriggerStartEvent(CASE_REFERENCE);
-        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
+        wiremockFixtures.stubReturn404TriggerStartEvent(CASE_REFERENCE);
+        underTest.createCaseEvents(List.of(CASE_REFERENCE));
 
         String formattedLog = String.format(START_EVENT_ERROR, CASE_REFERENCE, EVENT_ID);
 
@@ -177,9 +152,9 @@ class CcdCaseEventServiceIT {
             .token("tokenValue")
             .build();
 
-        stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
-        stubReturn404SubmitCaseEvent(CASE_REFERENCE);
-        ccdCaseEventService.createCaseEvents(List.of(CASE_REFERENCE));
+        wiremockFixtures.stubReturn200TriggerStartEvent(CASE_REFERENCE, startEventResponse);
+        wiremockFixtures.stubReturn404SubmitCaseEvent(CASE_REFERENCE);
+        underTest.createCaseEvents(List.of(CASE_REFERENCE));
 
         String formattedLog = String.format(SUBMIT_EVENT_ERROR, CASE_REFERENCE);
 

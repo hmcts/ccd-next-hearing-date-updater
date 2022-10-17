@@ -31,8 +31,13 @@ public class ElasticSearchService {
      */
     public List<String> findOutOfDateCaseReferencesByCaseType() {
         return caseTypes.stream()
+            .filter(this::isNotEmpty)
             .flatMap(caseType -> elasticSearchRepository.findCasesWithOutOfDateNextHearingDate(caseType).stream())
             .map(caseDetails -> caseDetails.getId().toString())
             .toList();
+    }
+
+    private boolean isNotEmpty(final String subject) {
+        return !"".equals(subject);
     }
 }

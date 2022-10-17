@@ -13,8 +13,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import static java.util.stream.Collectors.toUnmodifiableList;
-
 @Configuration
 public class ElasticSearchClientConfig {
     private RestHighLevelClient restHighLevelClient;
@@ -34,8 +32,7 @@ public class ElasticSearchClientConfig {
 
     private List<String> getElasticsearchHosts() {
         return elasticsearchHosts.stream()
-            .map(quotedHost -> quotedHost.replace("\"", "").strip())
-            .collect(toUnmodifiableList());
+            .map(quotedHost -> quotedHost.replace("\"", "").strip()).toList();
     }
 
     @PreDestroy
