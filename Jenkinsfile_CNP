@@ -21,6 +21,9 @@ def product = "ccd"
 def component = "next-hearing-date-updater"
 
 def secrets = [
+  'rpx-${env}': [
+    secret('mc-idam-client-secret', 'BEFTA_OAUTH2_CLIENT_SECRET_OF_XUIWEBAPP')
+  ],
   's2s-${env}': [
     secret('microservicekey-ccd-data', 'DATA_STORE_S2S_KEY'),
     secret('microservicekey-ccd-definition', 'DEFINITION_STORE_S2S_KEY'),
@@ -68,6 +71,9 @@ env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-use
 env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
 env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
 env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
+
+// alternative JAVA_HOME to run job under
+env.ALT_JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64" 
 
 // temporary workaround for platform changes: turn BEFTA header checks to warning mode
 env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
@@ -122,48 +128,27 @@ withPipeline(type, product, component) {
     sh "curl -k $CCD_DATA_STORE_API_BASE_URL/health | jq"
 
     try {
+      // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
+      env.IDAM_API_URL = env.IDAM_API_URL_BASE
+
+      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true` 
+      env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
+
       builder.gradle('functional')
     } finally {
-      junit '**/test-results/**/*.xml'
-      junit 'build/test-results/functional/**/*.xml'
-      archiveArtifacts 'build/reports/tests/functional/*.*'
 
       publishHTML target: [
         allowMissing         : true,
         alwaysLinkToLastBuild: true,
         keepAll              : true,
         reportDir            : "build/reports/tests/functional",
-        reportFiles          : "*.*",
+        reportFiles          : "overview-features.html,overview-failures.html,",
+        reportTitles         : "Features,Failures",
         reportName           : "Next Hearing Date Updater Functional Test Report"
       ]
+      junit '**/test-results/functional/*.xml'
     }
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
   }
-
-//  after('functionalTest:preview') {
-//    publishHTML target: [
-//      allowMissing         : true,
-//      alwaysLinkToLastBuild: true,
-//      keepAll              : true,
-//      reportDir            : "build/reports/tests/functional",
-//      reportFiles          : "*.*",
-//      reportName           : "Next Hearing Date Updater Functional Test Report"
-//    ]
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
-//  }
-//
-//  after('functionalTest:aat') {
-//
-//    publishHTML target: [
-//      allowMissing         : true,
-//      alwaysLinkToLastBuild: true,
-//      keepAll              : true,
-//      reportDir            : "build/reports/tests/functional",
-//      reportFiles          : "*.*",
-//      reportName           : "Next Hearing Date Updater Functional Test Report"
-//    ]
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/functional/**/*'
-//  }
 
   syncBranchesWithMaster(['demo', 'perftest'])
 }

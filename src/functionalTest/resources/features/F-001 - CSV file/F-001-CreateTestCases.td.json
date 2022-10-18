@@ -1,16 +1,6 @@
 {
   "_guid_": "F-001-CreateTestCases",
-  "_extends_": "Health__Base",
-
-  "specs": [
-    "to create test cases"
-  ],
-
-  "users": {
-    "invokingUser": {
-      "_extends_": "BeftaMasterCaseworker"
-    }
-  },
+  "_extends_": "CreateTestCases__Base",
 
   "prerequisites": [
     {

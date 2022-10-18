@@ -7,6 +7,9 @@
   "method": "GET",
   "uri": "{{CCD_DATA_STORE_API_BASE_URL}}/cases/{cid}",
 
+  "s2sClientId": "xui_webapp",
+  "userTokenClientId": "xuiwebapp",
+
   "request": {
     "headers": {
       "_extends_": "Common_Request_Headers",
