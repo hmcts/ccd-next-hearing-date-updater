@@ -3,12 +3,13 @@
   "_extends_": "Health__Base",
 
   "specs": [
-    "to check the health of datastore"
+    "to check the health of datastore",
+
+    "INFO: used to trigger the TestHookHandler so it can capture and register the exisitng ScenarioContext with the NHDU BEAN_FACTORY"
   ],
 
   "request": {
     "headers": {
-      "_extends_": "Common_Request_Headers",
       "X_TEST_HOOK": "${[scenarioContext][customValues][testHook]}"
     }
   }

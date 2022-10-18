@@ -108,22 +108,14 @@ task functional(type: JavaExec) {
   dependsOn 'bootJar'
 
   doFirst {
+    // clear away any previous BEFTA report output to prevent it being re-processed after a pre-cucumber error
+    cleanBeftaReports()
+
     boolean ciBuild = System.getenv().get("CI_BUILD") ?: false
     if (!ciBuild) {
-      delete "befta_recent_executions_info_LOCAL.json"
-
-      file('.befta.local.env').readLines().each() {
-        def (key, value) = it.tokenize('=')
-        environment key, value
-      }
-
-      // Override environment variables set by '.befta.local.env' above
-      if (file('/tmp/.test.stub.service.env').exists()) {
-        file('/tmp/.test.stub.service.env').readLines().each() {
-          def (key, value) = it.tokenize('=')
-          environment key, value
-        }
-      }
+      loadEnvFile(it, '.env.befta.local.env')
+      // Override with alternative test stub environment variables (i.e. if using bootWithCcd: need alternative test stub URL)
+      loadEnvFile(it, '.env.test.stub.service.env')
     }
   }
 
@@ -135,7 +127,7 @@ task functional(type: JavaExec) {
   classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
   args = [
     '--strict',
-    '--threads', '10',
+    '--threads', '1', // Setting this to single thread as the application is not designed to have the FTs run in parallel
     '--plugin', "json:${rootDir}/target/cucumber.json",
     '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
     '--tags', 'not @Ignore',
@@ -148,8 +140,8 @@ task functional(type: JavaExec) {
     generateCucumberReports.enabled = true
     generateCucumberReports {
       doLast{
-        delete "${rootDir}/BEFTA Report for Functional Tests/"
-        new File("${rootDir}/BEFTA Report for Functional Tests").mkdirs()
+        delete "${buildDir}/reports/tests/functional/"
+        new File("${buildDir}/reports/tests/functional").mkdirs()
         file("${rootDir}/target/cucumber/cucumber-html-reports").renameTo(file("${buildDir}/reports/tests/functional"))
         logger.quiet("Functional test report moved to ---> file://${buildDir}/reports/tests/functional/overview-features.html")
       }
@@ -164,13 +156,13 @@ cucumberReports {
   reports = files("${rootDir}/target/cucumber.json")
 }
 
-task customCleanBeftaReports(type:Delete) {
+void cleanBeftaReports() {
+  logger.quiet("Delete all previous BEFTA report files.")
   delete "${buildDir}/test-results/functional/"
   delete "${buildDir}/reports/tests/functional/"
   delete "${rootDir}/target/cucumber"
   delete "${rootDir}/target/cucumber.json"
 }
-tasks.clean.dependsOn(tasks.customCleanBeftaReports)
 
 task integration(type: Test) {
   description = "Runs integration tests"
@@ -328,10 +320,11 @@ dependencies {
   functionalTestImplementation sourceSets.integrationTest.runtimeClasspath
   functionalTestImplementation group: 'io.cucumber', name: 'cucumber-junit', version: cucumberVersion
   functionalTestImplementation group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
-  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.5'
-  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.5_HMAN-368'
   functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.4.0'
+
+  functionalTestImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.6'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.5'
 
 }
 
@@ -364,6 +357,7 @@ wrapper {
 
 bootWithCCD {
   doFirst {
+    // NB: must delete befta local run details to force re-import of def file with updated test stub URL
     delete "befta_recent_executions_info_LOCAL.json"
 
     // Set this flag to 'true', if you want the CFTLib containers to be recreates each time
@@ -373,4 +367,24 @@ bootWithCCD {
   authMode = uk.gov.hmcts.rse.AuthMode.Local
   environment("DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater")
   environment("RSE_LIB_S2S_PORT", 4502)
+}
+
+void loadEnvFile(Task execTask, String envFilePath) {
+  if (file(envFilePath).exists()) {
+    logger.quiet("Loading environment variables from '${envFilePath}'")
+
+    file(envFilePath).readLines().each() {
+      if (it.startsWith('# ')) {
+        if (it.startsWith('# WARNING')) {
+          // copy warning to console
+          logger.quiet(it)
+        }
+      } else if (!it.isEmpty()) {
+        def (key, value) = it.tokenize('=')
+        execTask.environment(key, value)
+      }
+    }
+  } else {
+    logger.quiet("Skipping load of environment variables from '${envFilePath}' as file not found.")
+  }
 }

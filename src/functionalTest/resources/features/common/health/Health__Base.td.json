@@ -8,15 +8,10 @@
   "method": "GET",
   "uri": "{{CCD_DATA_STORE_API_BASE_URL}}/health",
 
-  "users": {
-    "invokingUser": {
-      "_extends_": "Common_User_For_Request"
-    }
-  },
 
   "request": {
     "headers": {
-      "_extends_": "Common_Request_Headers"
+      "Content-Type": "application/json"
     }
   },
 

@@ -25,5 +25,5 @@ applicationinsights-agent-*.jar
 *.log
 
 target
-BEFTA Report for Functional Tests
 /befta_recent_executions_info_LOCAL.json
+.env.test.stub.service.env
