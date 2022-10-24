@@ -24,7 +24,9 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConf
 import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.NEXT_HEARING_DETAILS_FIELD_NAME;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.HEARING_DATE_TIME_IN_PAST;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository.START_EVENT_ERROR;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository.START_EVENT_FEIGN_ERROR;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository.SUBMIT_EVENT_ERROR;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.repository.CcdCaseEventRepository.SUBMIT_EVENT_FEIGN_ERROR;
 
 @SpringBootTest()
 @ActiveProfiles("itest")
@@ -128,7 +130,7 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
         wiremockFixtures.stubReturn404TriggerStartEvent(CASE_REFERENCE);
         underTest.createCaseEvents(List.of(CASE_REFERENCE));
 
-        String formattedLog = String.format(START_EVENT_ERROR, CASE_REFERENCE, EVENT_ID);
+        String formattedLog = String.format(START_EVENT_FEIGN_ERROR, CASE_REFERENCE, EVENT_ID);
 
         assertLogMessages(List.of(formattedLog));
     }
@@ -156,7 +158,7 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
         wiremockFixtures.stubReturn404SubmitCaseEvent(CASE_REFERENCE);
         underTest.createCaseEvents(List.of(CASE_REFERENCE));
 
-        String formattedLog = String.format(SUBMIT_EVENT_ERROR, CASE_REFERENCE);
+        String formattedLog = String.format(SUBMIT_EVENT_FEIGN_ERROR, CASE_REFERENCE);
 
         assertLogMessages(List.of(formattedLog));
     }
