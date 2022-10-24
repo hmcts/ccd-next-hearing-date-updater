@@ -43,6 +43,9 @@ public class CcdCaseEventRepository {
                                                             caseReference, CaseEventConfig.EVENT_ID);
         } catch (FeignException feignException) {
             log.error(String.format(START_EVENT_ERROR, caseReference, CaseEventConfig.EVENT_ID), feignException);
+        }  catch (Exception exception) {
+            log.error(String.format(START_EVENT_ERROR, caseReference, CaseEventConfig.EVENT_ID), exception);
+            return null;
         }
 
         return startEventResponse;
@@ -67,6 +70,9 @@ public class CcdCaseEventRepository {
             );
         } catch (FeignException feignException) {
             log.error(String.format(SUBMIT_EVENT_ERROR, caseReference), feignException);
+            return null;
+        } catch (Exception exception) {
+            log.error(String.format(SUBMIT_EVENT_ERROR, caseReference), exception);
             return null;
         }
     }
