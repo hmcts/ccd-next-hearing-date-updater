@@ -34,11 +34,11 @@ public class CsvService {
     private String fileLocation;
 
     public List<String> getCaseReferences() {
-        //ToDo  log.info("The Next-Hearing-Date-Updater has processed caseDetails {}.",caseDetails.size());
         try {
-            //ToDo X of Y processed
             List<String> caseReferences = getCaseReferencesFromCsvFile();
             validateCaseRefsFile(caseReferences);
+            log.info("The Next-Hearing-Date-Updater has processed csv and found the following "
+                     + "number of case references {}.", caseReferences.size());
             return caseReferences;
         } catch (TooManyCsvRecordsException | CsvFileException exception) {
             throw new InvalidConfigurationError(CSV_FILE_READ_ERROR, exception);
