@@ -63,7 +63,7 @@ public class CsvService {
     }
 
     private void validateCaseRefsFile(List<String> caseReferences) throws TooManyCsvRecordsException {
-        if(caseReferences.isEmpty()){
+        if (caseReferences.isEmpty()) {
             log.info(NO_REFERENCES_TO_VALIDATE);
         } else {
             validateCsvCaseSizeLessThanMaximum(caseReferences);
