@@ -38,7 +38,7 @@ public class CsvService {
             List<String> caseReferences = getCaseReferencesFromCsvFile();
             validateCaseRefsFile(caseReferences);
             log.info("The Next-Hearing-Date-Updater has processed csv and found the following "
-                     + "number of case references {}.", caseReferences.size());
+                     + "number of case references {}.", caseReferences.size() + 1);
             return caseReferences;
         } catch (TooManyCsvRecordsException | CsvFileException exception) {
             throw new InvalidConfigurationError(CSV_FILE_READ_ERROR, exception);
