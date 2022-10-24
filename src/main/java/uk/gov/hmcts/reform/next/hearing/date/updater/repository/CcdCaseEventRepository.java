@@ -20,10 +20,14 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.security.SecurityUtils;
 @SuppressWarnings("PMD.UnusedPrivateMethod")
 public class CcdCaseEventRepository {
 
-    public static final String SUBMIT_EVENT_ERROR =
+    public static final String SUBMIT_EVENT_FEIGN_ERROR =
         "Call to following downstream CCD endpoint failed: /cases/%s/events";
-    public static final String START_EVENT_ERROR =
+    public static final String START_EVENT_FEIGN_ERROR =
         "Call to following downstream CCD endpoint failed: /cases/%s/event-triggers/%s";
+    public static final String SUBMIT_EVENT_ERROR =
+        "Call to following downstream CCD endpoint failed: /cases/%s/events because of the following: ";
+    public static final String START_EVENT_ERROR =
+        "Call to following downstream CCD endpoint failed: /cases/%s/event-triggers/%s because of the following: ";
 
     private final CoreCaseDataApi datastoreClient;
     private final SecurityUtils securityUtils;
@@ -42,12 +46,10 @@ public class CcdCaseEventRepository {
             startEventResponse = datastoreClient.startEvent(nextHearingDateAdminAccessToken, s2SToken,
                                                             caseReference, CaseEventConfig.EVENT_ID);
         } catch (FeignException feignException) {
-            log.error(String.format(START_EVENT_ERROR, caseReference, CaseEventConfig.EVENT_ID), feignException);
+            log.error(String.format(START_EVENT_FEIGN_ERROR, caseReference, CaseEventConfig.EVENT_ID), feignException);
         }  catch (Exception exception) {
             log.error(String.format(START_EVENT_ERROR, caseReference, CaseEventConfig.EVENT_ID), exception);
-            return null;
         }
-
         return startEventResponse;
     }
 
@@ -69,7 +71,7 @@ public class CcdCaseEventRepository {
                 caseDataContent
             );
         } catch (FeignException feignException) {
-            log.error(String.format(SUBMIT_EVENT_ERROR, caseReference), feignException);
+            log.error(String.format(SUBMIT_EVENT_FEIGN_ERROR, caseReference), feignException);
             return null;
         } catch (Exception exception) {
             log.error(String.format(SUBMIT_EVENT_ERROR, caseReference), exception);
