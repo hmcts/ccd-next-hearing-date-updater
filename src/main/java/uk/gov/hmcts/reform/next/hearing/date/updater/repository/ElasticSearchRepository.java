@@ -42,7 +42,6 @@ public class ElasticSearchRepository {
                                                                 caseType, elasticSearchQuery.getQuery());
 
         List<CaseDetails> caseDetails = new ArrayList<>();
-        //ToDo X of Y processed
         if (searchResult.getTotal() > 0) {
             List<CaseDetails> searchResultCases = searchResult.getCases();
             caseDetails.addAll(searchResultCases);
