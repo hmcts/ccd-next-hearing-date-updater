@@ -31,7 +31,7 @@ public class CcdCaseEventService {
     private void createCaseEvent(String caseReference, List<String> caseReferences) {
         int index = caseReferences.indexOf(caseReference) + 1;
         int size = caseReferences.size();
-        log.info("Processing case %s (%s of %s)", caseReference, index, size);
+        log.info(String.format("Processing case %s (%s of %s)", caseReference, index, size));
         StartEventResponse startEventResult = ccdCaseEventRepository.triggerAboutToStartEvent(caseReference);
 
         if (startEventResult != null) {
@@ -54,6 +54,6 @@ public class CcdCaseEventService {
                 ccdCaseEventRepository.createCaseEvent(startEventResult);
             }
         }
-        log.info("Process complete for case %s (%s of %s)", caseReference, index, size);
+        log.info(String.format("Process complete for case %s (%s of %s)", caseReference, index, size));
     }
 }
