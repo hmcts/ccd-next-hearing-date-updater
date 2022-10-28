@@ -28,10 +28,6 @@ idam:
     totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:AAAAAAAAAAAAAAAA}
     microservice: ccd_next_hearing_date_updater
 
-azure:
-  application-insights:
-    instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
-
 next-hearing-date-updater:
   csv:
     caseReferences:
