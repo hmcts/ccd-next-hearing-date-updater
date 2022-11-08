@@ -1,5 +1,6 @@
 #!groovy
 import uk.gov.hmcts.contino.AppPipelineDsl
+import uk.gov.hmcts.contino.GithubAPI
 import uk.gov.hmcts.contino.GradleBuilder
 
 properties([
@@ -19,6 +20,7 @@ properties([
 def type = "java"
 def product = "ccd"
 def component = "next-hearing-date-updater"
+def branchesToSync = ['demo','perftest']
 
 def secrets = [
   'rpx-${env}': [
@@ -57,7 +59,7 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 
 env.CI_BUILD = true
 
-// Other env variables needed for BEFTA.
+// Set required environment variables to run functional tests apart from one in vaults.
 env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
@@ -81,16 +83,34 @@ env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
 GradleBuilder builder = new GradleBuilder(this, product)
 
 withPipeline(type, product, component) {
-  loadVaultSecrets(secrets)
-  nonServiceApp()
 
+  onMaster {
+    enableSlackNotifications('#ccd-master-builds')
+  }
   onPR {
     enableSlackNotifications('#ccd-pr-builds')
     env.ENV='preview'
     env.TEST_URL="https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal" // This is really not needed but here as a hack around TLS url
     env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+
+    def githubApi = new GithubAPI(this)
+    if (!githubApi.getLabelsbyPattern(env.BRANCH_NAME, "keep-helm")) {
+        enableCleanupOfHelmReleaseOnSuccess()
+    }
   }
+  onNonPR {
+    env.ENV='aat'
+    env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal" // This is really not needed but here as a hack around TLS url
+    env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
+    env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+  }
+
+  enableAksStagingDeployment()
+  disableLegacyDeployment()
+  loadVaultSecrets(secrets)
+  nonServiceApp()
+  syncBranchesWithMaster(branchesToSync)
 
   after('test') {
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
@@ -149,6 +169,4 @@ withPipeline(type, product, component) {
       junit '**/test-results/functional/*.xml'
     }
   }
-
-  syncBranchesWithMaster(['demo', 'perftest'])
 }
