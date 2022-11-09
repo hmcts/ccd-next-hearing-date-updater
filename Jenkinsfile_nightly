@@ -63,7 +63,8 @@ withNightlyPipeline(type, product, component) {
   env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
   env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
   env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
-  // the below may not be needed
+
+  // NB: legacy config for def file import
   env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
   env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
   env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
