@@ -106,7 +106,7 @@ withNightlyPipeline(type, product, component) {
       // NB: override IDAM_API_URL late as per `Jenkinsfile_CNP` tests
       env.IDAM_API_URL = env.IDAM_API_URL_BASE
 
-      builder.gradle('functional')
+      builder.functionalTest()
     } finally {
 
       publishHTML target: [
