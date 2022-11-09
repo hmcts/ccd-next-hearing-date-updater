@@ -1,6 +1,7 @@
 #!groovy
 import uk.gov.hmcts.contino.AppPipelineDsl
 import uk.gov.hmcts.contino.GradleBuilder
+import uk.gov.hmcts.contino.HealthChecker
 
 properties([
   [
@@ -143,12 +144,9 @@ withPipeline(type, product, component) {
 
   after('akschartsinstall') {
 
-    // for restful api deployments, the pipeline calls the `/health` in a loop until it gets SUCCESS or TIMEOUT
-    // rough and dirty solution is this wait, as this is a nonServiceApp
-    def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '120s' : '90s'
-    sh "sleep ${sleepTime}"
-
-    sh "curl -k $CCD_DATA_STORE_API_BASE_URL/health | jq"
+     // check data-store instance is up
+    def healthChecker = new HealthChecker(this)
+    healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
 
     try {
       // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
@@ -157,7 +155,7 @@ withPipeline(type, product, component) {
       // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true` 
       env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
 
-      builder.gradle('functional')
+      builder.functionalTest()
     } finally {
 
       publishHTML target: [
