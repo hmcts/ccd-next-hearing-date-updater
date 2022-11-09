@@ -1,6 +1,5 @@
 #!groovy
 import uk.gov.hmcts.contino.AppPipelineDsl
-import uk.gov.hmcts.contino.GithubAPI
 import uk.gov.hmcts.contino.GradleBuilder
 
 properties([
@@ -21,6 +20,11 @@ def type = "java"
 def product = "ccd"
 def component = "next-hearing-date-updater"
 def branchesToSync = ['demo','perftest']
+
+
+// Variables to switch pipeline logic and wiring per type of build
+def prsToKeepHelm = "PR-92" // Set this value to a PR number, or add it as a comma-separated value, if it's to follow CI/CD.
+
 
 def secrets = [
   'rpx-${env}': [
@@ -94,8 +98,7 @@ withPipeline(type, product, component) {
     env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
 
-    def githubApi = new GithubAPI(this)
-    if (!githubApi.getLabelsbyPattern(env.BRANCH_NAME, "keep-helm")) {
+    if (!prsToUseAat.toLowerCase().contains(env.BRANCH_NAME.toLowerCase())) {
         enableCleanupOfHelmReleaseOnSuccess()
     }
   }
