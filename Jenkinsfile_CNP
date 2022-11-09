@@ -1,7 +1,6 @@
 #!groovy
 import uk.gov.hmcts.contino.AppPipelineDsl
 import uk.gov.hmcts.contino.GradleBuilder
-import uk.gov.hmcts.contino.HealthChecker
 
 properties([
   [
@@ -115,7 +114,6 @@ withPipeline(type, product, component) {
   loadVaultSecrets(secrets)
   nonServiceApp()
   syncBranchesWithMaster(branchesToSync)
-  enableFullFunctionalTest()
 
   after('test') {
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
@@ -143,27 +141,35 @@ withPipeline(type, product, component) {
     junit '**/test-results/test/*.xml'
   }
 
-  before('functionalTest:preview') {
-    def healthChecker = new HealthChecker(this)
-    healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
+  after('akschartsinstall') {
 
-    // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
-    env.IDAM_API_URL = env.IDAM_API_URL_BASE
+    // for restful api deployments, the pipeline calls the `/health` in a loop until it gets SUCCESS or TIMEOUT
+    // rough and dirty solution is this wait, as this is a nonServiceApp
+    def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '120s' : '90s'
+    sh "sleep ${sleepTime}"
 
-    // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true` 
-    env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
-  }
-  after('functionalTest:preview') {
+    sh "curl -k $CCD_DATA_STORE_API_BASE_URL/health | jq"
 
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/functional",
-      reportFiles          : "overview-features.html,overview-failures.html,",
-      reportTitles         : "Features,Failures",
-      reportName           : "Next Hearing Date Updater Functional Test Report"
-    ]
-    junit '**/test-results/functional/*.xml'
+    try {
+      // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
+      env.IDAM_API_URL = env.IDAM_API_URL_BASE
+
+      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true` 
+      env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
+
+      builder.gradle('functional')
+    } finally {
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/functional",
+        reportFiles          : "overview-features.html,overview-failures.html,",
+        reportTitles         : "Features,Failures",
+        reportName           : "Next Hearing Date Updater Functional Test Report"
+      ]
+      junit '**/test-results/functional/*.xml'
+    }
   }
 }
