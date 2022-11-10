@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -24,6 +26,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static uk.gov.hmcts.reform.next.hearing.date.updater.FunctionalTestFixturesFactory.BEAN_FACTORY;
 
@@ -59,8 +62,14 @@ public class JobExecutionStepDefs {
     }
 
     @Given("the test csv contains case references from {string}")
-    public void csvContainsCaseReferences(final String contextName) throws FunctionalTestException {
+    public void csvContainsCaseReferences(final String contextName) {
         final String content = buildCsv(contextName);
+        filePath = createCsvFile(content);
+    }
+
+    @Given("the test csv contains case references from {string} plus the following extra case references: {string}")
+    public void csvContainsCaseReferencesPlusExtras(final String contextName, final String extraCaseReferences) {
+        final String content = buildCsv(contextName) + "\n" + extraCaseReferences.replace(',', '\n');
         filePath = createCsvFile(content);
     }
 
@@ -70,11 +79,12 @@ public class JobExecutionStepDefs {
         filePath = createCsvFile(content);
     }
 
-    @When("the next hearing date update job executes")
-    public void theNextHearingDateUpdateJobExecutesForCsv() throws FunctionalTestException {
+    @When("the next hearing date update job executes with maximum CSV limit {string}")
+    public void theNextHearingDateUpdateJobExecutesForCsv(final String maxCsvRecords) {
         final String locationParam = String.format("-DFILE_LOCATION=%s", filePath);
+        final String maxCsvRecordsParam = String.format("-DMAX_CSV_RECORDS=%s", maxCsvRecords);
 
-        executeJob(locationParam);
+        executeJob(locationParam, maxCsvRecordsParam);
     }
 
     @When("the next hearing date update job executes for {string}")
@@ -89,6 +99,13 @@ public class JobExecutionStepDefs {
         int responseCode = scenarioContext.getTheResponse().getResponseCode();
         scenario.log("Exit value: " + responseCode);
         Assert.assertEquals("Exit value '" + responseCode + "' is not a success code.", EXIT_SUCCESS, responseCode);
+    }
+
+    @Then("a non-success exit value is received")
+    public void verifyThatANonSuccessExitValueResponseWasReceived() {
+        int responseCode = scenarioContext.getTheResponse().getResponseCode();
+        scenario.log("Exit value: " + responseCode);
+        Assert.assertNotEquals("Exit value '" + responseCode + "' is a success code.", EXIT_SUCCESS, responseCode);
     }
 
     @Then("the following response is logged as output: {string}")
@@ -142,7 +159,7 @@ public class JobExecutionStepDefs {
         }
     }
 
-    private void executeJob(final String param) {
+    private void executeJob(final String... params) {
         BeftaUtils.defaultLog("===================== About to execute "
                                   + "ccd-next-hearing-date-updater =====================");
 
@@ -155,8 +172,15 @@ public class JobExecutionStepDefs {
         Assert.assertEquals("Java version check failed with exit value '" + versionResponse.getResponseCode() + "'.",
                             EXIT_SUCCESS, versionResponse.getResponseCode());
 
+        BeftaUtils.defaultLog("Executing job with params: " + Arrays.toString(params));
+
         // run job direct from jar
-        ResponseData jobResponse = executeCommand(getJavaPath(), "-jar", param, executableJar);
+        ArrayList<String> command = new ArrayList<>();
+        command.add(getJavaPath());
+        command.add("-jar");
+        command.addAll(Arrays.stream(params).toList());
+        command.add(executableJar);
+        ResponseData jobResponse = executeCommand(command.toArray(new String[0]));
 
         // record output response to scenarioContext for verification later
         this.scenarioContext.setTheResponse(jobResponse);
