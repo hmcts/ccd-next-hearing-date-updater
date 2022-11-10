@@ -73,27 +73,40 @@ class CsvServiceTest {
     @Test
     void getCaseReferencesShouldRemoveAndLogInvalidCaseReferences() {
 
+        // GIVEN
         ReflectionTestUtils.setField(csvService, FILE_LOCATION,
                                      TEST_RESOURCES + "testCsvContainingInvalidCaseRefs.csv");
 
+        // WHEN
         List<String> caseReferences = csvService.getCaseReferences();
 
+        // THEN
+
+        // verify postive output
         assertNotNull(caseReferences);
         assertFalse(caseReferences.isEmpty());
-        assertEquals(5, caseReferences.size());
+        assertEquals(5 + 1, caseReferences.size());
 
+        // extract the formatted error messages
         List<ILoggingEvent> logsList = listAppender.list;
-
         List<String> formattedMessages = logsList.stream()
             .map(ILoggingEvent::getFormattedMessage)
             .toList();
-        assertEquals(6, formattedMessages.size());
 
+        // verify number of errors
+        assertEquals(6 + 2, formattedMessages.size());
+
+        // validate the 6 for 'invalidCaseRef%s' were found
         boolean anyMatch = IntStream.rangeClosed(1, 6)
             .allMatch(i -> formattedMessages.contains(
                 format("002 Invalid Case Reference number 'invalidCaseRef%s' in CSV", i)));
-
         assertTrue(anyMatch);
+
+        // validate 2 extra luhn/length tests were found:
+        // :: valid length but bad luhn check digit
+        assertTrue(formattedMessages.contains("002 Invalid Case Reference number '1111222233334449' in CSV"));
+        // :: valid luhn number but bad length (i.e. not 16 digit)
+        assertTrue(formattedMessages.contains("002 Invalid Case Reference number '3162255313' in CSV"));
     }
 
     @Test

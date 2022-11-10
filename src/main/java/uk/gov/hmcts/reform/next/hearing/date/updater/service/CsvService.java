@@ -70,7 +70,8 @@ public class CsvService {
     }
 
     private void logInvalidCaseReferences(List<String> caseReferences) {
-        Predicate<String> isInvalidCaseReference = caseRef -> !LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(caseRef);
+        Predicate<String> isInvalidCaseReference =
+            caseRef -> !LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(caseRef) || caseRef.length() != 16;
 
         caseReferences.stream()
             .filter(isInvalidCaseReference)
