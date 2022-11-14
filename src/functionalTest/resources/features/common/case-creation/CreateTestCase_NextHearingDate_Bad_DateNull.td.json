@@ -1,0 +1,16 @@
+{
+  "_guid_": "CreateTestCase_NextHearingDate_Bad_DateNull",
+  "_extends_": "CreateTestCase__TestData__Base",
+
+  "prerequisites": [
+    {
+      "Token_Creation": "GetCreateToken_NextHearingDate_Bad_DateNull"
+    }
+  ],
+
+  "request": {
+    "pathVariables": {
+      "CaseTypeID": "FT_NHD_Bad_DateNull"
+    }
+  }
+}
