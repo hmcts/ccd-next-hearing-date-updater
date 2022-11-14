@@ -1,0 +1,13 @@
+{
+  "_guid_": "F-002-CreateTestCases_WithHearingDateGreaterIsNull",
+  "_extends_": "CreateTestCases__Base",
+
+  "prerequisites": [
+    {
+      "Case1": "F-002-CreateTestCase_WithHearingDateIsNull",
+      "Case2": "F-002-CreateTestCase_WithHearingDateIsNull",
+      "Case3": "F-002-CreateTestCase_WithHearingDateIsNull"
+    }
+  ]
+
+}

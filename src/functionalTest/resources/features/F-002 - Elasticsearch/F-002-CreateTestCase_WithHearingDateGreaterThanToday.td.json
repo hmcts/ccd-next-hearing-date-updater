@@ -1,0 +1,16 @@
+{
+  "_guid_": "F-002-CreateTestCase_WithHearingDateGreaterThanToday",
+  "_extends_": "CreateTestCase_NextHearingDate",
+
+
+  "request": {
+    "body": {
+      "data": {
+        "nextHearingDetails": {
+          "hearingDateTime": "2050-07-22T10:00:00.000"
+        }
+      }
+    }
+  }
+
+}
