@@ -26,7 +26,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static uk.gov.hmcts.reform.next.hearing.date.updater.FunctionalTestFixturesFactory.BEAN_FACTORY;
 
@@ -88,10 +87,19 @@ public class JobExecutionStepDefs {
     }
 
     @When("the next hearing date update job executes for {string}")
-    public void theNextHearingDateUpdateJobExecutesFor(final String caseType) {
+    public void theNextHearingDateUpdateJobExecutesForCaseTypes(final String caseType) {
         final String caseTypesParam = String.format("-DCASE_TYPES=%s", caseType);
 
         executeJob(caseTypesParam);
+    }
+
+    @When("the next hearing date update job executes for {string} with pagination size {string}")
+    public void theNextHearingDateUpdateJobExecutesForCaseTypesWithSize(final String caseType,
+                                                                        final String esQuerySize) {
+        final String caseTypesParam = String.format("-DCASE_TYPES=%s", caseType);
+        final String maxCsvRecordsParam = String.format("-DES_QUERY_SIZE=%s", esQuerySize);
+
+        executeJob(caseTypesParam, maxCsvRecordsParam);
     }
 
     @Then("a success exit value is received")
