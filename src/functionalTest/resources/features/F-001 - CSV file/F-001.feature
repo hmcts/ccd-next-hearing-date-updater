@@ -25,8 +25,7 @@ Feature: F-001: Update cases in CSV file
   @S-001.02 #HMAN-319 #AC02
   Scenario: CSV file contains only valid case references but too many for mamximum CSV limit
 
-    Given a successful call [to create test cases] as in [F-001-CreateTestCases]
-      And the test csv contains case references from "F-001-CreateTestCases"
+    Given the test csv contains case references: "4444333322221111,4444222233331111,4444111122223333"
 
      When the next hearing date update job executes with maximum CSV limit "2"
 

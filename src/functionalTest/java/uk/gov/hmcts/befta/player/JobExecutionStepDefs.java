@@ -60,8 +60,14 @@ public class JobExecutionStepDefs {
         scenarioContext = BEAN_FACTORY.getScenarioContext();
     }
 
+    @Given("the test csv contains case references: {string}")
+    public void csvContainsCaseReferences(final String caseReferences) {
+        final String content = caseReferences.replace(',', '\n');
+        filePath = createCsvFile(content);
+    }
+
     @Given("the test csv contains case references from {string}")
-    public void csvContainsCaseReferences(final String contextName) {
+    public void csvContainsCaseReferencesFromContext(final String contextName) {
         final String content = buildCsv(contextName);
         filePath = createCsvFile(content);
     }
