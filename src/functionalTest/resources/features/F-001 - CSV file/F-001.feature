@@ -7,6 +7,19 @@ Feature: F-001: Update cases in CSV file
     Given an appropriate test context as detailed in the test data source
      And a successful call [to check the health of datastore] as in [Check_Datastore_Health]
 
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @S-001.00 #HMAN-319 #extra
+  Scenario: CSV file is empty
+
+    Given the test csv is empty
+
+     When the next hearing date update job executes with maximum CSV limit "10000"
+
+     Then a success exit value is received
+      And the following response is logged as output: "No Case References found to be processed"
+
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @S-001.01 #HMAN-319 #AC01 #HMAN-322 #AC01
   Scenario: CSV file contains only valid case references
@@ -20,6 +33,7 @@ Feature: F-001: Update cases in CSV file
       And a successful call [to verify next hearing date for Case1] as in [F-001_Verify_Case1]
       And a successful call [to verify next hearing date for Case2] as in [F-001_Verify_Case2]
       And a successful call [to verify next hearing date for Case3] as in [F-001_Verify_Case3]
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @S-001.02 #HMAN-319 #AC02
