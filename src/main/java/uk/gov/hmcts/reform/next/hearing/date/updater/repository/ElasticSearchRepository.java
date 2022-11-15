@@ -67,14 +67,16 @@ public class ElasticSearchRepository {
                 caseDetails.addAll(subsequentSearchResult.getCases());
                 keepSearching = !subsequentSearchResult.getCases().isEmpty();
                 if (keepSearching) {
+                    int size = subsequentSearchResult.getCases().size();
+                    log.info("The paginated search for case type {} has found {} extra case(s).", caseType, size);
                     searchAfterValue = subsequentSearchResult.getCases()
-                        .get(subsequentSearchResult.getCases().size() - 1)
+                        .get(size - 1)
                         .getId().toString();
                 }
 
             } while (keepSearching);
         }
-        log.info("The Next-Hearing-Date-Updater has processed caseDetails {}.",caseDetails.size());
+        log.info("The Next-Hearing-Date-Updater has processed caseDetails {}.", caseDetails.size());
         return caseDetails;
     }
 }

@@ -20,6 +20,7 @@ Feature: F-002: Update cases in Elasticsearch
      Then a success exit value is received
       And the following response is logged as output: "No CSV file specified"
       And the following response is logged as output: "search for case type FT_NextHearingDate"
+      And the following response is logged as output: "The paginated search for case type FT_NextHearingDate has found 1 extra case\(s\)"
       And the following response is logged as output: "The Next-Hearing-Date-Updater has processed caseDetails 3"
       And the following response is logged as output: "search for case type FT_NextHearingDate_Clear"
       And the following response is logged as output: "The Next-Hearing-Date-Updater has processed caseDetails 2"
