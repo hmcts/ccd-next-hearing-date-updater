@@ -367,6 +367,7 @@ bootWithCCD {
   authMode = uk.gov.hmcts.rse.AuthMode.Local
   environment("DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater")
   environment("RSE_LIB_S2S_PORT", 4502)
+  environment("XUI_JURISDICTIONS", "BEFTA_MASTER,AUTOTEST1,BEFTA_JURISDICTION_1,BEFTA_JURISDICTION_2,BEFTA_JURISDICTION_3")
 }
 
 void loadEnvFile(Task execTask, String envFilePath) {
