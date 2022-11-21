@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater;
 
+import com.microsoft.applicationinsights.TelemetryClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +22,11 @@ class ApplicationBootstrapTest {
     @Mock
     private NextHearingDateUpdaterService nextHearingDateUpdaterService;
 
+    @Mock
+    private TelemetryClient client;
+
+
+
     @InjectMocks
     private ApplicationBootstrap underTest;
 
@@ -32,5 +38,6 @@ class ApplicationBootstrapTest {
         underTest.run(applicationArguments);
 
         verify(nextHearingDateUpdaterService).execute();
+        verify(client).flush();
     }
 }
