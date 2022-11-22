@@ -22,7 +22,7 @@ public class ApplicationBootstrap implements ApplicationRunner {
     private boolean isProcessingEnabled;
 
     @Autowired
-    private TelemetryClient client;
+    private final TelemetryClient client;
 
     @Value("${telemetry.wait.period:10000}")
     private int waitPeriod;
