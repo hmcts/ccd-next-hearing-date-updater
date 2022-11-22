@@ -34,6 +34,7 @@ class ApplicationBootstrapTest {
     void testShouldRunExecutor() throws Exception {
         ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
         doNothing().when(nextHearingDateUpdaterService).execute();
+        doNothing().when(client).flush();
 
         underTest.run(applicationArguments);
 

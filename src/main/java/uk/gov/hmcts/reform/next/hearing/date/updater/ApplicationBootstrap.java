@@ -30,8 +30,9 @@ public class ApplicationBootstrap implements ApplicationRunner {
     private final NextHearingDateUpdaterService nextHearingDateUpdaterService;
 
     @Autowired
-    public ApplicationBootstrap(NextHearingDateUpdaterService nextHearingDateUpdaterService) {
+    public ApplicationBootstrap(NextHearingDateUpdaterService nextHearingDateUpdaterService, TelemetryClient client) {
         this.nextHearingDateUpdaterService = nextHearingDateUpdaterService;
+        this.client = client;
     }
 
     @Override
