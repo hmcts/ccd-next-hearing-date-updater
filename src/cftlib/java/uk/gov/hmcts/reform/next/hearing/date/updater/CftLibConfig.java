@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 
+import java.io.IOException;
+import java.util.Scanner;
+
 @Component
 public class CftLibConfig extends ContainersBootstrap implements CFTLibConfigurer {
 
@@ -21,6 +24,8 @@ public class CftLibConfig extends ContainersBootstrap implements CFTLibConfigure
     public void configure(CFTLib lib) {
         createCcdRoles(lib);
         createIdamUsers(lib);
+
+        primeCcdEnvironment();
     }
 
     private void createCcdRoles(CFTLib lib) {
@@ -43,4 +48,28 @@ public class CftLibConfig extends ContainersBootstrap implements CFTLibConfigure
         lib.createIdamUser("master.caseworker@gmail.com", ROLE_CASEWORKER, ROLE_CASEWORKER_BM);
         LOGGER.info("Finished creating Idam users......................");
     }
+
+    private void primeCcdEnvironment() {
+
+        try {
+            LOGGER.info("About to prime CCD environment......................");
+
+            // NB: need to use gradle task to allow dynamic set of env vars that BEFTA uses when generating def files
+            final Process process = Runtime.getRuntime().exec("./gradlew localDataSetup");
+            process.waitFor();
+
+            String result;
+            Scanner s = new Scanner(process.getInputStream()).useDelimiter("\\A");
+            result = s.hasNext() ? s.next() : null;
+            LOGGER.info("localDataSetup output: \n\n{}", result);
+
+            LOGGER.info("Finished priming CCD environment......................");
+
+        } catch (IOException | InterruptedException e) {
+            LOGGER.error("Failed priming CCD environment:", e);
+            // Restore interrupted state...
+            Thread.currentThread().interrupt();
+        }
+    }
+
 }
