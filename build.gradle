@@ -209,6 +209,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
 
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
 
