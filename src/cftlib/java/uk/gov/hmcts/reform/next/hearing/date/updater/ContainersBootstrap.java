@@ -33,9 +33,13 @@ public class ContainersBootstrap {
     }
 
     private void createEnvFile() {
-        final String content = String.format("TEST_STUB_SERVICE_BASE_URL=http://localhost:%d",
+        final String content = String.format("""
+                                             # This file is only required when running bootWithCcd
+                                             #
+                                             # WARNING: overriding test stub URL: for use ONLY with `bootWithCcd`
+                                             TEST_STUB_SERVICE_BASE_URL=http://localhost:%d""",
                                              TEST_STUBS_CONTAINER.getFirstMappedPort());
-        final String filePath = String.format("%stmp%s%s", File.separator, File.separator, ".test.stub.service.env");
+        final String filePath = String.format(".%s%s", File.separator, ".env.test.stub.service.env");
         final Path path = Paths.get(filePath);
 
         try {

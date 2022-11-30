@@ -3,6 +3,8 @@ spring:
     import: "optional:configtree:/mnt/secrets/ccd/"
   application:
     name: ccd-next-hearing-date-updater
+  banner:
+    location: classpath:next-hearing-date-banner.txt
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false

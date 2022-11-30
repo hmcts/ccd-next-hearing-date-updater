@@ -1,0 +1,11 @@
+#!groovy
+
+@Library("Infrastructure")
+
+def type = "java"
+def product = "ccd"
+def component = "next-hearing-date-updater"
+
+withPipeline(type, product, component) {
+    disableLegacyDeployment()
+}
