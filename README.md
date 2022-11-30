@@ -72,8 +72,8 @@ When running in local docker the environment variables passed to the container w
 [CCD-Docker](https://github.com/hmcts/ccd-docker).
 
 > :information_source: Note: Although there are two different ways the *Next Hearing Date Updater* can be run (see
-> [Running the application](#running-the-application)) when it is inside a container it is really only the 'via Elastic
-> Search' process that is available.
+> [Running the application](#running-the-application)) when it is inside a container it is really only the 'via
+> Elasticsearch' process that is available.
 >
 > The default configuration inside the [.env](.env) file will run an elasticsearch query against the
 > [Test Case Types](#test-case-types): `FT_NextHearingDate` & `FT_NextHearingDate_Clear`.  If you wish to use a
@@ -324,21 +324,25 @@ You should get a response similar to this:
 }
 ```
 
-Should the docker containers fail to start, it is likely that the `bootWithCCD` plugin is not authorized to pull the
-container images from Azure.
+> :information_source: Note: Should the docker containers fail to start, it is likely that the `bootWithCCD` plugin is
+> not authorized to pull the container images from Azure.
+>
+> Log in, using the commands below:
+>
+> ```bash
+>  az acr login --name hmctspublic --subscription DCD-CNP-DEV
+>  az acr login --name hmctspublic --subscription DCD-CFT-Sandbox
+> ```
+>
+> … or if [CCD-Docker](https://github.com/hmcts/ccd-docker) repository is already cloned locally, run the login command:
+>
+> ```bash
+> ./ccd login
+> ```
 
-Log in, using the commands below
-
-```bash
-  az acr login --name hmctspublic --subscription DCD-CNP-DEV
-  az acr login --name hmctspublic --subscription DCD-CFT-Sandbox
-```
-
-.. or if [CCD-Docker](https://github.com/hmcts/ccd-docker) repository is already cloned locally, run the login command:
-
-```bash
-./ccd login
-```
+Once the `bootWithCcd` environment is running, test cases can be created manually using http://localhost:3000/ and the
+[master caseworker](./src/cftlib/java/uk/gov/hmcts/reform/next/hearing/date/updater/CftLibConfig.java) account.  For
+information on the test case types available see [Test Case Types](#test-case-types).
 
 #### CCD-Docker
 
@@ -376,6 +380,10 @@ These are generated each time a case type definition is published.  So this will
 [CCD-Docker](https://github.com/hmcts/ccd-docker) environment then run the `localDataSetup` command shown in
 [Test Case Types](#test-case-types).
 
+If the frontend is enabled in this CCD Docker environment (`./ccd enable xui-frontend frontend`), test cases can be
+created manually using http://localhost:3455/ and the
+[master caseworker](https://github.com/hmcts/ccd-docker/blob/master/bin/users.json) account.  For information on the
+test case types available see [Test Case Types](#test-case-types).
 
 ### Code quality checks
 
