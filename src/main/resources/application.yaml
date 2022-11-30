@@ -2,7 +2,7 @@ spring:
   config:
     import: "optional:configtree:/mnt/secrets/ccd/"
   application:
-    name: CCD Next Hearing Date Updater
+    name: ccd-next-hearing-date-updater
   banner:
     location: classpath:next-hearing-date-banner.txt
   jackson:
@@ -30,10 +30,6 @@ idam:
     totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:AAAAAAAAAAAAAAAA}
     microservice: ccd_next_hearing_date_updater
 
-azure:
-  application-insights:
-    instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
-
 next-hearing-date-updater:
   csv:
     caseReferences:
@@ -50,3 +46,6 @@ next-hearing-date-updater:
 core_case_data:
   api:
     url: ${CCD_DATA_STORE_API_BASE_URL:http://localhost:4452}
+azure:
+  application-insights:
+    instrumentation-key: ${ccd.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
