@@ -2,7 +2,7 @@ spring:
   config:
     import: "optional:configtree:/mnt/secrets/ccd/"
   application:
-    name: ccd-nhdu
+    name: ccd-next-hearing-date-updater
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
