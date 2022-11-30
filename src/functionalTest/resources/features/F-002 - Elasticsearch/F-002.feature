@@ -9,6 +9,19 @@ Feature: F-002: Update cases in Elasticsearch
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @S-002.00
+  Scenario: Quick search + update but without verifying hit count; used to clear away any unexpected test cases that would otherwise break remaing Elasticsearch tests, which need accurate hit counts
+
+    Given a wait time of [5] seconds [to allow for Logstash to re-index any cases left by other failed tests]
+
+     When the next hearing date update job executes for "FT_NextHearingDate,FT_NextHearingDate_Clear"
+
+     Then a success exit value is received
+      And the following response is logged as output: "search for case type FT_NextHearingDate"
+      And the following response is logged as output: "search for case type FT_NextHearingDate_Clear"
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @S-002.01 #HMAN-320 #AC01
   Scenario: Update cases in Elasticsearch: using Paginated result of cases that need NextHearing date to be set
 
