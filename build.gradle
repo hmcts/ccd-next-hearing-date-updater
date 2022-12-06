@@ -66,7 +66,6 @@ configurations {
 idea {
   module {
     // config to allow Intellij to mark test source and resource files correctly to help linting tools
-    testSourceDirs += project.sourceSets.cftlibTest.java.srcDirs
     testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
     testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
     testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
@@ -320,12 +319,9 @@ dependencies {
 
 
   // CFTLib dependencies
+  cftlibImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
   cftlibImplementation group: 'org.testcontainers', name: 'testcontainers', version: testcontainersVersion
-
-  cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
-    exclude group: 'junit', module: 'junit'
-    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-  }
+  cftlibAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
 
   // Integration test dependencies
@@ -383,6 +379,8 @@ wrapper {
 }
 
 bootWithCCD {
+  standardInput = System.in
+
   doFirst {
     // NB: must delete befta local run details to force re-import of def file with updated test stub URL
     delete "befta_recent_executions_info_LOCAL.json"
