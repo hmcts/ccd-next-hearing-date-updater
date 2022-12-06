@@ -27,14 +27,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static uk.gov.hmcts.reform.next.hearing.date.updater.ApplicationBootstrap.EXIT_SUCCESS;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.FunctionalTestFixturesFactory.BEAN_FACTORY;
 
 @SuppressWarnings("PMD")
 public class JobExecutionStepDefs {
 
     private static final String ALT_JAVA_HOME = EnvironmentVariableUtils.getOptionalVariable("ALT_JAVA_HOME");
-
-    private static final int EXIT_SUCCESS = 0;
 
     private String filePath;
 

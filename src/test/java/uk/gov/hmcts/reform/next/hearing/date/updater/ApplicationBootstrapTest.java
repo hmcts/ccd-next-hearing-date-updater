@@ -10,7 +10,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpdaterService;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,8 +26,6 @@ class ApplicationBootstrapTest {
 
     @Mock
     private TelemetryClient client;
-
-
 
     @InjectMocks
     private ApplicationBootstrap underTest;
@@ -41,4 +41,27 @@ class ApplicationBootstrapTest {
         verify(nextHearingDateUpdaterService).execute();
         verify(client).flush();
     }
+
+    @Test
+    void testShouldSetSuccessExitCodeWhenNoException() throws Exception {
+        ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
+        doNothing().when(nextHearingDateUpdaterService).execute();
+        doNothing().when(client).flush();
+
+        underTest.run(applicationArguments);
+
+        assertEquals(ApplicationBootstrap.EXIT_SUCCESS, underTest.getExitCode(), "Expected SUCCESS exit code");
+    }
+
+    @Test
+    void testShouldSetFailureExitCodeWhenExceptionTriggered() throws Exception {
+        ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
+        doThrow(new RuntimeException()).when(nextHearingDateUpdaterService).execute();
+        doNothing().when(client).flush();
+
+        underTest.run(applicationArguments);
+
+        assertEquals(ApplicationBootstrap.EXIT_FAILURE, underTest.getExitCode(), "Expected FAILURE exit code");
+    }
+
 }
