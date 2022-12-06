@@ -10,7 +10,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpdaterService;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -54,14 +53,12 @@ class ApplicationBootstrapTest {
         verify(client).flush();
     }
 
-
+    @SuppressWarnings("java:S2699")
     @Test
     void testMain() {
         ApplicationBootstrap.main(new String[]{
             "--spring.main.web-environment=false",
             "--spring.autoconfigure.exclude=blahblahblah",
-            // Override any other environment properties according to your needs
         });
-        assertTrue(true);
     }
 }
