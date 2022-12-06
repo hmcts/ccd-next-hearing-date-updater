@@ -11,6 +11,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpdaterService;
 
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,10 +36,29 @@ class ApplicationBootstrapTest {
         ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
         doNothing().when(nextHearingDateUpdaterService).execute();
         doNothing().when(client).flush();
-
         underTest.run(applicationArguments);
-
         verify(nextHearingDateUpdaterService).execute();
         verify(client).flush();
+    }
+
+    @Test
+    void testShouldRunExecutorWithException() throws Exception {
+        ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
+        doThrow(new RuntimeException("test")).when(nextHearingDateUpdaterService).execute();
+        doNothing().when(client).flush();
+        underTest.run(applicationArguments);
+        verify(nextHearingDateUpdaterService).execute();
+        verify(client).flush();
+    }
+
+
+    @Test
+    public void testMain()
+    {
+        ApplicationBootstrap.main(new String[]{
+            "--spring.main.web-environment=false",
+            "--spring.autoconfigure.exclude=blahblahblah",
+            // Override any other environment properties according to your needs
+        });
     }
 }
