@@ -10,11 +10,12 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpdaterService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
+@SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage",
+    "PMD.JUnitTestsShouldIncludeAssert"})
 @ExtendWith(MockitoExtension.class)
 class ApplicationBootstrapTest {
 
@@ -27,6 +28,8 @@ class ApplicationBootstrapTest {
     @Mock
     private TelemetryClient client;
 
+
+
     @InjectMocks
     private ApplicationBootstrap underTest;
 
@@ -35,33 +38,27 @@ class ApplicationBootstrapTest {
         ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
         doNothing().when(nextHearingDateUpdaterService).execute();
         doNothing().when(client).flush();
-
         underTest.run(applicationArguments);
-
         verify(nextHearingDateUpdaterService).execute();
         verify(client).flush();
     }
 
     @Test
-    void testShouldSetSuccessExitCodeWhenNoException() throws Exception {
+    void testShouldRunExecutorWithException() throws Exception {
         ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
-        doNothing().when(nextHearingDateUpdaterService).execute();
+        doThrow(new RuntimeException("test")).when(nextHearingDateUpdaterService).execute();
         doNothing().when(client).flush();
-
         underTest.run(applicationArguments);
-
-        assertEquals(ApplicationBootstrap.EXIT_SUCCESS, underTest.getExitCode(), "Expected SUCCESS exit code");
+        verify(nextHearingDateUpdaterService).execute();
+        verify(client).flush();
     }
 
+    @SuppressWarnings("java:S2699")
     @Test
-    void testShouldSetFailureExitCodeWhenExceptionTriggered() throws Exception {
-        ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
-        doThrow(new RuntimeException()).when(nextHearingDateUpdaterService).execute();
-        doNothing().when(client).flush();
-
-        underTest.run(applicationArguments);
-
-        assertEquals(ApplicationBootstrap.EXIT_FAILURE, underTest.getExitCode(), "Expected FAILURE exit code");
+    void testMain() {
+        ApplicationBootstrap.main(new String[]{
+            "--spring.main.web-environment=false",
+            "--spring.autoconfigure.exclude=blahblahblah",
+        });
     }
-
 }
