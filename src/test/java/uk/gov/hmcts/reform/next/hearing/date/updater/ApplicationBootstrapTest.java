@@ -14,6 +14,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
+@SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage",
+    "PMD.JUnitTestsShouldIncludeAssert"})
 @ExtendWith(MockitoExtension.class)
 class ApplicationBootstrapTest {
 
@@ -53,8 +55,7 @@ class ApplicationBootstrapTest {
 
 
     @Test
-    public void testMain()
-    {
+    void testMain() {
         ApplicationBootstrap.main(new String[]{
             "--spring.main.web-environment=false",
             "--spring.autoconfigure.exclude=blahblahblah",
