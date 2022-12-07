@@ -23,11 +23,13 @@ public class CftLibConfig extends ContainersBootstrap implements CFTLibConfigure
         createCcdRoles(lib);
         createIdamUsers(lib);
 
-        ContainersBootstrap.waitForStartUp();
+        waitForStartUp();
 
         primeCcdEnvironment();
 
-        ContainersBootstrap.waitForShutdown();
+        waitForShutdown();
+
+        System.exit(0);
     }
 
     private void createCcdRoles(CFTLib lib) {

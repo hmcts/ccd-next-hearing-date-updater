@@ -203,7 +203,7 @@ public class ContainersBootstrap {
             .timeout(Duration.ofMinutes(10))
             .until(ContainersBootstrap::testStubsReady);
 
-        log.warn("The TEST_STUBS_CONTAINER is available.");
+        log.info("The TEST_STUBS_CONTAINER is available.");
     }
 
     public static void waitForShutdown() {
