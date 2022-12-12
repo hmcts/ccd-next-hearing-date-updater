@@ -95,6 +95,7 @@ withPipeline(type, product, component) {
     env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
 
+    enableFullFunctionalTest()
     enableCleanupOfHelmReleaseOnSuccess()
   }
   onNonPR {
@@ -136,32 +137,28 @@ withPipeline(type, product, component) {
     junit '**/test-results/test/*.xml'
   }
 
-  afterAlways('akschartsinstall') {
-
-     // check data-store instance is up
+  before('fullFunctionalTest:preview') {
+    // check data-store instance is up
     def healthChecker = new HealthChecker(this)
     healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
 
-    try {
-      // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
-      env.IDAM_API_URL = env.IDAM_API_URL_BASE
+    // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
+    env.IDAM_API_URL = env.IDAM_API_URL_BASE
 
-      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true`
-      env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
+    // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true`
+    env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
+  }
 
-      builder.functionalTest()
-    } finally {
-
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/tests/functional",
-        reportFiles          : "overview-features.html,overview-failures.html,",
-        reportTitles         : "Features,Failures",
-        reportName           : "Next Hearing Date Updater Functional Test Report"
-      ]
-      junit '**/test-results/functional/*.xml'
-    }
+  afterAlways('fullFunctionalTest:preview') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/functional",
+      reportFiles          : "overview-features.html,overview-failures.html,",
+      reportTitles         : "Features,Failures",
+      reportName           : "Next Hearing Date Updater Functional Test Report"
+    ]
+    junit '**/test-results/functional/*.xml'
   }
 }
