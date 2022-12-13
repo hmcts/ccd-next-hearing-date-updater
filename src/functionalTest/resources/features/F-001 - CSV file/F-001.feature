@@ -17,6 +17,7 @@ Feature: F-001: Update cases in CSV file
      When the next hearing date update job executes with maximum CSV limit "10000"
 
      Then a success exit value is received
+      And no WARN or ERROR logged in output
       And the following response is logged as output: "No Case References found to be processed"
 
 
@@ -30,6 +31,7 @@ Feature: F-001: Update cases in CSV file
      When the next hearing date update job executes with maximum CSV limit "10000"
 
      Then a success exit value is received
+      And no WARN or ERROR logged in output
       And a successful call [to verify next hearing date for Case1] as in [F-001_Verify_Case1]
       And a successful call [to verify next hearing date for Case2] as in [F-001_Verify_Case2]
       And a successful call [to verify next hearing date for Case3] as in [F-001_Verify_Case3]
@@ -123,6 +125,7 @@ Feature: F-001: Update cases in CSV file
      When the next hearing date update job executes with maximum CSV limit "10000"
 
      Then a success exit value is received
+      And no WARN or ERROR logged in output
       And a successful call [to verify next hearing date for Case1 has been cleared] as in [F-001_Verify_Case1_Cleared]
 
 

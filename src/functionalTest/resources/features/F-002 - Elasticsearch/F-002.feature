@@ -17,6 +17,7 @@ Feature: F-002: Update cases in Elasticsearch
      When the next hearing date update job executes for "FT_NextHearingDate,FT_NextHearingDate_Clear"
 
      Then a success exit value is received
+      And no WARN or ERROR logged in output
       And the following response is logged as output: "search for case type FT_NextHearingDate"
       And the following response is logged as output: "search for case type FT_NextHearingDate_Clear"
 
@@ -31,6 +32,7 @@ Feature: F-002: Update cases in Elasticsearch
      When the next hearing date update job executes for "FT_NextHearingDate,FT_NextHearingDate_Clear" with pagination size "2"
 
      Then a success exit value is received
+      And no WARN or ERROR logged in output
       And the following response is logged as output: "No CSV file specified"
       And the following response is logged as output: "search for case type FT_NextHearingDate"
       And the following response is logged as output: "The paginated search for case type FT_NextHearingDate has found 1 extra case\(s\)"
@@ -51,6 +53,7 @@ Feature: F-002: Update cases in Elasticsearch
      When the next hearing date update job executes for "FT_NextHearingDate"
 
      Then a success exit value is received
+      And no WARN or ERROR logged in output
       And the following response is logged as output: "No CSV file specified"
       And the following response is logged as output: "search for case type FT_NextHearingDate"
       And the following response is logged as output: "The Next-Hearing-Date-Updater has processed caseDetails 0"
@@ -67,6 +70,7 @@ Feature: F-002: Update cases in Elasticsearch
      When the next hearing date update job executes for "FT_NextHearingDate"
 
      Then a success exit value is received
+      And no WARN or ERROR logged in output
       And the following response is logged as output: "No CSV file specified"
       And the following response is logged as output: "search for case type FT_NextHearingDate"
       And the following response is logged as output: "The Next-Hearing-Date-Updater has processed caseDetails 3"
@@ -85,6 +89,7 @@ Feature: F-002: Update cases in Elasticsearch
      When the next hearing date update job executes for "FT_NextHearingDate"
 
      Then a success exit value is received
+      And no WARN or ERROR logged in output
       And the following response is logged as output: "No CSV file specified"
       And the following response is logged as output: "search for case type FT_NextHearingDate"
       And the following response is logged as output: "The Next-Hearing-Date-Updater has processed caseDetails 0"
@@ -104,6 +109,7 @@ Feature: F-002: Update cases in Elasticsearch
      When the next hearing date update job executes for "FT_NextHearingDate"
 
      Then a success exit value is received
+      And no WARN or ERROR logged in output
       And the following response is logged as output: "No CSV file specified"
       And the following response is logged as output: "search for case type FT_NextHearingDate"
       And the following response is logged as output: "The Next-Hearing-Date-Updater has processed caseDetails 0"

@@ -124,9 +124,26 @@ public class JobExecutionStepDefs {
 
     @Then("the following response is logged as output: {string}")
     public void verifyThatJobOutputContained(String lookup) {
-        // NB: output to console from job should be in main context response: see `executeJob`
-        String jobOutput = scenarioContext.getTheResponse().getResponseMessage();
+        String jobOutput = getJobOutput();
+        boolean found = findInJobOutput(jobOutput, lookup);
 
+        Assert.assertTrue("Message '" + lookup + "' not found in job output: \n" + jobOutput, found);
+    }
+
+    @Then("no WARN or ERROR logged in output")
+    public void verifyThatJobOutputContainedNoWarningOrError() {
+        String jobOutput = getJobOutput();
+        boolean found = findInJobOutput(jobOutput, "\\s(?i)(warn|error)\\s");
+
+        if (!found) {
+            // log success state
+            scenario.log("No message of type WARN or ERROR found in job output.");
+        }
+
+        Assert.assertFalse("Unexpected WARN or ERROR message found in job output: \n" + jobOutput, found);
+    }
+
+    private boolean findInJobOutput(String jobOutput, String lookup) {
         Pattern pattern = Pattern.compile("^.*" + lookup + ".*$", Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(jobOutput);
         boolean found = false;
@@ -136,8 +153,12 @@ public class JobExecutionStepDefs {
             found = true;
         }
 
-        Assert.assertTrue("Message '" + lookup + "' not found in job output: \n" + jobOutput,
-                          found);
+        return found;
+    }
+
+    private String getJobOutput() {
+        // NB: output to console from job should be in main context response: see `executeJob`
+        return scenarioContext.getTheResponse().getResponseMessage();
     }
 
     private ResponseData executeCommand(final String... command) {
