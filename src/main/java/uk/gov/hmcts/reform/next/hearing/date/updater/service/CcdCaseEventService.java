@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import static uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig.NEXT_HEARING_DETAILS_FIELD_NAME;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails.HEARING_DATE_TIME;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.data.NextHearingDetails.HEARING_ID;
 
 @Slf4j
 @Service
@@ -41,13 +43,12 @@ public class CcdCaseEventService {
                 .getData()
                 .get(NEXT_HEARING_DETAILS_FIELD_NAME);
 
-            LocalDateTime hearingDate = LocalDateTime.parse(nextHearingDetailsJson
-                                                                .get(NextHearingDetails.HEARING_DATE_TIME)
-                                                                .toString());
+            String hearingId = getStringFromJsonMap(nextHearingDetailsJson, HEARING_ID);
+            LocalDateTime hearingDate = getLocalDateTimeFromJsonMap(nextHearingDetailsJson, HEARING_DATE_TIME);
 
             NextHearingDetails nextHearingDetails = NextHearingDetails.builder()
                 .caseReference(caseReference)
-                .hearingID(nextHearingDetailsJson.get(NextHearingDetails.HEARING_ID).toString())
+                .hearingID(hearingId)
                 .hearingDateTime(hearingDate)
                 .build();
 
@@ -57,4 +58,23 @@ public class CcdCaseEventService {
         }
         log.info(String.format("Process complete for case %s (%s of %s)", caseReference, index, size));
     }
+
+    private String getStringFromJsonMap(Map<String, Object> jsonMap, String key) {
+        if (jsonMap.containsKey(key)) {
+            Object value = jsonMap.get(key);
+
+            if (value != null && !value.toString().isEmpty()) {
+                return value.toString();
+            }
+        }
+
+        return null; // use null if not found or if null value returned from map
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private LocalDateTime getLocalDateTimeFromJsonMap(Map<String, Object> jsonMap, String key) {
+        String value = getStringFromJsonMap(jsonMap, key);
+        return value == null ? null : LocalDateTime.parse(value);
+    }
+
 }

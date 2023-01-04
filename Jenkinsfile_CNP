@@ -1,6 +1,7 @@
 #!groovy
 import uk.gov.hmcts.contino.AppPipelineDsl
 import uk.gov.hmcts.contino.GradleBuilder
+import uk.gov.hmcts.contino.HealthChecker
 
 properties([
   [
@@ -19,6 +20,7 @@ properties([
 def type = "java"
 def product = "ccd"
 def component = "next-hearing-date-updater"
+def branchesToSync = ['demo','perftest']
 
 def secrets = [
   'rpx-${env}': [
@@ -57,7 +59,7 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 
 env.CI_BUILD = true
 
-// Other env variables needed for BEFTA.
+// Set required environment variables to run functional tests apart from one in vaults.
 env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
@@ -67,13 +69,14 @@ env.BEFTA_OAUTH2_CLIENT_ID_OF_XUIWEBAPP = "xuiwebapp"
 env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
 env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
 env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
-// the below may not be needed
+
+// NB: legacy config for def file import
 env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
 env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
 env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
 
 // alternative JAVA_HOME to run job under
-env.ALT_JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64" 
+env.ALT_JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
 
 // temporary workaround for platform changes: turn BEFTA header checks to warning mode
 env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
@@ -81,9 +84,10 @@ env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
 GradleBuilder builder = new GradleBuilder(this, product)
 
 withPipeline(type, product, component) {
-  loadVaultSecrets(secrets)
-  nonServiceApp()
 
+  onMaster {
+    enableSlackNotifications('#ccd-master-builds')
+  }
   onPR {
     enableSlackNotifications('#ccd-pr-builds')
     env.ENV='preview'
@@ -91,8 +95,20 @@ withPipeline(type, product, component) {
     env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
   }
+  onNonPR {
+    env.ENV='aat'
+    env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
+    env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
+    env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+  }
 
-  after('test') {
+  enableAksStagingDeployment()
+  disableLegacyDeployment()
+  loadVaultSecrets(secrets)
+  nonServiceApp()
+  syncBranchesWithMaster(branchesToSync)
+
+  afterAlways('test') {
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
@@ -118,23 +134,20 @@ withPipeline(type, product, component) {
     junit '**/test-results/test/*.xml'
   }
 
-  after('akschartsinstall') {
+  afterAlways('akschartsinstall') {
 
-    // for restful api deployments, the pipeline calls the `/health` in a loop until it gets SUCCESS or TIMEOUT
-    // rough and dirty solution is this wait, as this is a nonServiceApp
-    def sleepTime = (env.BRANCH_NAME.startsWith("PR")) ? '120s' : '90s'
-    sh "sleep ${sleepTime}"
-
-    sh "curl -k $CCD_DATA_STORE_API_BASE_URL/health | jq"
+     // check data-store instance is up
+    def healthChecker = new HealthChecker(this)
+    healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
 
     try {
       // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
       env.IDAM_API_URL = env.IDAM_API_URL_BASE
 
-      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true` 
+      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true`
       env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
 
-      builder.gradle('functional')
+      builder.functionalTest()
     } finally {
 
       publishHTML target: [
@@ -149,6 +162,4 @@ withPipeline(type, product, component) {
       junit '**/test-results/functional/*.xml'
     }
   }
-
-  syncBranchesWithMaster(['demo', 'perftest'])
 }
