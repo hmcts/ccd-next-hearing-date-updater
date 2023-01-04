@@ -63,7 +63,8 @@ class CcdCaseEventRepositoryTest {
         when(datastoreClient.startEvent(ADMIN_TOKEN, S2S_TOKEN, CASE_REFERENCE, EVENT_ID))
             .thenReturn(START_EVENT_RESPONSE);
 
-        StartEventResponse returnedStartEventResponse = ccdCaseEventRepository.triggerAboutToStartEvent(CASE_REFERENCE, 1, 4);
+        StartEventResponse returnedStartEventResponse =
+            ccdCaseEventRepository.triggerAboutToStartEvent(CASE_REFERENCE, 1, 4);
 
         assertNotNull(returnedStartEventResponse);
         verify(securityUtils).getNextHearingDateAdminAccessToken();
@@ -75,7 +76,8 @@ class CcdCaseEventRepositoryTest {
         when(datastoreClient.startEvent(any(), any(), any(), any()))
             .thenThrow(FeignException.class);
 
-        StartEventResponse returnedStartEventResponse = ccdCaseEventRepository.triggerAboutToStartEvent(CASE_REFERENCE, 1, 4);
+        StartEventResponse returnedStartEventResponse =
+            ccdCaseEventRepository.triggerAboutToStartEvent(CASE_REFERENCE, 1, 4);
 
         assertNull(returnedStartEventResponse);
         verify(securityUtils).getNextHearingDateAdminAccessToken();
