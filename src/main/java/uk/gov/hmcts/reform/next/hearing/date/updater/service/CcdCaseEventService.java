@@ -32,7 +32,8 @@ public class CcdCaseEventService {
         int index = caseReferences.indexOf(caseReference) + 1;
         int size = caseReferences.size();
         log.info(String.format("Processing case %s (%s of %s)", caseReference, index, size));
-        StartEventResponse startEventResult = ccdCaseEventRepository.triggerAboutToStartEvent(caseReference);
+        StartEventResponse startEventResult = ccdCaseEventRepository.triggerAboutToStartEvent(caseReference,
+            index, size);
 
         if (startEventResult != null) {
             @SuppressWarnings("unchecked")
@@ -51,7 +52,7 @@ public class CcdCaseEventService {
                 .build();
 
             if (nextHearingDetails.isValid()) {
-                ccdCaseEventRepository.createCaseEvent(startEventResult);
+                ccdCaseEventRepository.createCaseEvent(startEventResult, index, size);
             }
         }
         log.info(String.format("Process complete for case %s (%s of %s)", caseReference, index, size));

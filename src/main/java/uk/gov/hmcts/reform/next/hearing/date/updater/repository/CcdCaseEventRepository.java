@@ -12,6 +12,8 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig;
 import uk.gov.hmcts.reform.next.hearing.date.updater.security.SecurityUtils;
 
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.ERROR_DOWNSTREAM;
+
 /**
  * HMAN-322.
  */
@@ -24,6 +26,10 @@ public class CcdCaseEventRepository {
         "Call to following downstream CCD endpoint failed: /cases/%s/events";
     public static final String START_EVENT_ERROR =
         "Call to following downstream CCD endpoint failed: /cases/%s/event-triggers/%s";
+    public static final String SUBMIT_EVENT =
+        "/cases/%s/events";
+    public static final String START_EVENT =
+        "/cases/%s/event-triggers/%s";
     private final CoreCaseDataApi datastoreClient;
     private final SecurityUtils securityUtils;
 
@@ -33,7 +39,7 @@ public class CcdCaseEventRepository {
         this.securityUtils = securityUtils;
     }
 
-    public StartEventResponse triggerAboutToStartEvent(String caseReference) {
+    public StartEventResponse triggerAboutToStartEvent(String caseReference, int index, int size) {
         StartEventResponse startEventResponse = null;
         try {
             String nextHearingDateAdminAccessToken = securityUtils.getNextHearingDateAdminAccessToken();
@@ -41,13 +47,15 @@ public class CcdCaseEventRepository {
             startEventResponse = datastoreClient.startEvent(nextHearingDateAdminAccessToken, s2SToken,
                                                             caseReference, CaseEventConfig.EVENT_ID);
         } catch (FeignException feignException) {
+            log.error(String.format(ERROR_DOWNSTREAM,
+                String.format(START_EVENT, caseReference, CaseEventConfig.EVENT_ID), caseReference, index, size));
             log.error(String.format(START_EVENT_ERROR, caseReference, CaseEventConfig.EVENT_ID),
-                feignException.getMessage());
+                feignException);
         }
         return startEventResponse;
     }
 
-    public CaseResource createCaseEvent(StartEventResponse startEventResponse)  {
+    public CaseResource createCaseEvent(StartEventResponse startEventResponse, int index, int size)  {
         String caseReference = startEventResponse.getCaseDetails().getId().toString();
 
         CaseDataContent caseDataContent = CaseDataContent.builder()
@@ -65,7 +73,9 @@ public class CcdCaseEventRepository {
                 caseDataContent
             );
         } catch (FeignException feignException) {
-            log.error(String.format(SUBMIT_EVENT_ERROR, caseReference), feignException.getMessage());
+            log.error(String.format(ERROR_DOWNSTREAM, String.format(SUBMIT_EVENT, caseReference),
+                caseReference, index, size));
+            log.error(String.format(SUBMIT_EVENT_ERROR, caseReference), feignException);
             return null;
         }
     }

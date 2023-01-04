@@ -63,7 +63,7 @@ class CcdCaseEventRepositoryTest {
         when(datastoreClient.startEvent(ADMIN_TOKEN, S2S_TOKEN, CASE_REFERENCE, EVENT_ID))
             .thenReturn(START_EVENT_RESPONSE);
 
-        StartEventResponse returnedStartEventResponse = ccdCaseEventRepository.triggerAboutToStartEvent(CASE_REFERENCE);
+        StartEventResponse returnedStartEventResponse = ccdCaseEventRepository.triggerAboutToStartEvent(CASE_REFERENCE, 1, 4);
 
         assertNotNull(returnedStartEventResponse);
         verify(securityUtils).getNextHearingDateAdminAccessToken();
@@ -75,7 +75,7 @@ class CcdCaseEventRepositoryTest {
         when(datastoreClient.startEvent(any(), any(), any(), any()))
             .thenThrow(FeignException.class);
 
-        StartEventResponse returnedStartEventResponse = ccdCaseEventRepository.triggerAboutToStartEvent(CASE_REFERENCE);
+        StartEventResponse returnedStartEventResponse = ccdCaseEventRepository.triggerAboutToStartEvent(CASE_REFERENCE, 1, 4);
 
         assertNull(returnedStartEventResponse);
         verify(securityUtils).getNextHearingDateAdminAccessToken();
@@ -88,7 +88,7 @@ class CcdCaseEventRepositoryTest {
         when(securityUtils.getNextHearingDateAdminAccessToken()).thenReturn(ADMIN_TOKEN);
 
 
-        ccdCaseEventRepository.createCaseEvent(START_EVENT_RESPONSE);
+        ccdCaseEventRepository.createCaseEvent(START_EVENT_RESPONSE, 1, 3);
 
         verify(datastoreClient).createEvent(any(), any(), any(), caseDataContentArgumentCaptor.capture());
 
@@ -109,7 +109,7 @@ class CcdCaseEventRepositoryTest {
         when(securityUtils.getNextHearingDateAdminAccessToken()).thenReturn(ADMIN_TOKEN);
         when(datastoreClient.createEvent(any(), any(), any(), any())).thenReturn(new CaseResource());
 
-        CaseResource caseEvent = ccdCaseEventRepository.createCaseEvent(START_EVENT_RESPONSE);
+        CaseResource caseEvent = ccdCaseEventRepository.createCaseEvent(START_EVENT_RESPONSE, 1, 3);
 
         assertNotNull(caseEvent);
         verify(securityUtils).getNextHearingDateAdminAccessToken();
@@ -121,7 +121,7 @@ class CcdCaseEventRepositoryTest {
         when(datastoreClient.createEvent(any(), any(), any(), any()))
             .thenThrow(FeignException.class);
 
-        CaseResource caseEvent = ccdCaseEventRepository.createCaseEvent(START_EVENT_RESPONSE);
+        CaseResource caseEvent = ccdCaseEventRepository.createCaseEvent(START_EVENT_RESPONSE, 1, 3);
 
         assertNull(caseEvent);
         verify(securityUtils).getNextHearingDateAdminAccessToken();
