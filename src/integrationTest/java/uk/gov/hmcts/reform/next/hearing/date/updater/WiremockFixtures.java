@@ -21,6 +21,7 @@ import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.resetAllRequests;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
@@ -57,6 +58,10 @@ public class WiremockFixtures {
                 .withHeader(HttpHeaders.CONNECTION, "close")
                 .build();
         }
+    }
+
+    public void resetRequests() {
+        resetAllRequests();
     }
 
     public void stubIdam() {
@@ -121,6 +126,10 @@ public class WiremockFixtures {
 
     public void verifyPostRequest(String path) {
         verify(postRequestedFor(urlEqualTo(path)));
+    }
+
+    public void verifyNoPostRequest(String path) {
+        verify(0, postRequestedFor(urlEqualTo(path)));
     }
 
     @SuppressWarnings({"PMD.AvoidThrowingRawExceptionTypes", "squid:S112"})
