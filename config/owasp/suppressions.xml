@@ -12,8 +12,10 @@
   <!--Please add all the temporary suppression under the below section -->
   <suppress>
     <notes>Temporary Suppression
-        CVE-2021-37533 refer [Ticket]</notes>
+        CVE-2021-37533 refer [Ticket]
+        CVE-2021-4277 refer [Ticket]</notes>
     <cve>CVE-2021-37533</cve>
+    <cve>CVE-2021-4277</cve>
   </suppress>
   <!--End of temporary suppression section -->
 </suppressions>
