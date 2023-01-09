@@ -1,33 +1,50 @@
 #!groovy
+import uk.gov.hmcts.contino.AppPipelineDsl
+import uk.gov.hmcts.contino.GradleBuilder
+import uk.gov.hmcts.contino.HealthChecker
+
+properties([
+  [
+    $class       : 'GithubProjectProperty',
+    displayName  : 'Next Hearing Date Updater',
+    projectUrlStr: 'https://github.com/hmcts/ccd-next-hearing-date-updater'
+  ],
+  pipelineTriggers([
+    [$class: 'GitHubPushTrigger']
+  ]),
+  disableConcurrentBuilds()
+])
 
 @Library("Infrastructure")
-
-import uk.gov.hmcts.contino.GradleBuilder
 
 def type = "java"
 def product = "ccd"
 def component = "next-hearing-date-updater"
 def branchesToSync = ['demo','perftest']
 
-GradleBuilder builder = new GradleBuilder(this, product)
-
 def secrets = [
+  'rpx-${env}': [
+    secret('mc-idam-client-secret', 'BEFTA_OAUTH2_CLIENT_SECRET_OF_XUIWEBAPP')
+  ],
+  's2s-${env}': [
+    secret('microservicekey-ccd-data', 'DATA_STORE_S2S_KEY'),
+    secret('microservicekey-ccd-definition', 'DEFINITION_STORE_S2S_KEY'),
+    secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
+    secret('microservicekey-ccd-gw', 'BEFTA_S2S_CLIENT_SECRET'),
+    secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP'),
+    secret('microservicekey-ccd-next-hearing-date-updater', 'IDAM_KEY_NEXT_HEARING_UPDATER')
+  ],
   'ccd-${env}': [
-    secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_STORE_S2S_SECRET'),
+    secret('ccd-caseworker-autotest-email', 'CCD_CASEWORKER_AUTOTEST_EMAIL'),
+    secret('ccd-caseworker-autotest-password', 'CCD_CASEWORKER_AUTOTEST_PASSWORD'),
     secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
     secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
-    secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET'),
-    secret('ccd-ELASTIC-SEARCH-URL', 'ELASTIC_SEARCH_HOSTS'),
-    secret('ccd-ELASTIC-SEARCH-DATA-NODES-URL', 'ELASTIC_SEARCH_DATA_NODES_HOSTS')
-  ]
-]
-
-def prSecrets = [
-  'ccd-aat': [
-    secret('ccd-definition-s2s-secret', 'CCD_DEFINITION_STORE_S2S_SECRET'),
-    secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
-    secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
-    secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET')
+    secret('ccd-befta-caseworker-1-pwd', 'CCD_BEFTA_CASEWORKER_1_PWD'),
+    secret('ccd-befta-master-caseworker-pwd', 'CCD_BEFTA_MASTER_CASEWORKER_PWD'),
+    secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
+    secret('idam-ccd-next-hearing-date-updater-system-user-username', 'IDAM_NEXT_HEARING_DATE_SYSTEM_USER'),
+    secret('idam-ccd-next-hearing-date-updater-system-user-password', 'IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD'),
+    secret('idam-ccd-next-hearing-date-updater-client-secret', 'CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET')
   ]
 ]
 
@@ -40,8 +57,58 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
   ]
 }
 
+env.CI_BUILD = true
+
+// Set required environment variables to run functional tests apart from one in vaults.
+env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
+env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
+env.BEFTA_OAUTH2_CLIENT_ID_OF_XUIWEBAPP = "xuiwebapp"
+env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
+env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
+env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
+
+// NB: legacy config for def file import
+env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
+env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
+env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
+
+// alternative JAVA_HOME to run job under
+env.ALT_JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
+
+// temporary workaround for platform changes: turn BEFTA header checks to warning mode
+env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
+
+GradleBuilder builder = new GradleBuilder(this, product)
+
 withPipeline(type, product, component) {
-  after('test') {
+
+  onMaster {
+    enableSlackNotifications('#ccd-master-builds')
+  }
+  onPR {
+    enableSlackNotifications('#ccd-pr-builds')
+    env.ENV='preview'
+    env.TEST_URL="https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal" // This is really not needed but here as a hack around TLS url
+    env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+  }
+  onNonPR {
+    env.ENV='aat'
+    env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
+    env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
+    env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+  }
+
+  enableAksStagingDeployment()
+  disableLegacyDeployment()
+  loadVaultSecrets(secrets)
+  nonServiceApp()
+  syncBranchesWithMaster(branchesToSync)
+
+  afterAlways('test') {
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
@@ -65,63 +132,34 @@ withPipeline(type, product, component) {
       reportName           : "Next Hearing Date Updater Unit Tests Report"
     ]
     junit '**/test-results/test/*.xml'
-
   }
 
-  enableAksStagingDeployment()
-  disableLegacyDeployment()
-  nonServiceApp()
-  syncBranchesWithMaster(branchesToSync)
+  afterAlways('akschartsinstall') {
 
-  onPR() {
-    echo "Loading PR secrets"
-    loadVaultSecrets(prSecrets)
-    env.ENV='preview'
-  }
+     // check data-store instance is up
+    def healthChecker = new HealthChecker(this)
+    healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
 
-  onNonPR() {
-    echo "Loading secrets"
-    loadVaultSecrets(secrets)
-    env.ENV='aat'
-  }
-
-  after('akschartsinstall') {
-    // Set required environment variables to run functional tests apart from one in vaults.
-
-    // Execute functional tests
-    echo "Verifying that functional test run correctly"
     try {
-      builder.gradle('functional')
+      // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
+      env.IDAM_API_URL = env.IDAM_API_URL_BASE
+
+      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true`
+      env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
+
+      builder.functionalTest()
     } finally {
-      junit '**/test-results/**/*.xml'
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/functional",
+        reportFiles          : "overview-features.html,overview-failures.html,",
+        reportTitles         : "Features,Failures",
+        reportName           : "Next Hearing Date Updater Functional Test Report"
+      ]
+      junit '**/test-results/functional/*.xml'
     }
-  }
-
-  after('functionalTest:preview') {
-    junit 'build/test-results/functional/**/*.xml'
-    archiveArtifacts 'build/reports/tests/functional/index.html'
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/functional",
-      reportFiles          : "index.html",
-      reportName           : "ccd-next-hearing-date-updater Functional Test Report"
-    ]
-  }
-
-  after('functionalTest:aat') {
-    junit 'build/test-results/functional/**/*.xml'
-    archiveArtifacts 'build/reports/tests/functional/index.html'
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/functional",
-      reportFiles          : "index.html",
-      reportName           : "ccd-next-hearing-date-updater Functional Test Report"
-    ]
   }
 }
