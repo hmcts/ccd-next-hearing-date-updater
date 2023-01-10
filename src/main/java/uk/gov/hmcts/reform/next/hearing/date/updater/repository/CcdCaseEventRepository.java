@@ -12,6 +12,8 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig;
 import uk.gov.hmcts.reform.next.hearing.date.updater.security.SecurityUtils;
 
+import java.time.LocalDateTime;
+
 /**
  * HMAN-322.
  */
@@ -24,7 +26,6 @@ public class CcdCaseEventRepository {
         "Call to following downstream CCD endpoint failed: /cases/%s/events";
     public static final String START_EVENT_ERROR =
         "Call to following downstream CCD endpoint failed: /cases/%s/event-triggers/%s";
-
     private final CoreCaseDataApi datastoreClient;
     private final SecurityUtils securityUtils;
 
@@ -43,6 +44,8 @@ public class CcdCaseEventRepository {
                                                             caseReference, CaseEventConfig.EVENT_ID);
         } catch (FeignException feignException) {
             log.error(String.format(START_EVENT_ERROR, caseReference, CaseEventConfig.EVENT_ID), feignException);
+            log.error(String.format("Error, failed to set next hearing date for %s at %s", caseReference,
+                LocalDateTime.now()));
         }
 
         return startEventResponse;
@@ -67,6 +70,8 @@ public class CcdCaseEventRepository {
             );
         } catch (FeignException feignException) {
             log.error(String.format(SUBMIT_EVENT_ERROR, caseReference), feignException);
+            log.error(String.format("Error, failed to set next hearing date for %s at %s", caseReference,
+                LocalDateTime.now()));
             return null;
         }
     }
