@@ -8,14 +8,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorDuringExecutionException;
 import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpdaterService;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorDuringExecutionException.EXIT_FAILURE;
 
-@SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage",
-    "PMD.JUnitTestsShouldIncludeAssert"})
 @ExtendWith(MockitoExtension.class)
 class ApplicationBootstrapTest {
 
@@ -28,8 +30,6 @@ class ApplicationBootstrapTest {
     @Mock
     private TelemetryClient client;
 
-
-
     @InjectMocks
     private ApplicationBootstrap underTest;
 
@@ -38,7 +38,9 @@ class ApplicationBootstrapTest {
         ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
         doNothing().when(nextHearingDateUpdaterService).execute();
         doNothing().when(client).flush();
+
         underTest.run(applicationArguments);
+
         verify(nextHearingDateUpdaterService).execute();
         verify(client).flush();
     }
@@ -48,12 +50,18 @@ class ApplicationBootstrapTest {
         ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
         doThrow(new RuntimeException("test")).when(nextHearingDateUpdaterService).execute();
         doNothing().when(client).flush();
-        underTest.run(applicationArguments);
+
+        ErrorDuringExecutionException exception = assertThrows(
+            ErrorDuringExecutionException.class, () -> underTest.run(applicationArguments)
+        );
+
+        // NB: must still verify execute and `client.flush` have still been actioned
         verify(nextHearingDateUpdaterService).execute();
         verify(client).flush();
+        assertEquals(EXIT_FAILURE, exception.getExitCode(), "Expecting the failure exit code.");
     }
 
-    @SuppressWarnings("java:S2699")
+    @SuppressWarnings({"java:S2699", "PMD.JUnitTestsShouldIncludeAssert"})
     @Test
     void testMain() {
         ApplicationBootstrap.main(new String[]{
@@ -61,4 +69,5 @@ class ApplicationBootstrapTest {
             "--spring.autoconfigure.exclude=blahblahblah",
         });
     }
+
 }
