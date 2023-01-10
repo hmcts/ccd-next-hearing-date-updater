@@ -12,6 +12,7 @@ import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.TooManyCsvRecord
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -83,7 +84,11 @@ public class CsvService {
 
         caseReferences.stream()
             .filter(isInvalidCaseReference)
-            .forEach(invalidCaseReference -> log.error(INVALID_CASE_REF_ERROR, invalidCaseReference));
+            .forEach(invalidCaseReference -> {
+                log.error(INVALID_CASE_REF_ERROR, invalidCaseReference);
+                log.error(String.format("Error, failed to set next hearing date for %s at %s", invalidCaseReference,
+                    LocalDateTime.now()));
+            });
 
         caseReferences.removeIf(isInvalidCaseReference);
     }
