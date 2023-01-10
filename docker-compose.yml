@@ -8,7 +8,8 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: hmctspublic.azurecr.io/spring-boot/template
+    image: hmcts/ccd-next-hearing-date-updater
+    container_name: ccd-next-hearing-date-updater
     environment:
       # these environment variables are used by java-logging library
       - ROOT_APPENDER
@@ -22,3 +23,9 @@ services:
       - LOGBACK_REQUIRE_THREAD
       - LOGBACK_REQUIRE_ALERT_LEVEL=false
       - LOGBACK_REQUIRE_ERROR_CODE=false
+      # these environment variables control the process
+      - CASE_TYPES
+      # these environment variables control the downstream calls
+      - IDAM_API_URL
+      - IDAM_S2S_URL
+      - CCD_DATA_STORE_API_BASE_URL
