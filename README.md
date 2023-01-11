@@ -273,7 +273,7 @@ This will start the CCD Environment and its dependent services.
 In order to test if the *CCD Data-Store* is up, you can call its health endpoint:
 
 ```bash
-  curl http://localhost:4451/health | jq
+  curl http://localhost:4452/health | jq
 ```
 
 You should get a response similar to this:
