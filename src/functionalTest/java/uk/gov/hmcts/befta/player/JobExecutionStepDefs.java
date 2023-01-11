@@ -110,9 +110,9 @@ public class JobExecutionStepDefs {
     public void theNextHearingDateUpdateJobExecutesForCaseTypesWithSize(final String caseType,
                                                                         final String esQuerySize) {
         final String caseTypesParam = String.format("-DCASE_TYPES=%s", caseType);
-        final String maxCsvRecordsParam = String.format("-DES_QUERY_SIZE=%s", esQuerySize);
+        final String esQuerySizeParam = String.format("-DES_QUERY_SIZE=%s", esQuerySize);
 
-        executeJob(caseTypesParam, maxCsvRecordsParam);
+        executeJob(caseTypesParam, esQuerySizeParam);
     }
 
     @Then("a success exit value is received")
@@ -214,7 +214,7 @@ public class JobExecutionStepDefs {
         Assert.assertEquals("Java version check failed with exit value '" + versionResponse.getResponseCode() + "'.",
                             EXIT_SUCCESS, versionResponse.getResponseCode());
 
-        BeftaUtils.defaultLog(scenario,"Executing job with params: " + Arrays.toString(params));
+        BeftaUtils.defaultLog(scenario,"Executing job with params: \n\t" + String.join("\n\t", params));
 
         // run job direct from jar
         ArrayList<String> command = new ArrayList<>();
