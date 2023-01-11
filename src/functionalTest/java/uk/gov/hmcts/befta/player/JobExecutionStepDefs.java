@@ -84,22 +84,29 @@ public class JobExecutionStepDefs {
         filePath = createCsvFile(content);
     }
 
-    @When("the next hearing date update job executes with maximum CSV limit {string}")
-    public void theNextHearingDateUpdateJobExecutesForCsv(final String maxCsvRecords) {
+    @When("the next hearing date update job executes for CSV")
+    public void theNextHearingDateUpdateJobExecutesForCsv() {
+        final String locationParam = String.format("-DFILE_LOCATION=%s", filePath);
+
+        executeJob(locationParam);
+    }
+
+    @When("the next hearing date update job executes for CSV with maximum CSV limit {string}")
+    public void theNextHearingDateUpdateJobExecutesForCsvWithLimit(final String maxCsvRecords) {
         final String locationParam = String.format("-DFILE_LOCATION=%s", filePath);
         final String maxCsvRecordsParam = String.format("-DMAX_CSV_RECORDS=%s", maxCsvRecords);
 
         executeJob(locationParam, maxCsvRecordsParam);
     }
 
-    @When("the next hearing date update job executes for {string}")
+    @When("the next hearing date update job executes for case types {string}")
     public void theNextHearingDateUpdateJobExecutesForCaseTypes(final String caseType) {
         final String caseTypesParam = String.format("-DCASE_TYPES=%s", caseType);
 
         executeJob(caseTypesParam);
     }
 
-    @When("the next hearing date update job executes for {string} with pagination size {string}")
+    @When("the next hearing date update job executes for case types {string} with pagination size {string}")
     public void theNextHearingDateUpdateJobExecutesForCaseTypesWithSize(final String caseType,
                                                                         final String esQuerySize) {
         final String caseTypesParam = String.format("-DCASE_TYPES=%s", caseType);
@@ -207,7 +214,7 @@ public class JobExecutionStepDefs {
         Assert.assertEquals("Java version check failed with exit value '" + versionResponse.getResponseCode() + "'.",
                             EXIT_SUCCESS, versionResponse.getResponseCode());
 
-        BeftaUtils.defaultLog("Executing job with params: " + Arrays.toString(params));
+        BeftaUtils.defaultLog(scenario,"Executing job with params: " + Arrays.toString(params));
 
         // run job direct from jar
         ArrayList<String> command = new ArrayList<>();

@@ -14,7 +14,7 @@ Feature: F-001: Update cases in CSV file
     Given a successful call [to create test cases] as in [F-001-CreateTestCases]
       And the test csv contains case references from "F-001-CreateTestCases"
 
-     When the next hearing date update job executes
+     When the next hearing date update job executes for CSV
 
      Then a success exit value is received
       And a successful call [to verify next hearing date for Case1] as in [F-001_Verify_Case1]

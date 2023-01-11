@@ -14,7 +14,7 @@ Feature: F-002: Update cases in Elasticsearch
     Given a successful call [to create test cases] as in [F-002-CreateTestCases]
       And the test csv is empty
 
-     When the next hearing date update job executes for "FT_NextHearingDate"
+     When the next hearing date update job executes for case types "FT_NextHearingDate"
 
      Then a success exit value is received
       And the following response is logged as output: "search for case type FT_NextHearingDate"
