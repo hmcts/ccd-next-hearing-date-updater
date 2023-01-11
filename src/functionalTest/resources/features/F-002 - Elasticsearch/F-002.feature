@@ -103,7 +103,7 @@ Feature: F-002: Update cases in Elasticsearch
   @S-002.13 #HMAN-326 #AC03
   Scenario: Update cases in Elasticsearch: Cases have hearingDateTime as null.
 
-    Given a successful call [to create test cases] as in [F-002-CreateTestCases_WithHearingDateGreaterIsNull]
+    Given a successful call [to create test cases] as in [F-002-CreateTestCases_WithHearingDateNull]
       And a wait time of [5] seconds [to allow for Logstash to re-index the case]
 
      When the next hearing date update job executes for case types "FT_NextHearingDate"

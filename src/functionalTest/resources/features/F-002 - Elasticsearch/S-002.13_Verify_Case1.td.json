@@ -8,7 +8,7 @@
 
   "request": {
     "pathVariables": {
-      "cid": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateGreaterIsNull][childContexts][Case1][testData][actualResponse][body][id]}"
+      "cid": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateNull][childContexts][Case1][testData][actualResponse][body][id]}"
     }
   },
 
@@ -16,8 +16,8 @@
     "body": {
       "data": {
         "nextHearingDetails": {
-          "hearingID": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateGreaterIsNull][childContexts][Case1][testData][actualResponse][body][data][nextHearingDetails][hearingID]}",
-          "hearingDateTime": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateGreaterIsNull][childContexts][Case1][testData][actualResponse][body][data][nextHearingDetails][hearingDateTime]}"
+          "hearingID": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateNull][childContexts][Case1][testData][actualResponse][body][data][nextHearingDetails][hearingID]}",
+          "hearingDateTime": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateNull][childContexts][Case1][testData][actualResponse][body][data][nextHearingDetails][hearingDateTime]}"
         }
       }
     }
