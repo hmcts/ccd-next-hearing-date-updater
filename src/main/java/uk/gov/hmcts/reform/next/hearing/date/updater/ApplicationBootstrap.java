@@ -36,7 +36,6 @@ public class ApplicationBootstrap implements ApplicationRunner {
         this.client = client;
     }
 
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
         if (isProcessingEnabled) {

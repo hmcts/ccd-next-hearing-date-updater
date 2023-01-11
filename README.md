@@ -30,7 +30,7 @@ To build the project execute the following command:
 
 The *Next Hearing Date Updater* can be run in one of two ways:
 
-1. *via a CSV fil*e: against a file containing a list of Case References to process, or
+1. *via a CSV file*: against a file containing a list of Case References to process, or
 2. *via Elasticsearch*: using a list of Case Types to search for cases that have an out-of-date *Next Hearing Date*
    value and then to process the results from these searches.
 

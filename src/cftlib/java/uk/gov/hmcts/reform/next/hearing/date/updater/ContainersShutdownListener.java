@@ -31,4 +31,3 @@ class ContainersShutdownListener implements Runnable {
         return exit;
     }
 }
-

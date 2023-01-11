@@ -50,7 +50,7 @@ Feature: F-002: Update cases in Elasticsearch
   @S-002.02 #HMAN-320 #AC02
   Scenario: Update cases in Elasticsearch: Elastic Search returns no cases
 
-     When the next hearing date update job executes for "FT_NextHearingDate"
+     When the next hearing date update job executes for case types "FT_NextHearingDate"
 
      Then a success exit value is received
       And no WARN or ERROR logged in output
