@@ -14,7 +14,7 @@ Feature: F-001: Update cases in CSV file
 
     Given the test csv is empty
 
-     When the next hearing date update job executes with maximum CSV limit "10000"
+     When the next hearing date update job executes for CSV
 
      Then a success exit value is received
       And no WARN or ERROR logged in output
@@ -28,7 +28,7 @@ Feature: F-001: Update cases in CSV file
     Given a successful call [to create test cases] as in [F-001-CreateTestCases]
       And the test csv contains case references from "F-001-CreateTestCases"
 
-     When the next hearing date update job executes for CSV
+     When the next hearing date update job executes for CSV with maximum CSV limit "10000"
 
      Then a success exit value is received
       And no WARN or ERROR logged in output
@@ -43,7 +43,7 @@ Feature: F-001: Update cases in CSV file
 
     Given the test csv contains case references: "4444333322221111,4444222233331111,4444111122223333"
 
-     When the next hearing date update job executes with maximum CSV limit "2"
+     When the next hearing date update job executes for CSV with maximum CSV limit "2"
 
      Then a non-success exit value is received
       And the following response is logged as output: "001 More than 2 references in CSV"
@@ -55,7 +55,7 @@ Feature: F-001: Update cases in CSV file
     Given a successful call [to create test cases] as in [F-001-CreateTestCases]
       And the test csv contains case references from "F-001-CreateTestCases" plus the following extra case references: "1111222233334449,3162255313,,not-a-number"
 
-     When the next hearing date update job executes with maximum CSV limit "10000"
+     When the next hearing date update job executes for CSV with maximum CSV limit "10000"
 
      Then a success exit value is received
       And the following response is logged as output: "002 Invalid Case Reference number '1111222233334449' in CSV"
@@ -74,7 +74,7 @@ Feature: F-001: Update cases in CSV file
     Given a successful call [to create test cases] as in [F-001-CreateTestCases_Bad_StartEvent]
       And the test csv contains case references from "F-001-CreateTestCases_Bad_StartEvent"
 
-     When the next hearing date update job executes with maximum CSV limit "10000"
+     When the next hearing date update job executes for CSV
 
      Then the following response is logged as output: "Call to following downstream CCD endpoint failed: /cases/[0-9]*/event-triggers/UpdateNextHearingInfo"
 
@@ -86,7 +86,7 @@ Feature: F-001: Update cases in CSV file
     Given a successful call [to create test cases] as in [F-001-CreateTestCases_Bad_DatePast]
       And the test csv contains case references from "F-001-CreateTestCases_Bad_DatePast"
 
-     When the next hearing date update job executes with maximum CSV limit "10000"
+     When the next hearing date update job executes for CSV
 
      Then the following response is logged as output: "003 hearingDateTime set is in the past '[0-9]*'"
 
@@ -98,7 +98,7 @@ Feature: F-001: Update cases in CSV file
     Given a successful call [to create test cases] as in [F-001-CreateTestCases_Bad_DateNull]
       And the test csv contains case references from "F-001-CreateTestCases_Bad_DateNull"
 
-     When the next hearing date update job executes with maximum CSV limit "10000"
+     When the next hearing date update job executes for CSV
 
      Then the following response is logged as output: "004 hearingDateTime set is null '[0-9]*'"
 
@@ -110,7 +110,7 @@ Feature: F-001: Update cases in CSV file
     Given a successful call [to create test cases] as in [F-001-CreateTestCases_Bad_IDNull]
       And the test csv contains case references from "F-001-CreateTestCases_Bad_IDNull"
 
-     When the next hearing date update job executes with maximum CSV limit "10000"
+     When the next hearing date update job executes for CSV
 
      Then the following response is logged as output: "005 hearingID set is null '[0-9]*'"
 
@@ -122,7 +122,7 @@ Feature: F-001: Update cases in CSV file
     Given a successful call [to create test cases] as in [F-001-CreateTestCases_Clear]
       And the test csv contains case references from "F-001-CreateTestCases_Clear"
 
-     When the next hearing date update job executes with maximum CSV limit "10000"
+     When the next hearing date update job executes for CSV
 
      Then a success exit value is received
       And no WARN or ERROR logged in output
@@ -136,7 +136,7 @@ Feature: F-001: Update cases in CSV file
     Given a successful call [to create test cases] as in [F-001-CreateTestCases_Bad_SubmitEvent]
       And the test csv contains case references from "F-001-CreateTestCases_Bad_SubmitEvent"
 
-     When the next hearing date update job executes with maximum CSV limit "10000"
+     When the next hearing date update job executes for CSV
 
      Then the following response is logged as output: "Call to following downstream CCD endpoint failed: /cases/[0-9]*/events"
 

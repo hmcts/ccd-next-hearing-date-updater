@@ -14,7 +14,7 @@ Feature: F-002: Update cases in Elasticsearch
 
     Given a wait time of [5] seconds [to allow for Logstash to re-index any cases left by other failed tests]
 
-     When the next hearing date update job executes for "FT_NextHearingDate,FT_NextHearingDate_Clear"
+     When the next hearing date update job executes for case types "FT_NextHearingDate,FT_NextHearingDate_Clear"
 
      Then a success exit value is received
       And no WARN or ERROR logged in output
@@ -29,7 +29,7 @@ Feature: F-002: Update cases in Elasticsearch
     Given a successful call [to create test cases] as in [F-002-Create5TestCases]
       And a wait time of [5] seconds [to allow for Logstash to re-index the case]
 
-     When the next hearing date update job executes for "FT_NextHearingDate,FT_NextHearingDate_Clear" with pagination size "2"
+     When the next hearing date update job executes for case types "FT_NextHearingDate,FT_NextHearingDate_Clear" with pagination size "2"
 
      Then a success exit value is received
       And no WARN or ERROR logged in output
@@ -67,7 +67,7 @@ Feature: F-002: Update cases in Elasticsearch
     Given a successful call [to create test cases] as in [F-002-CreateTestCases]
       And a wait time of [5] seconds [to allow for Logstash to re-index the case]
 
-     When the next hearing date update job executes for "FT_NextHearingDate"
+     When the next hearing date update job executes for case types "FT_NextHearingDate"
 
      Then a success exit value is received
       And no WARN or ERROR logged in output
@@ -86,7 +86,7 @@ Feature: F-002: Update cases in Elasticsearch
     Given a successful call [to create test cases] as in [F-002-CreateTestCases_WithHearingDateGreaterThanToday]
       And a wait time of [5] seconds [to allow for Logstash to re-index the case]
 
-     When the next hearing date update job executes for "FT_NextHearingDate"
+     When the next hearing date update job executes for case types "FT_NextHearingDate"
 
      Then a success exit value is received
       And no WARN or ERROR logged in output
@@ -106,7 +106,7 @@ Feature: F-002: Update cases in Elasticsearch
     Given a successful call [to create test cases] as in [F-002-CreateTestCases_WithHearingDateGreaterIsNull]
       And a wait time of [5] seconds [to allow for Logstash to re-index the case]
 
-     When the next hearing date update job executes for "FT_NextHearingDate"
+     When the next hearing date update job executes for case types "FT_NextHearingDate"
 
      Then a success exit value is received
       And no WARN or ERROR logged in output
