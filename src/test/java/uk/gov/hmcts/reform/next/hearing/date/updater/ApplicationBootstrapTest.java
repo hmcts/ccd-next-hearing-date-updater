@@ -11,7 +11,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpdaterService;
 
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @SuppressWarnings({"PMD.JUnitAssertionsShouldIncludeMessage",
