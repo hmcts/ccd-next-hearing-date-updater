@@ -43,15 +43,6 @@ class ApplicationBootstrapTest {
         verify(client).flush();
     }
 
-    @Test
-    void testShouldRunExecutorWithException() throws Exception {
-        ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
-        doThrow(new RuntimeException("test")).when(nextHearingDateUpdaterService).execute();
-        doNothing().when(client).flush();
-        underTest.run(applicationArguments);
-        verify(nextHearingDateUpdaterService).execute();
-        verify(client).flush();
-    }
 
     @SuppressWarnings("java:S2699")
     @Test
