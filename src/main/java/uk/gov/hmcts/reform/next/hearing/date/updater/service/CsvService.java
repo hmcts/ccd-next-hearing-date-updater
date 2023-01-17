@@ -21,7 +21,9 @@ import java.util.stream.Stream;
 
 import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.CSV_FILE_READ_ERROR;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.INVALID_CASE_REF_ERROR;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.MAX_CSV_ENTRIES_EXCEEDED_ERROR;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.NO_CSV_FILE;
+import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorMessages.NO_REFERENCES_TO_VALIDATE;
 
 @Service
 @Slf4j
@@ -36,6 +38,8 @@ public class CsvService {
         try {
             List<String> caseReferences = getCaseReferencesFromCsvFile();
             validateCaseRefsFile(caseReferences);
+            log.info("The Next-Hearing-Date-Updater has processed csv and found the following "
+                     + "number of case references {}.", caseReferences.size());
             return caseReferences;
         } catch (TooManyCsvRecordsException | CsvFileException exception) {
             throw new InvalidConfigurationError(CSV_FILE_READ_ERROR, exception);
@@ -60,12 +64,17 @@ public class CsvService {
     }
 
     private void validateCaseRefsFile(List<String> caseReferences) throws TooManyCsvRecordsException {
-        validateCsvCaseSizeLessThanMaximum(caseReferences);
-        logInvalidCaseReferences(caseReferences);
+        if (caseReferences.isEmpty()) {
+            log.info(NO_REFERENCES_TO_VALIDATE);
+        } else {
+            validateCsvCaseSizeLessThanMaximum(caseReferences);
+            logInvalidCaseReferences(caseReferences);
+        }
     }
 
     private void validateCsvCaseSizeLessThanMaximum(List<String> caseReferences) throws TooManyCsvRecordsException {
         if (caseReferences.size() > maxNumCaseReferences) {
+            log.error(String.format(MAX_CSV_ENTRIES_EXCEEDED_ERROR, maxNumCaseReferences));
             throw new TooManyCsvRecordsException(maxNumCaseReferences);
         }
     }
