@@ -1,5 +1,6 @@
 #!groovy
 import uk.gov.hmcts.contino.AppPipelineDsl
+import uk.gov.hmcts.contino.GithubAPI
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.HealthChecker
 
@@ -96,7 +97,10 @@ withPipeline(type, product, component) {
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.TEST_STUB_SERVICE_BASE_URL = "http://ccd-next-hearing-date-updater-pr-${CHANGE_ID}-ccd-test-stubs-service" // NB : when def file is imported this will lead to data-store.preview -> test-stub.preview.
 
-    enableCleanupOfHelmReleaseOnSuccess()
+    def githubApi = new GithubAPI(this)
+    if (!githubApi.getLabelsbyPattern(env.BRANCH_NAME, "keep-helm")) {
+        enableCleanupOfHelmReleaseAlways()
+    }
   }
   onNonPR {
     env.ENV='aat'
