@@ -16,7 +16,7 @@ properties([
   disableConcurrentBuilds()
 ])
 
-@Library("Infrastructure")
+@Library("Infrastructure@HMAN-514_functionalTest_nonServiceApp")
 
 def type = "java"
 def product = "ccd"
