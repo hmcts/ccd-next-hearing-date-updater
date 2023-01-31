@@ -82,43 +82,29 @@ withNightlyPipeline(type, product, component) {
   env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
 
 
-  enableAksStagingDeployment()
   disableLegacyDeployment()
   loadVaultSecrets(secrets)
   nonServiceApp()
   enableMutationTest()
-  enableFullFunctionalTest()
 
-  afterAlways('fortify-scan') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
-  }
+  enableFullFunctionalTestNonServiceApp(env.CCD_DATA_STORE_API_BASE_URL)
 
   before('fullFunctionalTest') {
-    echo "Loading the secrets"
-    loadVaultSecrets(secrets)
-
-
-    // Execute functional tests
-    echo "Just waiting a while to ensure that the pod has run the job"
-    sh "sleep 30s"
-    echo "Verifying that functional test run correctly"
-    try {
-      // NB: override IDAM_API_URL late as per `Jenkinsfile_CNP` tests
-      env.IDAM_API_URL = env.IDAM_API_URL_BASE
-
-      builder.functionalTest()
-    } finally {
-
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/tests/functional",
-        reportFiles          : "overview-features.html,overview-failures.html,",
-        reportTitles         : "Features,Failures",
-        reportName           : "Next Hearing Date Updater Functional Test Report"
-      ]
-      junit '**/test-results/functional/*.xml'
-    }
+    // NB: override IDAM_API_URL late as per `Jenkinsfile_CNP` tests
+    env.IDAM_API_URL = env.IDAM_API_URL_BASE
   }
+
+  afterAlways('fullFunctionalTest') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/functional",
+      reportFiles          : "overview-features.html,overview-failures.html,",
+      reportTitles         : "Features,Failures",
+      reportName           : "Next Hearing Date Updater Functional Test Report"
+    ]
+    junit '**/test-results/functional/*.xml'
+  }
+
 }
