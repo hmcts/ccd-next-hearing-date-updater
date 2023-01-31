@@ -92,7 +92,6 @@ withPipeline(type, product, component) {
   onPR {
     enableSlackNotifications('#ccd-pr-builds')
     env.ENV='preview'
-    env.TEST_URL="https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal" // This is really not needed but here as a hack around TLS url
     env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.TEST_STUB_SERVICE_BASE_URL = "http://ccd-next-hearing-date-updater-pr-${CHANGE_ID}-ccd-test-stubs-service" // NB : when def file is imported this will lead to data-store.preview -> test-stub.preview.
@@ -104,7 +103,6 @@ withPipeline(type, product, component) {
   }
   onNonPR {
     env.ENV='aat'
-    env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
     env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
     env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
   }
