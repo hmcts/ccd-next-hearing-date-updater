@@ -35,16 +35,22 @@ public class NextHearingDetails {
     public boolean isValid() {
         if (hearingDateTime != null && hearingDateTime.isBefore(LocalDateTime.now())) {
             log.error(HEARING_DATE_TIME_IN_PAST, caseReference);
+            log.error(String.format("Error, failed to set next hearing date for %s at %s", caseReference,
+                LocalDateTime.now()));
             return false;
         }
 
         if (hearingID != null && hearingDateTime == null) {
             log.error(NULL_HEARING_DATE_TIME_LOG_MESSAGE, caseReference);
+            log.error(String.format("Error, failed to set next hearing date for %s at %s", caseReference,
+                LocalDateTime.now()));
             return false;
         }
 
         if (hearingID == null && hearingDateTime != null) {
             log.error(NULL_HEARING_ID_MESSAGE, caseReference);
+            log.error(String.format("Error, failed to set next hearing date for %s at %s", caseReference,
+                LocalDateTime.now()));
             return false;
         }
         return true;

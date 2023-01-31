@@ -76,7 +76,7 @@ env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
 env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
 
 // alternative JAVA_HOME to run job under
-env.ALT_JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64" 
+env.ALT_JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
 
 // temporary workaround for platform changes: turn BEFTA header checks to warning mode
 env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
@@ -94,6 +94,7 @@ withPipeline(type, product, component) {
     env.TEST_URL="https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal" // This is really not needed but here as a hack around TLS url
     env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.TEST_STUB_SERVICE_BASE_URL = "http://ccd-next-hearing-date-updater-pr-${CHANGE_ID}-ccd-test-stubs-service" // NB : when def file is imported this will lead to data-store.preview -> test-stub.preview.
 
     enableCleanupOfHelmReleaseOnSuccess()
   }
@@ -110,7 +111,7 @@ withPipeline(type, product, component) {
   nonServiceApp()
   syncBranchesWithMaster(branchesToSync)
 
-  after('test') {
+  afterAlways('test') {
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
@@ -136,7 +137,7 @@ withPipeline(type, product, component) {
     junit '**/test-results/test/*.xml'
   }
 
-  after('akschartsinstall') {
+  afterAlways('akschartsinstall') {
 
      // check data-store instance is up
     def healthChecker = new HealthChecker(this)
@@ -146,7 +147,7 @@ withPipeline(type, product, component) {
       // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
       env.IDAM_API_URL = env.IDAM_API_URL_BASE
 
-      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true` 
+      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true`
       env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
 
       builder.functionalTest()

@@ -8,6 +8,7 @@ import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.befta.custom.CustomValueHandler;
 import uk.gov.hmcts.reform.next.hearing.date.updater.befta.custom.CustomValueKey;
 import uk.gov.hmcts.reform.next.hearing.date.updater.befta.custom.TestHookHandler;
+import uk.gov.hmcts.reform.next.hearing.date.updater.befta.custom.VerifyHearingDateTimeIsFutureDateHandler;
 
 import java.util.List;
 
@@ -17,7 +18,8 @@ import static uk.gov.hmcts.befta.dse.ccd.DataLoaderToDefinitionStore.VALID_CCD_T
 public class ServiceTestAutomationAdapter extends DefaultTestAutomationAdapter {
 
     private final List<CustomValueHandler> customValueHandlers = List.of(
-        new TestHookHandler()
+        new TestHookHandler(),
+        new VerifyHearingDateTimeIsFutureDateHandler()
     );
 
     @Override

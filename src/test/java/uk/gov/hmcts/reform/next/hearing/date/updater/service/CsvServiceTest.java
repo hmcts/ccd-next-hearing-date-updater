@@ -87,7 +87,7 @@ class CsvServiceTest {
         List<String> formattedMessages = logsList.stream()
             .map(ILoggingEvent::getFormattedMessage)
             .toList();
-        assertEquals(6, formattedMessages.size());
+        assertEquals(13, formattedMessages.size());
 
         boolean anyMatch = IntStream.rangeClosed(1, 6)
             .allMatch(i -> formattedMessages.contains(

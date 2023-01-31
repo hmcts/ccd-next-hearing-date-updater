@@ -6,6 +6,20 @@
       CVE-2016-1000027 refer https://tools.hmcts.net/jira/browse/CCD-3246
     </notes>
     <cve>CVE-2016-1000027</cve>
-    <cve>CVE-2021-37533</cve>
   </suppress>
+  <!--End of false positives section -->
+
+  <!--Please add all the temporary suppression under the below section -->
+  <suppress>
+    <notes>Temporary Suppression
+        CVE-2021-37533 refer [Ticket]
+        CVE-2021-4277 refer [Ticket]
+        CVE-2022-3064 refer [Ticket]
+        CVE-2021-4235 refer [Ticket]</notes>
+    <cve>CVE-2021-37533</cve>
+    <cve>CVE-2021-4277</cve>
+    <cve>CVE-2022-3064</cve>
+    <cve>CVE-2021-4235</cve>
+  </suppress>
+  <!--End of temporary suppression section -->
 </suppressions>
