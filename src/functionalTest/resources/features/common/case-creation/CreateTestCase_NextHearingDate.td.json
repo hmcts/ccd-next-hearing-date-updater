@@ -42,7 +42,7 @@
   "expectedResponse": {
     "body": {
       "jurisdiction": "BEFTA_MASTER",
-      "case_type": "FT_NextHearingDate",
+      "case_type": "FORCE-TEST-TO-FAIL",
       "data": {
         "nextHearingDetails": {
           "hearingID": 1234,
