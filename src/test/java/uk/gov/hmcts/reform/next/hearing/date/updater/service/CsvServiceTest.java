@@ -96,8 +96,9 @@ class CsvServiceTest {
         // verify number of errors
         // 6: non-numeric tests: i.e. invalidCaseRefX
         // 2: bad number format tests: i.e. bad luhn or wrong length
-        // x 2 because each error generates 2 messages (1 detailed + 1 formatted for dynatrace)
-        assertEquals((6 + 2) * 2, formattedMessages.size());
+        // x 2: because each error generates 2 messages (1 detailed + 1 formatted for dynatrace)
+        // + 1: summary
+        assertEquals((6 + 2) * 2 + 1, formattedMessages.size());
 
         // validate the 6 for 'invalidCaseRef%s' were found
         boolean anyMatch = IntStream.rangeClosed(1, 6)
@@ -124,4 +125,5 @@ class CsvServiceTest {
         assertTrue(invalidConfigurationError.getCause() instanceof CsvFileException);
         assertTrue(invalidConfigurationError.getCause().getCause() instanceof IOException);
     }
+
 }
