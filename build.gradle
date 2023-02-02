@@ -251,9 +251,9 @@ ext {
   springFrameworkVersion = '5.3.25'
   springFrameworkSecurityVersion = '5.7.6'
   cucumberVersion = '5.7.0'
-  wiremockVersion = '2.33.2'
+  wiremockVersion = '2.35.0'
   elasticsearchVersion = '7.17.8'
-  testcontainersVersion = '1.17.3'
+  testcontainersVersion = '1.17.6'
 }
 
 dependencies {
