@@ -96,8 +96,6 @@ withPipeline(type, product, component) {
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.TEST_STUB_SERVICE_BASE_URL = "http://ccd-next-hearing-date-updater-pr-${CHANGE_ID}-ccd-test-stubs-service" // NB : when def file is imported this will lead to data-store.preview -> test-stub.preview.
 
-    enableFullFunctionalTestNonServiceApp(env.CCD_DATA_STORE_API_BASE_URL)
-
     def githubApi = new GithubAPI(this)
     if (!githubApi.getLabelsbyPattern(env.BRANCH_NAME, "keep-helm")) {
         enableCleanupOfHelmReleaseAlways()
@@ -107,8 +105,6 @@ withPipeline(type, product, component) {
     env.ENV='aat'
     env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
     env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
-
-    enableFullFunctionalTestNonServiceApp(env.CCD_DATA_STORE_API_BASE_URL)
   }
 
   enableAksStagingDeployment()
@@ -116,6 +112,8 @@ withPipeline(type, product, component) {
   loadVaultSecrets(secrets)
   nonServiceApp()
   syncBranchesWithMaster(branchesToSync)
+
+  enableFullFunctionalTestNonServiceApp(env.CCD_DATA_STORE_API_BASE_URL)
 
   afterAlways('test') {
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
