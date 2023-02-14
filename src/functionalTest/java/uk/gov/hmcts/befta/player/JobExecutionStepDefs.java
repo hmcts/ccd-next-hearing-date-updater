@@ -55,7 +55,7 @@ public class JobExecutionStepDefs {
 
         // NB: The ScenarioContext is generated inside the DefaultBackEndFunctionalTestScenarioPlayer.
         // A CustomValueHandler, triggered at the start of the test scenario (e.g. see TestHookHandler
-        // referenced in `Check_Datastore_Health.td.json`), is used to capture and register the existing
+        // referenced in `Trigger_TestHookHandler.td.json`), is used to capture and register the existing
         // ScenarioContext with local BEAN_FACTORY, so it can be shared between both BEFTA DSL players.
         scenarioContext = BEAN_FACTORY.getScenarioContext();
     }

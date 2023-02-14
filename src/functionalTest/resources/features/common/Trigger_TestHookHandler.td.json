@@ -1,0 +1,16 @@
+{
+  "_guid_": "Trigger_TestHookHandler",
+  "_extends_": "Simple_404_Call",
+
+  "title": "trigger the TestHookHandler so it can capture and register the existing ScenarioContext with the NHDU BEAN_FACTORY",
+
+  "specs": [
+    "to register the existing ScenarioContext with NHDU BEAN_FACTORY"
+  ],
+
+  "request": {
+    "headers": {
+      "X_TEST_HOOK": "${[scenarioContext][customValues][testHook]}"
+    }
+  }
+}

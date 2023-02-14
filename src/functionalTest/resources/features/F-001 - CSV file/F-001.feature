@@ -5,7 +5,7 @@ Feature: F-001: Update cases in CSV file
 
   Background:
     Given an appropriate test context as detailed in the test data source
-     And a successful call [to check the health of datastore] as in [Check_Datastore_Health]
+     And a successful call [to register the existing ScenarioContext with NHDU BEAN_FACTORY] as in [Trigger_TestHookHandler]
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
