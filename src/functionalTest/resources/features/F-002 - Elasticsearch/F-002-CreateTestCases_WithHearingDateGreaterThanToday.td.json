@@ -1,0 +1,13 @@
+{
+  "_guid_": "F-002-CreateTestCases_WithHearingDateGreaterThanToday",
+  "_extends_": "CreateTestCases__Base",
+
+  "prerequisites": [
+    {
+      "Case1": "F-002-CreateTestCase_WithHearingDateGreaterThanToday",
+      "Case2": "F-002-CreateTestCase_WithHearingDateGreaterThanToday",
+      "Case3": "F-002-CreateTestCase_WithHearingDateGreaterThanToday"
+    }
+  ]
+
+}

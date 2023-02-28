@@ -1,0 +1,16 @@
+{
+  "_guid_": "CreateTestCase_NextHearingDate_Clear",
+  "_extends_": "CreateTestCase__TestData__Base",
+
+  "prerequisites": [
+    {
+      "Token_Creation": "GetCreateToken_NextHearingDate_Clear"
+    }
+  ],
+
+  "request": {
+    "pathVariables": {
+      "CaseTypeID": "FT_NextHearingDate_Clear"
+    }
+  }
+}
