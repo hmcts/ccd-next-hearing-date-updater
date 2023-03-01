@@ -14,7 +14,7 @@
 
   "request": {
     "pathVariables": {
-      "cid": "${[scenarioContext][siblingContexts][CreateTestCases][childContexts][Case1][testData][actualResponse][body][id]}"
+      "cid": "OVERRIDE"
     }
   },
 

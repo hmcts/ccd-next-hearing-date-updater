@@ -1,0 +1,11 @@
+{
+  "_guid_": "GetCreateToken_NextHearingDate_Bad_DateNull",
+  "_extends_": "GetCreateToken__TestData__Base",
+
+
+  "request": {
+    "pathVariables": {
+      "ctid": "FT_NHD_Bad_DateNull"
+    }
+  }
+}

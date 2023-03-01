@@ -36,11 +36,16 @@ public class CsvService {
 
     public List<String> getCaseReferences() {
         try {
-            List<String> caseReferences = getCaseReferencesFromCsvFile();
-            validateCaseRefsFile(caseReferences);
-            log.info("The Next-Hearing-Date-Updater has processed csv and found the following "
-                     + "number of case references {}.", caseReferences.size());
-            return caseReferences;
+            if (ObjectUtils.isEmpty(fileLocation)) {
+                log.info(NO_CSV_FILE);
+                return Collections.emptyList();
+            } else {
+                List<String> caseReferences = getCaseReferencesFromCsvFile();
+                validateCaseRefsFile(caseReferences);
+                log.info("The Next-Hearing-Date-Updater has processed csv and found the following "
+                             + "number of case references {}.", caseReferences.size());
+                return caseReferences;
+            }
         } catch (TooManyCsvRecordsException | CsvFileException exception) {
             throw new InvalidConfigurationError(CSV_FILE_READ_ERROR, exception);
         }
@@ -48,19 +53,11 @@ public class CsvService {
 
     @SuppressWarnings("java:S6204")
     private List<String> getCaseReferencesFromCsvFile() throws CsvFileException {
-        List<String> caseReferences = Collections.emptyList();
-
-        if (ObjectUtils.isEmpty(fileLocation)) {
-            log.info(NO_CSV_FILE);
-        } else {
-            try (Stream<String> lines = Files.lines(Paths.get(fileLocation))) {
-                caseReferences = lines.collect(Collectors.toList()); // Compliant, the list needs to be mutable
-            } catch (IOException exception) {
-                throw new CsvFileException(exception);
-            }
+        try (Stream<String> lines = Files.lines(Paths.get(fileLocation))) {
+            return lines.collect(Collectors.toList()); // Compliant, the list needs to be mutable
+        } catch (IOException exception) {
+            throw new CsvFileException(exception);
         }
-
-        return caseReferences;
     }
 
     private void validateCaseRefsFile(List<String> caseReferences) throws TooManyCsvRecordsException {
@@ -80,7 +77,8 @@ public class CsvService {
     }
 
     private void logInvalidCaseReferences(List<String> caseReferences) {
-        Predicate<String> isInvalidCaseReference = caseRef -> !LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(caseRef);
+        Predicate<String> isInvalidCaseReference =
+            caseRef -> !LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(caseRef) || caseRef.length() != 16;
 
         caseReferences.stream()
             .filter(isInvalidCaseReference)

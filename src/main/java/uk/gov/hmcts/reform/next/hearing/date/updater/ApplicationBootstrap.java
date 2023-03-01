@@ -10,12 +10,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
+import uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorDuringExecutionException;
 import uk.gov.hmcts.reform.next.hearing.date.updater.service.NextHearingDateUpdaterService;
 
 @Slf4j
 @SpringBootApplication
 @EnableFeignClients(basePackages = {"uk.gov.hmcts.reform.idam"})
-@SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
+@SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, it's not a utility class
 public class ApplicationBootstrap implements ApplicationRunner {
 
     @Value("${next-hearing-date-updater.processing.enabled}")
@@ -43,7 +44,7 @@ public class ApplicationBootstrap implements ApplicationRunner {
                 nextHearingDateUpdaterService.execute();
                 log.info("Completed the Next-Hearing-Date-Updater job successfully triggered by cron job.");
             } catch (Exception exception) {
-                log.error("Error executing Next-Hearing-Date-Updater job.", exception);
+                throw new ErrorDuringExecutionException("Error executing Next-Hearing-Date-Updater job.", exception);
             } finally {
                 client.flush();
                 waitTelemetryGracefulPeriod();

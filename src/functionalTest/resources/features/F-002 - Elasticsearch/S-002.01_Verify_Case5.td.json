@@ -1,0 +1,14 @@
+{
+  "_guid_": "S-002.01_Verify_Case5",
+  "_extends_": "Verify_Next_Hearing_Date_Cleared__Base",
+
+  "specs": [
+    "to verify next hearing date for Case5"
+  ],
+
+  "request": {
+    "pathVariables": {
+      "cid": "${[scenarioContext][siblingContexts][F-002-Create5TestCases][childContexts][Case5][testData][actualResponse][body][id]}"
+    }
+  }
+}

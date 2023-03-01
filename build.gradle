@@ -66,9 +66,10 @@ configurations {
 idea {
   module {
     // config to allow Intellij to mark test source and resource files correctly to help linting tools
-    testSourceDirs += project.sourceSets.cftlibTest.java.srcDirs
+    testSourceDirs += project.sourceSets.cftlib.java.srcDirs
     testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
     testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
+    testResourceDirs += project.sourceSets.cftlib.resources.srcDirs
     testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
     testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
   }
@@ -111,12 +112,7 @@ task functional(type: JavaExec) {
     // clear away any previous BEFTA report output to prevent it being re-processed after a pre-cucumber error
     cleanBeftaReports()
 
-    boolean ciBuild = System.getenv().get("CI_BUILD") ?: false
-    if (!ciBuild) {
-      loadEnvFile(it, '.env.befta.local.env')
-      // Override with alternative test stub environment variables (i.e. if using bootWithCcd: need alternative test stub URL)
-      loadEnvFile(it, '.env.test.stub.service.env')
-    }
+    loadBeftaEnvVariables(it)
   }
 
   description = "Runs functional tests"
@@ -151,6 +147,27 @@ task functional(type: JavaExec) {
   outputs.upToDateWhen { false }
 }
 
+task localDataSetup(type: JavaExec) {
+  generateCucumberReports.enabled = false
+
+  doFirst {
+    // NB: must delete befta local run details to force re-import of def file
+    delete "befta_recent_executions_info_LOCAL.json"
+
+    loadBeftaEnvVariables(it)
+  }
+
+  description = "Loads BEFTA test definitions"
+  group = "Verification"
+
+  main = "uk.gov.hmcts.reform.next.hearing.date.updater.befta.DataSetupApp"
+  classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
+  args = [
+    'LOCAL'
+  ]
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
 cucumberReports {
   outputDir = file("${rootDir}/target/cucumber")
   reports = files("${rootDir}/target/cucumber.json")
@@ -162,6 +179,15 @@ void cleanBeftaReports() {
   delete "${buildDir}/reports/tests/functional/"
   delete "${rootDir}/target/cucumber"
   delete "${rootDir}/target/cucumber.json"
+}
+
+void loadBeftaEnvVariables(Task execTask) {
+    boolean ciBuild = System.getenv().get("CI_BUILD") ?: false
+    if (!ciBuild) {
+      loadEnvFile(execTask, '.env.befta.local.env')
+      // Override with alternative test stub environment variables (i.e. if using bootWithCcd: need alternative test stub URL)
+      loadEnvFile(execTask, '.env.test.stub.service.env')
+    }
 }
 
 task integration(type: Test) {
@@ -306,12 +332,9 @@ dependencies {
 
 
   // CFTLib dependencies
+  cftlibImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
   cftlibImplementation group: 'org.testcontainers', name: 'testcontainers', version: testcontainersVersion
-
-  cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
-    exclude group: 'junit', module: 'junit'
-    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-  }
+  cftlibAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
 
   // Integration test dependencies
@@ -369,6 +392,8 @@ wrapper {
 }
 
 bootWithCCD {
+  standardInput = System.in
+
   doFirst {
     // NB: must delete befta local run details to force re-import of def file with updated test stub URL
     delete "befta_recent_executions_info_LOCAL.json"
@@ -378,7 +403,7 @@ bootWithCCD {
   }
 
   authMode = uk.gov.hmcts.rse.AuthMode.Local
-  environment("DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd_gw,ccd_gateway,ccd_data,ccd_next_hearing_date_updater")
+  environment("DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd_gw,ccd_gateway,ccd_data,aac_manage_case_assignment,xui_webapp,ccd_case_document_am_api,am_role_assignment_service,ccd_next_hearing_date_updater")
   environment("RSE_LIB_S2S_PORT", 4502)
   environment("XUI_JURISDICTIONS", "BEFTA_MASTER,AUTOTEST1,BEFTA_JURISDICTION_1,BEFTA_JURISDICTION_2,BEFTA_JURISDICTION_3")
 }

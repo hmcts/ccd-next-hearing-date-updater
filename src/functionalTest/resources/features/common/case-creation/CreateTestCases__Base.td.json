@@ -1,6 +1,6 @@
 {
   "_guid_": "CreateTestCases__Base",
-  "_extends_": "Health__Base",
+  "_extends_": "Simple_404_Call",
 
   "specs": [
     "to create test cases",

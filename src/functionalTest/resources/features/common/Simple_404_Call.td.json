@@ -1,0 +1,32 @@
+{
+  "_guid_": "Simple_404_Call",
+  "title": "must return a 404 response when hitting data-store",
+
+  "productName": "CCD Data Store",
+  "operationName": "404 call",
+
+  "method": "GET",
+  "uri": "{{CCD_DATA_STORE_API_BASE_URL}}/404",
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "BeftaMasterCaseworker"
+    }
+  },
+
+  "request": {
+    "headers": {
+      "_extends_": "Common_Request_Headers"
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_404_Response",
+
+    "body": {
+      "message" : "No message available",
+      "path" : "/404"
+    }
+  }
+
+}

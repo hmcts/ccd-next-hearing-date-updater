@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 public enum CustomValueKey {
     TEST_HOOK("testHook"),
+    FUTURE_DATE("FutureDate"),
     VERIFY_HEARING_DATE_TIME_IS_FUTURE_DATE("VerifyHearingDateTimeIsFutureDate"),
     DEFAULT_KEY("DefaultKey");
 

@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -53,14 +55,26 @@ public class JobExecutionStepDefs {
 
         // NB: The ScenarioContext is generated inside the DefaultBackEndFunctionalTestScenarioPlayer.
         // A CustomValueHandler, triggered at the start of the test scenario (e.g. see TestHookHandler
-        // referenced in `Check_Datastore_Health.td.json`), is used to capture and register the existing
+        // referenced in `Trigger_TestHookHandler.td.json`), is used to capture and register the existing
         // ScenarioContext with local BEAN_FACTORY, so it can be shared between both BEFTA DSL players.
         scenarioContext = BEAN_FACTORY.getScenarioContext();
     }
 
+    @Given("the test csv contains case references: {string}")
+    public void csvContainsCaseReferences(final String caseReferences) {
+        final String content = caseReferences.replace(',', '\n');
+        filePath = createCsvFile(content);
+    }
+
     @Given("the test csv contains case references from {string}")
-    public void csvContainsCaseReferences(final String contextName) throws FunctionalTestException {
+    public void csvContainsCaseReferencesFromContext(final String contextName) {
         final String content = buildCsv(contextName);
+        filePath = createCsvFile(content);
+    }
+
+    @Given("the test csv contains case references from {string} plus the following extra case references: {string}")
+    public void csvContainsCaseReferencesPlusExtras(final String contextName, final String extraCaseReferences) {
+        final String content = buildCsv(contextName) + "\n" + extraCaseReferences.replace(',', '\n');
         filePath = createCsvFile(content);
     }
 
@@ -70,18 +84,35 @@ public class JobExecutionStepDefs {
         filePath = createCsvFile(content);
     }
 
-    @When("the next hearing date update job executes")
-    public void theNextHearingDateUpdateJobExecutesForCsv() throws FunctionalTestException {
+    @When("the next hearing date update job executes for CSV")
+    public void theNextHearingDateUpdateJobExecutesForCsv() {
         final String locationParam = String.format("-DFILE_LOCATION=%s", filePath);
 
         executeJob(locationParam);
     }
 
-    @When("the next hearing date update job executes for {string}")
-    public void theNextHearingDateUpdateJobExecutesFor(final String caseType) {
+    @When("the next hearing date update job executes for CSV with maximum CSV limit {string}")
+    public void theNextHearingDateUpdateJobExecutesForCsvWithLimit(final String maxCsvRecords) {
+        final String locationParam = String.format("-DFILE_LOCATION=%s", filePath);
+        final String maxCsvRecordsParam = String.format("-DMAX_CSV_RECORDS=%s", maxCsvRecords);
+
+        executeJob(locationParam, maxCsvRecordsParam);
+    }
+
+    @When("the next hearing date update job executes for case types {string}")
+    public void theNextHearingDateUpdateJobExecutesForCaseTypes(final String caseType) {
         final String caseTypesParam = String.format("-DCASE_TYPES=%s", caseType);
 
         executeJob(caseTypesParam);
+    }
+
+    @When("the next hearing date update job executes for case types {string} with pagination size {string}")
+    public void theNextHearingDateUpdateJobExecutesForCaseTypesWithSize(final String caseType,
+                                                                        final String esQuerySize) {
+        final String caseTypesParam = String.format("-DCASE_TYPES=%s", caseType);
+        final String esQuerySizeParam = String.format("-DES_QUERY_SIZE=%s", esQuerySize);
+
+        executeJob(caseTypesParam, esQuerySizeParam);
     }
 
     @Then("a success exit value is received")
@@ -91,11 +122,35 @@ public class JobExecutionStepDefs {
         Assert.assertEquals("Exit value '" + responseCode + "' is not a success code.", EXIT_SUCCESS, responseCode);
     }
 
+    @Then("a non-success exit value is received")
+    public void verifyThatANonSuccessExitValueResponseWasReceived() {
+        int responseCode = scenarioContext.getTheResponse().getResponseCode();
+        scenario.log("Exit value: " + responseCode);
+        Assert.assertNotEquals("Exit value '" + responseCode + "' is a success code.", EXIT_SUCCESS, responseCode);
+    }
+
     @Then("the following response is logged as output: {string}")
     public void verifyThatJobOutputContained(String lookup) {
-        // NB: output to console from job should be in main context response: see `executeJob`
-        String jobOutput = scenarioContext.getTheResponse().getResponseMessage();
+        String jobOutput = getJobOutput();
+        boolean found = findInJobOutput(jobOutput, lookup);
 
+        Assert.assertTrue("Message '" + lookup + "' not found in job output: \n" + jobOutput, found);
+    }
+
+    @Then("no WARN or ERROR logged in output")
+    public void verifyThatJobOutputContainedNoWarningOrError() {
+        String jobOutput = getJobOutput();
+        boolean found = findInJobOutput(jobOutput, "\\s(?i)(warn|error)\\s");
+
+        if (!found) {
+            // log success state
+            scenario.log("No message of type WARN or ERROR found in job output.");
+        }
+
+        Assert.assertFalse("Unexpected WARN or ERROR message found in job output: \n" + jobOutput, found);
+    }
+
+    private boolean findInJobOutput(String jobOutput, String lookup) {
         Pattern pattern = Pattern.compile("^.*" + lookup + ".*$", Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(jobOutput);
         boolean found = false;
@@ -105,8 +160,12 @@ public class JobExecutionStepDefs {
             found = true;
         }
 
-        Assert.assertTrue("Message '" + lookup + "' not found in job output: \n" + jobOutput,
-                          found);
+        return found;
+    }
+
+    private String getJobOutput() {
+        // NB: output to console from job should be in main context response: see `executeJob`
+        return scenarioContext.getTheResponse().getResponseMessage();
     }
 
     private ResponseData executeCommand(final String... command) {
@@ -142,7 +201,7 @@ public class JobExecutionStepDefs {
         }
     }
 
-    private void executeJob(final String param) {
+    private void executeJob(final String... params) {
         BeftaUtils.defaultLog("===================== About to execute "
                                   + "ccd-next-hearing-date-updater =====================");
 
@@ -155,8 +214,15 @@ public class JobExecutionStepDefs {
         Assert.assertEquals("Java version check failed with exit value '" + versionResponse.getResponseCode() + "'.",
                             EXIT_SUCCESS, versionResponse.getResponseCode());
 
+        BeftaUtils.defaultLog(scenario,"Executing job with params: \n\t" + String.join("\n\t", params));
+
         // run job direct from jar
-        ResponseData jobResponse = executeCommand(getJavaPath(), "-jar", param, executableJar);
+        ArrayList<String> command = new ArrayList<>();
+        command.add(getJavaPath());
+        command.add("-jar");
+        command.addAll(Arrays.stream(params).toList());
+        command.add(executableJar);
+        ResponseData jobResponse = executeCommand(command.toArray(new String[0]));
 
         // record output response to scenarioContext for verification later
         this.scenarioContext.setTheResponse(jobResponse);

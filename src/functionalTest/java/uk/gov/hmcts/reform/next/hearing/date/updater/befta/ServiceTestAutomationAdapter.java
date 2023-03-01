@@ -7,6 +7,7 @@ import uk.gov.hmcts.befta.player.BackEndFunctionalTestScenarioContext;
 import uk.gov.hmcts.befta.util.BeftaUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.befta.custom.CustomValueHandler;
 import uk.gov.hmcts.reform.next.hearing.date.updater.befta.custom.CustomValueKey;
+import uk.gov.hmcts.reform.next.hearing.date.updater.befta.custom.FutureDateHandler;
 import uk.gov.hmcts.reform.next.hearing.date.updater.befta.custom.TestHookHandler;
 import uk.gov.hmcts.reform.next.hearing.date.updater.befta.custom.VerifyHearingDateTimeIsFutureDateHandler;
 
@@ -19,6 +20,7 @@ public class ServiceTestAutomationAdapter extends DefaultTestAutomationAdapter {
 
     private final List<CustomValueHandler> customValueHandlers = List.of(
         new TestHookHandler(),
+        new FutureDateHandler(),
         new VerifyHearingDateTimeIsFutureDateHandler()
     );
 

@@ -1,34 +1,11 @@
 {
   "_guid_": "GetCreateToken_NextHearingDate",
-  "_extends_": "GetCreateToken__Base",
+  "_extends_": "GetCreateToken__TestData__Base",
 
-  "specs": [
-    "to create a token for case creation",
-    "As a prerequisite"
-  ],
-
-  "users": {
-    "invokingUser": {
-      "_extends_": "BeftaMasterCaseworker"
-    }
-  },
 
   "request": {
     "pathVariables": {
-      "jid": "BEFTA_MASTER",
-      "ctid": "FT_NextHearingDate",
-      "etid": "CREATE"
-    }
-  },
-
-
-  "expectedResponse": {
-    "body": {
-      "case_details": {
-        "jurisdiction": "BEFTA_MASTER",
-        "case_type_id": "FT_NextHearingDate"
-      },
-      "event_id": "CREATE"
+      "ctid": "FT_NextHearingDate"
     }
   }
 }
