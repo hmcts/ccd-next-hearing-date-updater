@@ -10,7 +10,10 @@ plugins {
   id 'uk.gov.hmcts.java' version '0.12.41'
   id 'com.github.hmcts.rse-cft-lib' version '0.19.566'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.23'
+  id "info.solidsoft.pitest" version '1.7.4'
 }
+
+apply plugin: "info.solidsoft.pitest"
 
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
@@ -236,6 +239,8 @@ sonarqube {
     property "sonar.projectName", "Reform :: ccd-next-hearing-date-updater"
     property "sonar.projectKey", "uk.gov.hmcts.reform:ccd-next-hearing-date-updater"
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
+    property "sonar.pitest.mode", "reuseReport"
+    property "sonar.pitest.reportsDirectory", "build/reports/pitest"
   }
 }
 
@@ -264,6 +269,37 @@ repositories {
   maven { url 'https://jitpack.io' }
 }
 
+pitest {
+  pitestVersion.set('1.7.4')
+  junit5PluginVersion.set('0.15')
+  targetClasses = ['uk.gov.hmcts.reform.*']
+  excludedClasses = [
+    'uk.gov.hmcts.reform.ccd.madeup.*'
+  ]
+  threads = 10
+  enableDefaultIncrementalAnalysis = true
+  outputFormats = ['XML', 'HTML']
+  timestampedReports = false
+  mutationThreshold = 50
+  timeoutConstInMillis = 30000
+  mutators.set([
+    'CONDITIONALS_BOUNDARY',
+    'INCREMENTS',
+    'INVERT_NEGS',
+    'MATH',
+    'NEGATE_CONDITIONALS',
+    'VOID_METHOD_CALLS',
+    'EMPTY_RETURNS',
+    'FALSE_RETURNS',
+    'NULL_RETURNS',
+    'PRIMITIVE_RETURNS',
+    'TRUE_RETURNS',
+    'REMOVE_CONDITIONALS'
+  ])
+}
+
+project.tasks['pitest'].group = "Verification"
+
 ext {
   reformLogging = '6.0.1'
   lombokVersion = '1.18.24'
@@ -274,6 +310,9 @@ ext {
   wiremockVersion = '2.35.0'
   elasticsearchVersion = '7.17.8'
   testcontainersVersion = '1.17.6'
+  gradlePitestVersion = '1.9.0'
+  pitestVersion = '1.9.11'
+  sonarPitestVersion = '0.5'
 }
 
 dependencies {
@@ -324,6 +363,9 @@ dependencies {
   }
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
+  testImplementation group: 'org.pitest', name: 'pitest', version: pitestVersion
+  testImplementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: gradlePitestVersion
+  testImplementation group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', version: sonarPitestVersion
 
   // CFTLib dependencies
   cftlibImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
