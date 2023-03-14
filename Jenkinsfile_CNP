@@ -2,7 +2,6 @@
 import uk.gov.hmcts.contino.AppPipelineDsl
 import uk.gov.hmcts.contino.GithubAPI
 import uk.gov.hmcts.contino.GradleBuilder
-import uk.gov.hmcts.contino.HealthChecker
 
 properties([
   [
@@ -16,7 +15,7 @@ properties([
   disableConcurrentBuilds()
 ])
 
-@Library("Infrastructure")
+@Library("Infrastructure@HMAN-514_functionalTest_nonServiceApp")
 
 def type = "java"
 def product = "ccd"
@@ -91,8 +90,8 @@ withPipeline(type, product, component) {
   }
   onPR {
     enableSlackNotifications('#ccd-pr-builds')
+
     env.ENV='preview'
-    env.TEST_URL="https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal" // This is really not needed but here as a hack around TLS url
     env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.TEST_STUB_SERVICE_BASE_URL = "http://ccd-next-hearing-date-updater-pr-${CHANGE_ID}-ccd-test-stubs-service" // NB : when def file is imported this will lead to data-store.preview -> test-stub.preview.
@@ -104,7 +103,6 @@ withPipeline(type, product, component) {
   }
   onNonPR {
     env.ENV='aat'
-    env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
     env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
     env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
   }
@@ -114,6 +112,8 @@ withPipeline(type, product, component) {
   loadVaultSecrets(secrets)
   nonServiceApp()
   syncBranchesWithMaster(branchesToSync)
+
+  enableFullFunctionalTestNonServiceApp(env.CCD_DATA_STORE_API_BASE_URL)
 
   afterAlways('test') {
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
@@ -141,32 +141,43 @@ withPipeline(type, product, component) {
     junit '**/test-results/test/*.xml'
   }
 
-  afterAlways('akschartsinstall') {
+  before('functionalTest:preview') {
+    // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
+    env.IDAM_API_URL = env.IDAM_API_URL_BASE
 
-     // check data-store instance is up
-    def healthChecker = new HealthChecker(this)
-    healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
-
-    try {
-      // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
-      env.IDAM_API_URL = env.IDAM_API_URL_BASE
-
-      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true`
-      env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
-
-      builder.functionalTest()
-    } finally {
-
-      publishHTML target: [
-        allowMissing         : true,
-        alwaysLinkToLastBuild: true,
-        keepAll              : true,
-        reportDir            : "build/reports/tests/functional",
-        reportFiles          : "overview-features.html,overview-failures.html,",
-        reportTitles         : "Features,Failures",
-        reportName           : "Next Hearing Date Updater Functional Test Report"
-      ]
-      junit '**/test-results/functional/*.xml'
-    }
+    // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true`
+    env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
   }
+
+  before('functionalTest:aat') {
+    // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
+    env.IDAM_API_URL = env.IDAM_API_URL_BASE
+  }
+
+  afterAlways('functionalTest:preview') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/functional",
+      reportFiles          : "overview-features.html,overview-failures.html,",
+      reportTitles         : "Features,Failures",
+      reportName           : "Next Hearing Date Updater Functional Test Report"
+    ]
+    junit '**/test-results/functional/*.xml'
+  }
+
+  afterAlways('functionalTest:aat') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/functional",
+      reportFiles          : "overview-features.html,overview-failures.html,",
+      reportTitles         : "Features,Failures",
+      reportName           : "Next Hearing Date Updater Functional Test Report"
+    ]
+    junit '**/test-results/functional/*.xml'
+  }
+
 }
