@@ -61,8 +61,8 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 env.CI_BUILD = true
 
 // Set required environment variables to run functional tests apart from one in vaults.
-env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.preview.platform.hmcts.net"
+env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.preview.platform.hmcts.net"
 env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
 env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
 env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
@@ -92,9 +92,9 @@ withPipeline(type, product, component) {
   onPR {
     enableSlackNotifications('#ccd-pr-builds')
     env.ENV='preview'
-    env.TEST_URL="https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal" // This is really not needed but here as a hack around TLS url
-    env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-    env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.TEST_URL="https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.preview.platform.hmcts.net" // This is really not needed but here as a hack around TLS url
+    env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.preview.platform.hmcts.net"
+    env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.preview.platform.hmcts.net"
     env.TEST_STUB_SERVICE_BASE_URL = "http://ccd-next-hearing-date-updater-pr-${CHANGE_ID}-ccd-test-stubs-service" // NB : when def file is imported this will lead to data-store.preview -> test-stub.preview.
 
     def githubApi = new GithubAPI(this)
@@ -104,9 +104,9 @@ withPipeline(type, product, component) {
   }
   onNonPR {
     env.ENV='aat'
-    env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
-    env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
-    env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+    env.TEST_URL="http://ccd-data-store-api-aat.preview.platform.hmcts.net"
+    env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.preview.platform.hmcts.net"
+    env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.preview.platform.hmcts.net"
   }
 
   enableAksStagingDeployment()
