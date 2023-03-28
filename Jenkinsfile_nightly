@@ -54,8 +54,8 @@ env.CI_BUILD = true
 
 withNightlyPipeline(type, product, component) {
   // Set required environment variables to run functional tests apart from one in vaults.
-  env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-  env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+  env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.preview.platform.hmcts.net"
+  env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.preview.platform.hmcts.net"
   env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
   env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
   env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
@@ -78,9 +78,9 @@ withNightlyPipeline(type, product, component) {
 
   // apply standard `onNonPR` env variables for nightly
   env.ENV='aat'
-  env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
-  env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
-  env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+  env.TEST_URL="http://ccd-data-store-api-aat.preview.platform.hmcts.net"
+  env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.preview.platform.hmcts.net"
+  env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.preview.platform.hmcts.net"
 
 
   enableAksStagingDeployment()
