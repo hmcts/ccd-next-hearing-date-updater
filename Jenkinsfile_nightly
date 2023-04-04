@@ -78,9 +78,9 @@ withNightlyPipeline(type, product, component) {
 
   // apply standard `onNonPR` env variables for nightly
   env.ENV='aat'
-  env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
-  env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
-  env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+  env.TEST_URL="http://ccd-data-store-api-aat.aat..platform.hmcts.net"
+  env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.aat..platform.hmcts.net"
+  env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.aat..platform.hmcts.net"
 
 
   enableAksStagingDeployment()
