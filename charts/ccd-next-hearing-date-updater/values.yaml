@@ -30,7 +30,7 @@ job:
     IDAM_S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
     CCD_DATA_STORE_API_BASE_URL: http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
     # CASE_TYPES: <TBD in HMAN-344>
-    CASE_TYPES: FT_NextHearingDate
+    CASE_TYPES: FT_NextHearingDate,PRLAPPS
     MAX_CSV_RECORDS: 10000
     ES_QUERY_SIZE: 100
     HEARING_NEXT_DAY_CRON_JOB_PROCESSING_ENABLED: "true"
