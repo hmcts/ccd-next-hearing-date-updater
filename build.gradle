@@ -397,7 +397,7 @@ dependencies {
   functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.4.0'
 
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.11'
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '20.2.0.rdm.8934.1'
   testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.19.12'
 
 }
