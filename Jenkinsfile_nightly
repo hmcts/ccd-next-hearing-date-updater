@@ -4,7 +4,7 @@ import uk.gov.hmcts.contino.GradleBuilder
 properties([
   // H allow predefined but random minute see https://en.wikipedia.org/wiki/Cron#Non-standard_characters
   //CCD-3539 (Stop running Nightly builds on weekends) - At 05:00 on every day-of-week from Monday through Friday.  Original schedule was 'H 05 * * *'
-  pipelineTriggers([cron('H 05 * * 1-5')])
+  pipelineTriggers([cron('H 08 * * 1-5')])
 ])
 
 @Library("Infrastructure")
