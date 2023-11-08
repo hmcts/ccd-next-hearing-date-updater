@@ -334,7 +334,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
 
-  implementation group: 'org.yaml', name: 'snakeyaml', version: '1.33'
+  implementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
