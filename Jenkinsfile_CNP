@@ -145,7 +145,7 @@ withPipeline(type, product, component) {
 
      // check data-store instance is up
     def healthChecker = new HealthChecker(this)
-    healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 80)
+    healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
 
     try {
       // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
