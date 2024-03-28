@@ -178,6 +178,25 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
         assertTrue(getLogs().isEmpty());
     }
 
+    @Test // CCD-5181 AC01
+    void createCaseEventsWhenStartEventResponseHasNextHearingDetailsIsNull() {
+
+        // GIVEN
+        appendLoggerFor(NextHearingDetails.class);
+        stubReturn200TriggerStartEvent(null);
+        wiremockFixtures.stubReturn200SubmitCaseEvent(CASE_REFERENCE);
+
+        // WHEN
+        underTest.createCaseEvents(List.of(CASE_REFERENCE));
+
+        // THEN
+        wiremockFixtures.verifyGetRequest(String.format(TRIGGER_START_EVENT_URL, CASE_REFERENCE, EVENT_ID));
+        // NB: when NextHearingDetails is null proceed with case event submission
+        wiremockFixtures.verifyPostRequest(String.format(SUBMIT_CASE_EVENT_URL, CASE_REFERENCE));
+
+        assertTrue(getLogs().isEmpty());
+    }
+
     @Test // HMAN-322 AC02
     void errorsLoggedWhenStartEventFails() {
 
@@ -220,7 +239,7 @@ class CcdCaseEventServiceIT extends WireMockBootstrap {
 
         CaseDetails caseDetails = CaseDetails.builder()
             .id(Long.valueOf(CASE_REFERENCE))
-            .data(Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
+            .data(nextHearingDetails == null ? Map.of() : Map.of(NEXT_HEARING_DETAILS_FIELD_NAME, nextHearingDetails))
             .build();
 
         StartEventResponse startEventResponse = StartEventResponse.builder()
