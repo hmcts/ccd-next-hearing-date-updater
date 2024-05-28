@@ -306,7 +306,7 @@ ext {
   lombokVersion = '1.18.24'
   jacksonVersion = '2.14.2'
   springFrameworkVersion = '5.3.27'
-  springFrameworkSecurityVersion = '5.7.10'
+  springFrameworkSecurityVersion = '5.8.10'
   cucumberVersion = '5.7.0'
   wiremockVersion = '2.35.0'
   elasticsearchVersion = '7.17.8'
