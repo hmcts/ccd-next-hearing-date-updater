@@ -350,7 +350,7 @@ dependencies {
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
 
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
-  implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+  implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
 
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.1.2'
