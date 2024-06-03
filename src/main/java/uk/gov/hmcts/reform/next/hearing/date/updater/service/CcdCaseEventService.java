@@ -60,7 +60,7 @@ public class CcdCaseEventService {
     }
 
     private String getStringFromJsonMap(Map<String, Object> jsonMap, String key) {
-        if (jsonMap.containsKey(key)) {
+        if (jsonMap != null && jsonMap.containsKey(key)) {
             Object value = jsonMap.get(key);
 
             if (value != null && !value.toString().isEmpty()) {
