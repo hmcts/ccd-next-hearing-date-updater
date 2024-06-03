@@ -125,7 +125,6 @@ task functional(type: JavaExec) {
   mainClass = 'uk.gov.hmcts.reform.next.hearing.date.updater.befta.ServiceBeftaMain'
   classpath += sourceSets.functionalTest.runtimeClasspath + sourceSets.main.output + sourceSets.test.output
   args = [
-    '--strict',
     '--threads', '1', // Setting this to single thread as the application is not designed to have the FTs run in parallel
     '--plugin', "json:${rootDir}/target/cucumber.json",
     '--plugin', "junit:${buildDir}/test-results/functional/cucumber.xml",
