@@ -238,7 +238,7 @@ sonarqube {
   properties {
     property "sonar.projectName", "Reform :: ccd-next-hearing-date-updater"
     property "sonar.projectKey", "uk.gov.hmcts.reform:ccd-next-hearing-date-updater"
-    property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
+    property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.outputLocation}"
     property "sonar.coverage.exclusions", "**/ccd/ApplicationBootstrap.java"
     property "sonar.pitest.mode", "reuseReport"
     property "sonar.pitest.reportsDirectory", "build/reports/pitest"
