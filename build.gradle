@@ -66,13 +66,6 @@ configurations {
   cftlibRuntimeClasspath.extendsFrom(runtimeClasspath)
 }
 
-configurations.all {
-  resolutionStrategy.dependencySubstitution {
-    substitute module('ch.qos.logback:logback-classic:1.2.12') with module('ch.qos.logback:logback-classic:1.3.14')
-    substitute module('ch.qos.logback:logback-core:1.2.12') using module('ch.qos.logback:logback-core:1.3.14')
-  }
-}
-
 idea {
   module {
     // config to allow Intellij to mark test source and resource files correctly to help linting tools
@@ -326,17 +319,7 @@ ext {
 dependencies {
 
   // Implementation dependencies
-  implementation'org.springframework.boot:spring-boot-starter:2.7.18'
-  constraints {
-
-    implementation('org.springframework.boot:spring-boot-starter-logging:2.7.18'){}
-
-    implementation('ch.qos.logback:logback-core'){
-      version{
-        strictly '1.3.14'
-      }
-    }
-  }
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
 
 
   implementation group: 'org.springframework', name:'spring-webmvc', version: springFrameworkVersion
@@ -345,9 +328,7 @@ dependencies {
   implementation group:'org.springframework.security', name: 'spring-security-core', version: springFrameworkSecurityVersion
   implementation group:'org.springframework.security', name: 'spring-security-crypto', version: springFrameworkSecurityVersion
   implementation group:'org.springframework.security', name: 'spring-security-oauth2-client', version: springFrameworkSecurityVersion
-  constraints{
-    implementation('com.nimbusds:nimbus-jose-jwt:9.37.2'){}
-  }
+
   implementation group:'org.springframework.security', name: 'spring-security-oauth2-core', version: springFrameworkSecurityVersion
   implementation group:'org.springframework.security', name: 'spring-security-oauth2-jose', version: springFrameworkSecurityVersion
   implementation group:'org.springframework.security', name: 'spring-security-oauth2-resource-server', version: springFrameworkSecurityVersion
@@ -359,19 +340,12 @@ dependencies {
   implementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
-  implementation('com.github.hmcts.java-logging:logging-appinsights:6.0.1'){
-    exclude group: 'ch.qos.logback', module: 'logback-core'
-    exclude group: 'ch.qos.logback', module: 'logback-classic'
-  }
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
 
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
 
-  implementation('org.springframework.cloud:spring-cloud-starter-openfeign:3.1.5'){
-    exclude group: 'ch.qos.logback', module: 'logback-classic'
-    exclude group: 'ch.qos.logback', module: 'logback-core'
-  }
-
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.5'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
   implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
