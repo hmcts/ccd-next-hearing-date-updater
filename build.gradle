@@ -336,6 +336,8 @@ dependencies {
 
   implementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
 
+  implementation group: 'org.json', name: 'json', version: '20240303'
+
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
