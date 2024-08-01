@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater;
 
 import com.microsoft.applicationinsights.TelemetryClient;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
