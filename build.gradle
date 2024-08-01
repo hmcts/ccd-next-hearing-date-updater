@@ -348,7 +348,7 @@ dependencies {
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.12' // CVE-2023-6378
   implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.4.12' // CVE-2023-6378
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
+  implementation group: 'com.microsoft.azure', name: 'applicationinsights-core', version: '3.4.11'
 
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
   implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
