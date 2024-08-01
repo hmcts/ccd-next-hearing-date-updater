@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater;
 
 import com.microsoft.applicationinsights.TelemetryClient;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorDuringExecutionException.EXIT_FAILURE;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,9 +36,15 @@ class ApplicationBootstrapTest {
     @InjectMocks
     private ApplicationBootstrap underTest;
 
+    @BeforeEach
+    void setUp() {
+        openMocks(this);
+        underTest = new ApplicationBootstrap(nextHearingDateUpdaterService, client);
+        ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
+    }
+
     @Test
     void testShouldRunExecutor() throws Exception {
-        ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
         doNothing().when(nextHearingDateUpdaterService).execute();
         doNothing().when(client).flush();
 
@@ -47,7 +56,6 @@ class ApplicationBootstrapTest {
 
     @Test
     void testShouldRunExecutorWithException() throws Exception {
-        ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
         doThrow(new RuntimeException("test")).when(nextHearingDateUpdaterService).execute();
         doNothing().when(client).flush();
 
