@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater;
 
 import ch.qos.logback.classic.Level;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
 import org.testcontainers.containers.GenericContainer;
@@ -16,8 +18,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import static uk.gov.hmcts.reform.next.hearing.date.updater.ContainersShutdownListener.EXIT_COMMAND;
 
