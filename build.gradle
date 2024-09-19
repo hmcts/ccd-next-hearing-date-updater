@@ -327,6 +327,8 @@ dependencies {
 
   // Implementation dependencies
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
+
+
   implementation group: 'org.springframework', name:'spring-webmvc', version: springFrameworkVersion
 
   implementation group: 'org.springframework.security', name: 'spring-security-config', version: springFrameworkSecurityVersion
@@ -337,6 +339,7 @@ dependencies {
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose', version: springFrameworkSecurityVersion
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-resource-server', version: springFrameworkSecurityVersion
   implementation group: 'org.springframework.security', name: 'spring-security-web', version: springFrameworkSecurityVersion
+
   implementation group: 'org.springframework.security', name: 'spring-security-rsa', version: '1.1.1'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
@@ -346,6 +349,7 @@ dependencies {
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
+
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
 
