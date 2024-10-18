@@ -10,7 +10,6 @@ import org.junit.Assert;
 import uk.gov.hmcts.befta.data.ResponseData;
 import uk.gov.hmcts.befta.exception.FunctionalTestException;
 import uk.gov.hmcts.befta.util.BeftaUtils;
-import uk.gov.hmcts.befta.util.EnvironmentVariableUtils;
 import uk.gov.hmcts.reform.next.hearing.date.updater.utils.StreamGobbler;
 
 import java.io.IOException;
