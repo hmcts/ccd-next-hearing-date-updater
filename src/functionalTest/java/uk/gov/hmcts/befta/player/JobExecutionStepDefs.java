@@ -32,7 +32,7 @@ import static uk.gov.hmcts.reform.next.hearing.date.updater.FunctionalTestFixtur
 @SuppressWarnings("PMD")
 public class JobExecutionStepDefs {
 
-    private static final String ALT_JAVA_HOME = EnvironmentVariableUtils.getOptionalVariable("ALT_JAVA_HOME");
+    private static final String JAVA_EXECUTABLE = "java";
 
     private static final int EXIT_SUCCESS = 0;
 
@@ -209,7 +209,7 @@ public class JobExecutionStepDefs {
                                                    System.getProperty("user.dir"));
 
         // log java version information
-        ResponseData versionResponse = executeCommand(getJavaPath(), "-version");
+        ResponseData versionResponse = executeCommand(JAVA_EXECUTABLE, "-version");
         BeftaUtils.defaultLog("java -version\n" + versionResponse.getResponseMessage());
         Assert.assertEquals("Java version check failed with exit value '" + versionResponse.getResponseCode() + "'.",
                             EXIT_SUCCESS, versionResponse.getResponseCode());
@@ -218,7 +218,7 @@ public class JobExecutionStepDefs {
 
         // run job direct from jar
         ArrayList<String> command = new ArrayList<>();
-        command.add(getJavaPath());
+        command.add(JAVA_EXECUTABLE);
         command.add("-jar");
         command.addAll(Arrays.stream(params).toList());
         command.add(executableJar);
@@ -270,13 +270,4 @@ public class JobExecutionStepDefs {
     private String getFilename() {
         return scenarioContext.getParentContext().getCurrentScenarioTag() + ".csv";
     }
-
-    private String getJavaPath() {
-        if (ALT_JAVA_HOME == null) {
-            return "java";
-        } else {
-            return ALT_JAVA_HOME + "/bin/java";
-        }
-    }
-
 }
