@@ -12,7 +12,7 @@ This microservice implements `The Next Hearing Date` feature outlined in [this w
 ## Getting Started
 
 ### Prerequisites
-- [JDK 17](https://openjdk.org/projects/jdk/17/)
+- [JDK 21](https://openjdk.org/projects/jdk/21/)
 - [Docker](https://www.docker.com)
 
 ### Building the application
