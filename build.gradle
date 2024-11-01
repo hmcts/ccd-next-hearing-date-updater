@@ -21,7 +21,7 @@ version = '0.0.1'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
@@ -309,11 +309,11 @@ ext {
   set('jackson.version', '2.16.0')
   set('snakeyaml.version', '2.2')
   reformLogging = '6.0.1'
-  lombokVersion = '1.18.24'
+  lombokVersion = '1.18.34'
   cucumberVersion = '5.7.0'
   wiremockVersion = '2.35.0'
   elasticsearchVersion = '7.17.8'
-  testcontainersVersion = '1.17.6'
+  testcontainersVersion = '1.20.2'
   gradlePitestVersion = '1.9.0'
   pitestVersion = '1.9.11'
   sonarPitestVersion = '0.5'
@@ -328,8 +328,12 @@ dependencyManagement {
 dependencies {
 
   // Implementation dependencies
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
+  
+  
+  // Spring
   implementation group: 'org.springframework', name:'spring-webmvc'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'
   implementation group: 'org.springframework.security', name: 'spring-security-config'
   implementation group: 'org.springframework.security', name: 'spring-security-core'
   implementation group: 'org.springframework.security', name: 'spring-security-crypto'
@@ -339,12 +343,13 @@ dependencies {
   implementation group: 'org.springframework.security', name: 'spring-security-oauth2-resource-server'
   implementation group: 'org.springframework.security', name: 'spring-security-web'
   implementation group: 'org.springframework.security', name: 'spring-security-rsa'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'
+
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
+
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.12' // CVE-2023-6378
   implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.4.12' // CVE-2023-6378
