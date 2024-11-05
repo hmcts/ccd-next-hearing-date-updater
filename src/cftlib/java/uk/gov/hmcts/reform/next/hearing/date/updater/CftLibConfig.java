@@ -67,11 +67,12 @@ public class CftLibConfig extends ContainersBootstrap implements CFTLibConfigure
             process.waitFor();
 
             String result;
-            Scanner s = new Scanner(process.getInputStream()).useDelimiter("\\A");
-            result = s.hasNext() ? s.next() : null;
+            Scanner scanner = new Scanner(process.getInputStream()).useDelimiter("\\A");
+            result = scanner.hasNext() ? scanner.next() : null;
             log.info("localDataSetup output: \n\n{}", result);
 
             log.info("Finished priming CCD environment......................");
+            scanner.close();
 
         } catch (IOException | InterruptedException e) {
             log.error("Failed priming CCD environment:", e);
