@@ -305,7 +305,7 @@ ext {
   set('springCloudVersion', "2021.0.8")
   reformLogging = '6.0.1'
   lombokVersion = '1.18.34'
-  jacksonVersion = '2.14.2'
+  jacksonVersion = '2.16.0'
   springFrameworkVersion = '5.3.27'
   springFrameworkSecurityVersion = '5.8.10'
   cucumberVersion = '5.7.0'
