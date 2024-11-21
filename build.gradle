@@ -312,8 +312,8 @@ ext {
   wiremockVersion = '2.35.0'
   elasticsearchVersion = '7.17.8'
   testcontainersVersion = '1.20.2'
-  gradlePitestVersion = '1.9.0'
-  pitestVersion = '1.9.11'
+  gradlePitestVersion = '1.15.0'
+  pitestVersion = '1.15.0'
   sonarPitestVersion = '0.5'
 }
 
