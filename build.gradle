@@ -271,7 +271,7 @@ repositories {
 }
 
 pitest {
-  pitestVersion.set('1.7.4')
+  pitestVersion.set('1.15.0')
   junit5PluginVersion.set('0.15')
   targetClasses = ['uk.gov.hmcts.reform.*']
   excludedClasses = [
