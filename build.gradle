@@ -376,8 +376,12 @@ dependencies {
   }
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
-  testImplementation group: 'org.pitest', name: 'pitest', version: pitestVersion
-  testImplementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: gradlePitestVersion
+  //testImplementation group: 'org.pitest', name: 'pitest', version: pitestVersion
+  testImplementation 'org.pitest:pitest:1.17.1'
+
+  //testImplementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: gradlePitestVersion
+  testImplementation 'info.solidsoft.pitest:info.solidsoft.pitest.gradle.plugin:1.7.4'
+  
   testImplementation group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', version: sonarPitestVersion
 
   // CFTLib dependencies
