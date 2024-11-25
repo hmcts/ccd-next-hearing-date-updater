@@ -1,19 +1,10 @@
 #!groovy
-import uk.gov.hmcts.contino.AppPipelineDsl
-import uk.gov.hmcts.contino.GithubAPI
 import uk.gov.hmcts.contino.GradleBuilder
-import uk.gov.hmcts.contino.HealthChecker
 
 properties([
-  [
-    $class       : 'GithubProjectProperty',
-    displayName  : 'Next Hearing Date Updater',
-    projectUrlStr: 'https://github.com/hmcts/ccd-next-hearing-date-updater'
-  ],
-  pipelineTriggers([
-    [$class: 'GitHubPushTrigger']
-  ]),
-  disableConcurrentBuilds()
+  // H allow predefined but random minute see https://en.wikipedia.org/wiki/Cron#Non-standard_characters
+  //CCD-3539 (Stop running Nightly builds on weekends) - At 05:00 on every day-of-week from Monday through Friday.  Original schedule was 'H 05 * * *'
+  pipelineTriggers([cron('H 08 * * 1-5')])
 ])
 
 @Library("Infrastructure")
@@ -21,7 +12,6 @@ properties([
 def type = "java"
 def product = "ccd"
 def component = "next-hearing-date-updater"
-def branchesToSync = ['demo','perftest']
 
 def secrets = [
   'rpx-${env}': [
@@ -58,98 +48,65 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
   ]
 }
 
-env.CI_BUILD = true
-
-// Set required environment variables to run functional tests apart from one in vaults.
-env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
-env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
-env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
-env.BEFTA_OAUTH2_CLIENT_ID_OF_XUIWEBAPP = "xuiwebapp"
-env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
-env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
-env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
-
-// NB: legacy config for def file import
-env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
-env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
-env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
-
-// temporary workaround for platform changes: turn BEFTA header checks to warning mode
-env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
-
 GradleBuilder builder = new GradleBuilder(this, product)
 
-withPipeline(type, product, component) {
+env.CI_BUILD = true
 
-  onMaster {
-    enableSlackNotifications('#ccd-master-builds')
-  }
-  onPR {
-    enableSlackNotifications('#ccd-pr-builds')
-    env.ENV='preview'
-    env.TEST_URL="https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.preview.platform.hmcts.net" // This is really not needed but here as a hack around TLS url
-    env.CCD_DATA_STORE_API_BASE_URL = "https://ccd-data-store-api-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.preview.platform.hmcts.net"
-    env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-ccd-next-hearing-date-updater-pr-${CHANGE_ID}.preview.platform.hmcts.net"
-    env.TEST_STUB_SERVICE_BASE_URL = "http://ccd-next-hearing-date-updater-pr-${CHANGE_ID}-ccd-test-stubs-service" // NB : when def file is imported this will lead to data-store.preview -> test-stub.preview.
+withNightlyPipeline(type, product, component) {
+  // Set required environment variables to run functional tests apart from one in vaults.
+  env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+  env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+  env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+  env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
+  env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
+  env.BEFTA_OAUTH2_CLIENT_ID_OF_XUIWEBAPP = "xuiwebapp"
+  env.BEFTA_OAUTH2_REDIRECT_URI_OF_XUIWEBAPP = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
+  env.BEFTA_OAUTH2_ACCESS_TOKEN_TYPE_OF_XUIWEBAPP = "OIDC"
+  env.BEFTA_OAUTH2_SCOPE_VARIABLES_OF_XUIWEBAPP = "profile openid roles manage-user create-user search-user"
 
-    def githubApi = new GithubAPI(this)
-    if (!githubApi.getLabelsbyPattern(env.BRANCH_NAME, "keep-helm")) {
-        //enableCleanupOfHelmReleaseAlways()
-    }
-  }
-  onNonPR {
-    env.ENV='aat'
-    env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
-    env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
-    env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
-  }
+  // NB: legacy config for def file import
+  env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
+  env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
+  env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
+
+  // temporary workaround for platform changes: turn BEFTA header checks to warning mode
+  env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
+
+
+  // apply standard `onNonPR` env variables for nightly
+  env.ENV='aat'
+  env.TEST_URL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
+  env.CCD_DATA_STORE_API_BASE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
+  env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+
 
   enableAksStagingDeployment()
   disableLegacyDeployment()
   loadVaultSecrets(secrets)
   nonServiceApp()
-  syncBranchesWithMaster(branchesToSync)
+  enableMutationTest()
+  enableFullFunctionalTest()
 
-  afterAlways('test') {
-    // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/integration",
-      reportFiles          : "index.html",
-      reportName           : "Next Hearing Date Updater Integration Tests Report"
-    ]
-    junit '**/test-results/integration/*.xml'
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/test",
-      reportFiles          : "index.html",
-      reportName           : "Next Hearing Date Updater Unit Tests Report"
-    ]
-    junit '**/test-results/test/*.xml'
+  afterAlways('fortify-scan') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
   }
 
-  afterAlways('akschartsinstall') {
+  afterAlways('mutationTest') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'functional-output/**/*'
+  }
 
-     // check data-store instance is up
-    def healthChecker = new HealthChecker(this)
-    healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
+  before('fullFunctionalTest') {
+    echo "Loading the secrets"
+    loadVaultSecrets(secrets)
 
+
+    // Execute functional tests
+    echo "Just waiting a while to ensure that the pod has run the job"
+    sh "sleep 30s"
+    echo "Verifying that functional test run correctly"
     try {
-      // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
+      // NB: override IDAM_API_URL late as per `Jenkinsfile_CNP` tests
       env.IDAM_API_URL = env.IDAM_API_URL_BASE
-
-      // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true`
-      env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true
 
       builder.functionalTest()
     } finally {
