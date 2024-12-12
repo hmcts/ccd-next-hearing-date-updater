@@ -76,9 +76,6 @@ env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.ne
 env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
 env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
 
-// alternative JAVA_HOME to run job under
-env.ALT_JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
-
 // temporary workaround for platform changes: turn BEFTA header checks to warning mode
 env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
 
@@ -99,7 +96,7 @@ withPipeline(type, product, component) {
 
     def githubApi = new GithubAPI(this)
     if (!githubApi.getLabelsbyPattern(env.BRANCH_NAME, "keep-helm")) {
-        //enableCleanupOfHelmReleaseAlways()
+      //enableCleanupOfHelmReleaseAlways()
     }
   }
   onNonPR {
@@ -143,7 +140,7 @@ withPipeline(type, product, component) {
 
   afterAlways('akschartsinstall') {
 
-     // check data-store instance is up
+    // check data-store instance is up
     def healthChecker = new HealthChecker(this)
     healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
 
