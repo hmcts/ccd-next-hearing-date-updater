@@ -10,11 +10,8 @@ plugins {
   id 'uk.gov.hmcts.java' version '0.12.57'
   id 'com.github.hmcts.rse-cft-lib' version '0.19.1214'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
-  id 'info.solidsoft.pitest' version '1.15.0'
-
+  id 'info.solidsoft.pitest' version '1.15.0' apply false
 }
-
-apply plugin: "info.solidsoft.pitest"
 
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
@@ -242,6 +239,7 @@ sonarqube {
     property "sonar.coverage.exclusions", "**/ccd/ApplicationBootstrap.java"
     property "sonar.pitest.mode", "reuseReport"
     property "sonar.pitest.reportsDirectory", "build/reports/pitest"
+
   }
 }
 
@@ -270,9 +268,10 @@ repositories {
   maven { url 'https://jitpack.io' }
 }
 
+apply plugin: 'info.solidsoft.pitest'
+
 pitest {
-  pitestVersion.set('1.7.4')
-  junit5PluginVersion.set('0.15')
+  junit5PluginVersion.set('1.2.1')
   targetClasses = ['uk.gov.hmcts.reform.*']
   excludedClasses = [
     'uk.gov.hmcts.reform.ccd.madeup.*'
@@ -312,9 +311,6 @@ ext {
   wiremockVersion = '2.35.0'
   elasticsearchVersion = '7.17.8'
   testcontainersVersion = '1.20.2'
-  gradlePitestVersion = '1.9.0'
-  pitestVersion = '1.9.11'
-  sonarPitestVersion = '0.5'
 }
 
 dependencyManagement {
@@ -327,7 +323,6 @@ dependencies {
 
   // Implementation dependencies
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
-
 
   implementation group: 'org.springframework', name:'spring-webmvc', version: springFrameworkVersion
 
@@ -347,6 +342,9 @@ dependencies {
 
   implementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
 
+  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.13'
+  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.13'
+
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
 
@@ -363,6 +361,12 @@ dependencies {
 
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.1'
 
+  implementation group: 'org.pitest', name: 'pitest', version: '1.16.3'
+  implementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: '1.15.0'
+  implementation (group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', version: '0.5') {
+    exclude module: "guava"
+  }
+
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
@@ -375,10 +379,6 @@ dependencies {
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-
-  testImplementation group: 'org.pitest', name: 'pitest', version: pitestVersion
-  testImplementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: gradlePitestVersion
-  testImplementation group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', version: sonarPitestVersion
 
   // CFTLib dependencies
   cftlibImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
