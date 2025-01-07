@@ -321,6 +321,17 @@ dependencyManagement {
 
 dependencies {
 
+  implementation('ch.qos.logback:logback-classic'){
+    version {
+      strictly '1.2.13'
+    }
+  }
+  implementation('ch.qos.logback:logback-core'){
+    version {
+      strictly '1.2.13'
+    }
+  }
+
   // Implementation dependencies
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
 
@@ -346,10 +357,15 @@ dependencies {
   implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.13'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
+  implementation(group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging) {
+    exclude group: 'ch.qos.logback', module: 'logback-classic'
+    exclude group: 'ch.qos.logback', module: 'logback-core'
+  }
 
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.2'
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
+  implementation (group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4') {
+    exclude group: 'ch.qos.logback', module: 'logback-classic'
+  }
 
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
   implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
