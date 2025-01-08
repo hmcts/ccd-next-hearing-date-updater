@@ -350,8 +350,9 @@ dependencies {
 
   implementation group: 'org.springframework.security', name: 'spring-security-rsa', version: '1.1.1'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'
+
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
-  //implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
+  implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
 
   implementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
 
@@ -405,7 +406,7 @@ dependencies {
 
 
   // Integration test dependencies
-  //integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
+  integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
   integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: wiremockVersion
   integrationTestImplementation group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearchVersion
   integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: elasticsearchVersion
@@ -426,8 +427,8 @@ dependencies {
   functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.4.0'
 
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.0.2'
-  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.22.2'
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.0'
+  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.24.2'
 
 }
 
