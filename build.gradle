@@ -337,9 +337,6 @@ dependencyManagement {
 }
 
 dependencies {
-
-  // Implementation dependencies
-  
   
   // Spring
   implementation group: 'org.springframework', name:'spring-webmvc'
