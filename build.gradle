@@ -355,16 +355,18 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
 
+  implementation group: 'org.json', name: 'json', version: '20240303'
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.13'
   implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.13'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
+  implementation(group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging) {
+    exclude group: 'ch.qos.logback', module: 'logback-classic'
+    exclude group: 'ch.qos.logback', module: 'logback-core'
+  }
 
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.0'
-  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.12' // CVE-2023-6378
-  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.12' // CVE-2023-6378
-  implementation group: 'com.microsoft.azure', name: 'applicationinsights-core', version: '3.6.2'
+  implementation (group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
 
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
   implementation group: 'commons-io', name: 'commons-io', version: '2.17.0'
@@ -423,8 +425,8 @@ dependencies {
   functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.5'
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.0'
 
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.0.2'
-  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.22.2'
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.0'
+  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.24.2'
 
 }
 
