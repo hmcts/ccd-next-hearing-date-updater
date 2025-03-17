@@ -379,7 +379,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.1'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: 'v4.9.1'
 
-  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.1'
+  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.4'
 
   implementation group: 'org.pitest', name: 'pitest', version: '1.16.3'
   implementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: '1.15.0'
