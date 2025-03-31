@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater.config.es;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -10,8 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 @Configuration
 public class ElasticSearchClientConfig {
