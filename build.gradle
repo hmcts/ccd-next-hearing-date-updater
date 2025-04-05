@@ -3,15 +3,15 @@ plugins {
   id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'com.github.ben-manes.versions' version '0.51.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1444'
+  id 'com.github.ben-manes.versions' version '0.52.0'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1618'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
   id 'io.spring.dependency-management' version '1.1.7'
   id 'info.solidsoft.pitest' version '1.15.0' apply false
   id 'org.owasp.dependencycheck' version '11.1.1'
-  id 'org.sonarqube' version '6.0.1.5171'
-  id 'org.springframework.boot' version '3.4.1'
-  id 'uk.gov.hmcts.java' version '0.12.63'
+  id 'org.sonarqube' version '6.1.0.5360'
+  id 'org.springframework.boot' version '3.4.4'
+  id 'uk.gov.hmcts.java' version '0.12.65'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -203,13 +203,13 @@ task smoke(type: Test) {
 }
 
 checkstyle {
-  toolVersion = '10.3.1'
+  toolVersion = '10.23.0'
   maxWarnings = 0
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
 
 pmd {
-  toolVersion = "6.41.0"
+  toolVersion = "6.55.0"
   sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
   reportsDir = file("$project.buildDir/reports/pmd")
   // https://github.com/pmd/pmd/issues/876
@@ -299,20 +299,20 @@ pitest {
 project.tasks['pitest'].group = "Verification"
 
 ext {
-  set('springCloudVersion', '2024.0.0')
+  set('springCloudVersion', '2024.0.1')
   set('spring-framework.version', '6.2.1')
   set('spring-security.version', '6.4.2')
   set('log4j2.version', '2.17.1')
   set('jackson.version', '2.18.0')
   set('snakeyaml.version', '2.2')
-  junit = '5.10.5'
-  junitPlatform = '1.10.5'
-  reformLogging = '6.0.1'
-  lombokVersion = '1.18.34'
+  junit = '5.12.1'
+  junitPlatform = '1.12.1'
+  reformLogging = '6.1.8'
+  lombokVersion = '1.18.38'
   // test dependencies
-  cucumberVersion = '7.20.1'
-  elasticsearchVersion = '7.17.8'
-  testcontainersVersion = '1.20.3'
+  cucumberVersion = '7.22.0'
+  elasticsearchVersion = '7.17.28'
+  testcontainersVersion = '1.20.6'
   gradlePitestVersion = '1.15.0'
   pitestVersion = '1.17.1'
   sonarPitestVersion = '0.5'
@@ -339,16 +339,16 @@ dependencies {
 
   // start::CVE Vulnerability dependency overrides                                                    // MAIN PARENT DEPENDEDNCY
 
-  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.16'                  // logging-appinsights
-  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.16'                     // logging-appinsights
-  implementation group: 'commons-io', name: 'commons-io', version: '2.17.0'                           // idam-java-client
+  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.18'                  // logging-appinsights
+  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.18'                     // logging-appinsights
+  implementation group: 'commons-io', name: 'commons-io', version: '2.18.0'                           // idam-java-client
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'              // idam-java-client
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '13.5'                 // idam-java-client
-  implementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.23'                        // befta-fw
-  implementation group: 'org.apache.groovy', name: 'groovy-xml', version: '4.0.23'                    // befta-fw
-  implementation group: 'org.apache.groovy', name: 'groovy-json', version: '4.0.23'                   // befta-fw 
+  implementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.26'                        // befta-fw
+  implementation group: 'org.apache.groovy', name: 'groovy-xml', version: '4.0.26'                    // befta-fw
+  implementation group: 'org.apache.groovy', name: 'groovy-json', version: '4.0.26'                   // befta-fw 
 
-  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.0'       // ccd-test-definitions
+  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.1'       // ccd-test-definitions
 
   // end::CVE Vulnerability dependency overrides                                                      // MAIN PARENT DEPENDEDNCY
   
@@ -368,9 +368,9 @@ dependencies {
   implementation group: 'org.springframework.security', name: 'spring-security-rsa', version: '1.1.5'
 
   // HMCTS
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: 'v5.0.1'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.3'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.0'
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
   implementation(group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging) {
     exclude group: 'ch.qos.logback', module: 'logback-classic'
@@ -387,7 +387,7 @@ dependencies {
     exclude module: "guava"
   }
   implementation group: 'org.json', name: 'json', version: '20240303'
-  implementation group: 'org.pitest', name: 'pitest', version: '1.16.3'
+  implementation group: 'org.pitest', name: 'pitest', version: '1.19.0'
   implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
@@ -395,19 +395,19 @@ dependencies {
   // Unit test dependencies
   testImplementation libraries.junit5
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.0'
-  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.24.2'
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.3'
+  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.26.1'
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
   // CFTLib dependencies
-  cftlibImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.2'
+  cftlibImplementation group: 'org.awaitility', name: 'awaitility', version: '4.3.0'
   cftlibImplementation group: 'org.testcontainers', name: 'testcontainers', version: testcontainersVersion
   cftlibAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
 
   // Integration test dependencies
   integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8'
-  integrationTestImplementation group: 'org.wiremock.integrations', name:'wiremock-spring-boot', version: '3.6.0'
+  integrationTestImplementation group: 'org.wiremock.integrations', name:'wiremock-spring-boot', version: '3.9.0'
   integrationTestImplementation group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearchVersion
   integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: elasticsearchVersion
   integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: elasticsearchVersion
@@ -423,7 +423,7 @@ dependencies {
   functionalTestImplementation sourceSets.integrationTest.runtimeClasspath
   functionalTestImplementation group: 'io.cucumber', name: 'cucumber-junit', version: cucumberVersion
   functionalTestImplementation group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
-  functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.5'
+  functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.6'
 
 }
 
