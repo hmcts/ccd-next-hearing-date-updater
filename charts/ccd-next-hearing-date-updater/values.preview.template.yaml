@@ -267,6 +267,11 @@ ccd:
         enabled: false
         minReplicas: 1
         maxReplicas: 1
+      secrets:
+          USER_PROFILE_DB_PASSWORD:
+            secretRef: "{{ .Values.global.postgresSecret }}"
+            key: PASSWORD
+            disabled: true
       environment:
         USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,sscs
       keyVaults: [ ]
