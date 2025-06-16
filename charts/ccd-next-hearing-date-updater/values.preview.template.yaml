@@ -238,7 +238,6 @@ ccd:
 
   ccd-definition-store-api:
     java:
-      ingressHost: ccd-definition-store-${SERVICE_FQDN}
       imagePullPolicy: Always
       environment:
         ELASTIC_SEARCH_ENABLED: true
@@ -250,13 +249,11 @@ ccd:
 
   ccd-user-profile-api:
     java:
-      ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
       imagePullPolicy: Always
       keyVaults: [ ]
 
   ccd-data-store-api:
     java:
-      ingressHost: ccd-data-store-api-${SERVICE_FQDN}
       memoryRequests: '1524Mi'
       cpuRequests: '900m'
       environment:
