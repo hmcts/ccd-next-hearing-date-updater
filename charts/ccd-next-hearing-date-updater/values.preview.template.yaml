@@ -252,6 +252,11 @@ ccd:
       devmemoryRequests: "1024Mi"
       devmemoryLimits: "2048Mi"
       keyVaults: [ ]
+      secrets:
+        DEFINITION_STORE_DB_PASSWORD:
+          secretRef: "{{ .Values.global.postgresSecret }}"
+          key: PASSWORD
+          disabled: true
 
   ccd-user-profile-api:
     java:
@@ -265,6 +270,11 @@ ccd:
         USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,sscs
         USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
       keyVaults: [ ]
+      secrets:
+        USER_PROFILE_DB_PASSWORD:
+          secretRef: "{{ .Values.global.postgresSecret }}"
+          key: PASSWORD
+          disabled: true
 
   ccd-data-store-api:
     java:
@@ -285,6 +295,11 @@ ccd:
         DATA_STORE_IDAM_KEY: ${DATA_STORE_S2S_KEY}
         DATA_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
       keyVaults: []
+      secrets:
+        DATA_STORE_DB_PASSWORD:
+          secretRef: "{{ .Values.global.postgresSecret }}"
+          key: PASSWORD
+          disabled: true
 
   ccd-test-stubs-service:
     java:
