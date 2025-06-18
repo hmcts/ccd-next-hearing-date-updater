@@ -221,6 +221,8 @@ ccd:
       enabled: true
     testStubsService:
       enabled: true
+  postgresql:
+    enabled: true
 
   ingressHost: ${SERVICE_FQDN}
 
@@ -272,6 +274,10 @@ ccd:
       keyVaults: [ ]
       secrets:
         USER_PROFILE_DB_PASSWORD:
+          secretRef: "{{ .Values.global.postgresSecret }}"
+          key: PASSWORD
+          disabled: true
+        USER_PROFILE_DB_USERNAME:
           secretRef: "{{ .Values.global.postgresSecret }}"
           key: PASSWORD
           disabled: true

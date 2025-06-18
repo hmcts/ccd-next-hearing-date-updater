@@ -61,6 +61,7 @@ def secrets = [
     secret('definition-store-api-POSTGRES-USER-V15', 'DEFINITION_STORE_DB_USERNAME'),
     secret('definition-store-api-POSTGRES-PASS-V15', 'DEFINITION_STORE_DB_PASSWORD'),
     secret('user-profile-api-POSTGRES-PASS-V15', 'USER_PROFILE_DB_PASSWORD'),
+    secret('user-profile-api-POSTGRES-USER-V15', 'USER_PROFILE_DB_USERNAME'),
     secret('dm-store-storage-account-primary-access-key', 'DM_STORE_STORAGE_ACCOUNT_PRIMARY_ACCESS_KEY'),
   ]
 ]
