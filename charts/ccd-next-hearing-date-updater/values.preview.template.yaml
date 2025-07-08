@@ -312,6 +312,7 @@ ccd:
 
 postgresql:
   enabled: true
+  releaseNameOverride: ${SERVICE_NAME}-postgresql
   primary:
     persistence:
       enabled: false
@@ -327,7 +328,6 @@ postgresql:
           CREATE DATABASE "annotation" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
           CREATE DATABASE "role_assignment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
           CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-    auth:
-      username: "hmcts"
-      password: "hmcts"
-    postgresHostname: ${SERVICE_NAME}-postgresql
+  auth:
+    username: "hmcts"
+    password: "hmcts"
