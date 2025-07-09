@@ -198,10 +198,7 @@ logstash:
 
 postgresql:
   enabled: true
-  releaseNameOverride: ${SERVICE_NAME}-postgresql
   primary:
-    persistence:
-      enabled: false
     initdb:
       scripts:
         init.sql: |
@@ -257,6 +254,7 @@ ccd:
     s2sUrl: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
     enableKeyVaults: true
     devMode: true
+    postgresHostname: ${SERVICE_NAME}-postgresql
 
   ccd-definition-store-api:
     java:
@@ -332,3 +330,6 @@ ccd:
       ingressHost: ccd-test-stubs-service-${SERVICE_FQDN}
       imagePullPolicy: Always
 
+  postgresql:
+    persistence:
+      enabled: false
