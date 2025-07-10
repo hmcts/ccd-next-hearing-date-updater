@@ -5,6 +5,10 @@ ccd:
 postgresql:
   enabled: false
 
+java:
+  postgresql:
+    enabled: false
+
 job:
   image: 'https://hmctspublic.azurecr.io/ccd/ccd-next-hearing-date-updater:latest'
   kind: CronJob

@@ -196,24 +196,28 @@ logstash:
           }
       }
 
-postgresql:
-  enabled: true
-  primary:
-    initdb:
-      scripts:
-        init.sql: |
-          CREATE DATABASE "data-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-          CREATE DATABASE "definition-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-          CREATE DATABASE "user-profile" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-          CREATE DATABASE "draftstore" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-          CREATE DATABASE "payment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-          CREATE DATABASE "evidence" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-          CREATE DATABASE "annotation" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-          CREATE DATABASE "role_assignment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-          CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
-  auth:
-    username: "hmcts"
-    password: "hmcts"
+java:
+  postgresql:
+    enabled: true
+    primary:
+      persistence:
+        enabled: false
+      initdb:
+        scripts:
+          init.sql: |
+            CREATE DATABASE "data-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "definition-store" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "user-profile" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "draftstore" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "payment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "evidence" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "annotation" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "role_assignment" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+            CREATE DATABASE "ts_translation_service" WITH OWNER = hmcts ENCODING = 'UTF-8' CONNECTION LIMIT = -1;
+    auth:
+      username: "hmcts"
+      password: "hmcts"
+    postgresHostname: ${SERVICE_NAME}-postgresql
 
 ccd:
   enabled: true
@@ -255,6 +259,10 @@ ccd:
     enableKeyVaults: true
     devMode: true
     postgresHostname: ${SERVICE_NAME}-postgresql
+    postgresql:
+      auth:
+        postgresUsername: hmcts
+        postgresPassword: hmcts
 
   ccd-definition-store-api:
     java:
@@ -269,6 +277,9 @@ ccd:
         ELASTIC_SEARCH_HOST: ${SERVICE_NAME}-es-master
         DEFINITION_STORE_IDAM_KEY: ${DEFINITION_STORE_S2S_KEY}
         DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
+        DEFINITION_STORE_DB_USERNAME: hmcts
+        DEFINITION_STORE_DB_PASSWORD: hmcts
+        DEFINITION_STORE_DB_OPTIONS: "?stringtype=unspecified"
       devmemoryRequests: "1024Mi"
       devmemoryLimits: "2048Mi"
       keyVaults: [ ]
@@ -329,7 +340,3 @@ ccd:
     java:
       ingressHost: ccd-test-stubs-service-${SERVICE_FQDN}
       imagePullPolicy: Always
-
-  postgresql:
-    persistence:
-      enabled: false
