@@ -197,7 +197,7 @@ logstash:
       }
 
 java:
-  image: ""
+  image: ${IMAGE_NAME}
   postgresql:
     enabled: true
     primary:
