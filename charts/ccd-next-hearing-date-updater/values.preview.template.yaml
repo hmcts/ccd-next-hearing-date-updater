@@ -198,6 +198,10 @@ logstash:
 
 java:
   image: ${IMAGE_NAME}
+  environment:
+    DB_HOST: "{{ .Release.Name }}-postgresql"
+    DB_USER_NAME: "hmcts"
+    DB_PASSWORD: "hmcts"
   postgresql:
     enabled: true
     primary:
