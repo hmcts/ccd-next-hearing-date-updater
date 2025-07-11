@@ -197,8 +197,16 @@ logstash:
       }
 
 java:
-  image: ${IMAGE_NAME}
+  image: 'hmctspublic.azurecr.io/ccd/user-profile-api:latest'
+  imagePullPolicy: Always
+  ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
   environment:
+    USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,sscs
+    USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
+    USER_PROFILE_DB_USERNAME: hmcts
+    USER_PROFILE_DB_PASSWORD: hmcts
+    USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified&sslmode=disable"
+    TESTING_SUPPORT_ENABLED: true
     DB_HOST: "{{ .Release.Name }}-postgresql"
     DB_USER_NAME: "hmcts"
     DB_PASSWORD: "hmcts"
@@ -246,7 +254,7 @@ ccd:
     definitionStore:
       enabled: true
     userProfile:
-      enabled: true
+      enabled: false
     testStubsService:
       enabled: true
 
@@ -290,31 +298,6 @@ ccd:
       keyVaults: [ ]
       secrets:
         DEFINITION_STORE_DB_PASSWORD:
-          secretRef: "{{ .Values.global.postgresSecret }}"
-          key: PASSWORD
-          disabled: true
-
-  ccd-user-profile-api:
-    java:
-      ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
-      imagePullPolicy: Always
-      autoscaling:
-        enabled: false
-        minReplicas: 1
-        maxReplicas: 1
-      environment:
-        USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,sscs
-        USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
-        USER_PROFILE_DB_USERNAME: hmcts
-        USER_PROFILE_DB_PASSWORD: hmcts
-        USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified&sslmode=disable"
-      keyVaults: [ ]
-      secrets:
-        USER_PROFILE_DB_PASSWORD:
-          secretRef: "{{ .Values.global.postgresSecret }}"
-          key: PASSWORD
-          disabled: true
-        USER_PROFILE_DB_USERNAME:
           secretRef: "{{ .Values.global.postgresSecret }}"
           key: PASSWORD
           disabled: true
