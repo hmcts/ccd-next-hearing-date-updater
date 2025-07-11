@@ -196,6 +196,11 @@ logstash:
           }
       }
 
+postgresql:
+  auth:
+      username: "hmcts"
+      password: "hmcts"
+
 java:
   image: ${IMAGE_NAME}
   environment:
@@ -264,6 +269,8 @@ ccd:
     enableKeyVaults: true
     devMode: true
     postgresHostname: ${SERVICE_NAME}-postgresql
+    postgresUsername: hmcts
+    postgresPassword: hmcts
     postgresql:
       auth:
         postgresUsername: hmcts
@@ -287,12 +294,6 @@ ccd:
         DEFINITION_STORE_DB_OPTIONS: "?stringtype=unspecified&sslmode=disable"
       devmemoryRequests: "1024Mi"
       devmemoryLimits: "2048Mi"
-      keyVaults: [ ]
-      secrets:
-        DEFINITION_STORE_DB_PASSWORD:
-          secretRef: "{{ .Values.global.postgresSecret }}"
-          key: PASSWORD
-          disabled: true
 
   ccd-user-profile-api:
     java:
@@ -305,17 +306,9 @@ ccd:
       environment:
         USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_definition,ccd_admin,sscs
         USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
+        USER_PROFILE_DB_USERNAME: hmcts
+        USER_PROFILE_DB_PASSWORD: hmcts
         USER_PROFILE_DB_OPTIONS: "?stringtype=unspecified&sslmode=disable"
-      keyVaults: [ ]
-      secrets:
-        USER_PROFILE_DB_PASSWORD:
-          secretRef: "{{ .Values.global.postgresSecret }}"
-          key: PASSWORD
-          disabled: true
-        USER_PROFILE_DB_USERNAME:
-          secretRef: "{{ .Values.global.postgresSecret }}"
-          key: PASSWORD
-          disabled: true
 
   ccd-data-store-api:
     java:
@@ -335,13 +328,9 @@ ccd:
         ELASTIC_SEARCH_DATA_NODES_HOSTS: http://${SERVICE_NAME}-es-master:9200
         DATA_STORE_IDAM_KEY: ${DATA_STORE_S2S_KEY}
         DATA_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
+        DATA_STORE_DB_PASSWORD: hmcts
+        DATA_STORE_DB_USERNAME: hmcts
         DATA_STORE_DB_OPTIONS: "?stringtype=unspecified&sslmode=disable"
-      keyVaults: []
-      secrets:
-        DATA_STORE_DB_PASSWORD:
-          secretRef: "{{ .Values.global.postgresSecret }}"
-          key: PASSWORD
-          disabled: true
 
   ccd-test-stubs-service:
     java:
