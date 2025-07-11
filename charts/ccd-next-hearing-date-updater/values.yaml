@@ -6,6 +6,7 @@ postgresql:
   enabled: false
 
 java:
+  enabled: false
   postgresql:
     enabled: false
 
