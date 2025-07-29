@@ -45,7 +45,24 @@ def secrets = [
     secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
     secret('idam-ccd-next-hearing-date-updater-system-user-username', 'IDAM_NEXT_HEARING_DATE_SYSTEM_USER'),
     secret('idam-ccd-next-hearing-date-updater-system-user-password', 'IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD'),
-    secret('idam-ccd-next-hearing-date-updater-client-secret', 'CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET')
+    secret('idam-ccd-next-hearing-date-updater-client-secret', 'CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET'),
+    secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_IDAM_CLIENT_SECRET'),
+    secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
+    secret('postcode-info-address-lookup-token', 'ADDRESS_LOOKUP_TOKEN'),
+    secret('ccd-admin-web-oauth2-client-secret', 'ADMIN_WEB_IDAM_SECRET'),
+    secret('idam-data-store-client-secret', 'IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET'),
+    secret('idam-data-store-system-user-username', 'IDAM_DATA_STORE_SYSTEM_USER_USERNAME'),
+    secret('idam-data-store-system-user-password', 'IDAM_DATA_STORE_SYSTEM_USER_PASSWORD'),
+    secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
+    secret('definition-store-api-POSTGRES-PASS-V15', 'CCD_DEFINITION_STORE_POSTGRES_PASSWORD'),
+    secret('data-store-api-POSTGRES-PASS-V15', 'DATASTORE_POSTGRES_PASSWORD'),
+    secret('AppInsightsInstrumentationKey', 'CCD_APPINSIGHTS_INSTRUMENTATION_KEY'),
+    secret('app-insights-connection-string', 'APP_INSIGHTS_CONNECTION_STRING'),
+    secret('definition-store-api-POSTGRES-USER-V15', 'DEFINITION_STORE_DB_USERNAME'),
+    secret('definition-store-api-POSTGRES-PASS-V15', 'DEFINITION_STORE_DB_PASSWORD'),
+    secret('user-profile-api-POSTGRES-PASS-V15', 'USER_PROFILE_DB_PASSWORD'),
+    secret('user-profile-api-POSTGRES-USER-V15', 'USER_PROFILE_DB_USERNAME'),
+    secret('dm-store-storage-account-primary-access-key', 'DM_STORE_STORAGE_ACCOUNT_PRIMARY_ACCESS_KEY'),
   ]
 ]
 
