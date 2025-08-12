@@ -4,7 +4,7 @@ plugins {
   id 'pmd'
   id 'jacoco'
   id 'com.github.ben-manes.versions' version '0.51.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1814'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1836'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
   id 'io.spring.dependency-management' version '1.1.7'
   id 'info.solidsoft.pitest' version '1.15.0' apply false
@@ -313,7 +313,7 @@ ext {
   reformLogging = '6.1.9'
   lombokVersion = '1.18.38'
   // test dependencies
-  cucumberVersion = '7.26.0'
+  cucumberVersion = '7.27.0'
   elasticsearchVersion = '7.17.8'
   testcontainersVersion = '1.21.3'
 }
@@ -360,15 +360,15 @@ dependencies {
   implementation group: 'org.springframework.security', name: 'spring-security-web'
 
   // HMCTS
-  implementation group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '5.1.1'
+  implementation group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '5.2.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.4'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.3'
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
 
-  implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
+  implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.19.2'
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
-  implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
+  implementation group: 'commons-validator', name: 'commons-validator', version: '1.10.0'
   implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
   implementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: '1.15.0'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.1'
@@ -394,7 +394,7 @@ dependencies {
 
   // Integration test dependencies
   integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8'
-  integrationTestImplementation group: 'org.wiremock.integrations', name:'wiremock-spring-boot', version: '3.6.0'
+  integrationTestImplementation group: 'org.wiremock.integrations', name:'wiremock-spring-boot', version: '3.10.0'
   integrationTestImplementation group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearchVersion
   integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: elasticsearchVersion
   integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: elasticsearchVersion
