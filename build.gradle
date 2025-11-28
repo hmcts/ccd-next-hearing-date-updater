@@ -306,7 +306,7 @@ ext {
   set('spring-framework.version', '6.2.14')
   set('spring-security.version', '6.5.7')
   set('log4j2.version', '2.17.1')
-  set('jackson.version', '2.20.0')
+  set('jackson.version', '2.19.2')
   set('snakeyaml.version', '2.2')
   junit = '5.13.4'
   junitPlatform = '1.13.4'
@@ -367,7 +367,6 @@ dependencies {
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging
 
   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.20.0'
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.20'
   implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.6.4'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.10.1'
   implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
