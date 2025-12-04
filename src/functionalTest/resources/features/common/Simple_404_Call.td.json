@@ -21,11 +21,13 @@
   },
 
   "expectedResponse": {
-    "_extends_": "Common_404_Response",
-
-    "body": {
-      "message" : "No message available",
-      "path" : "/404"
+    "body" : {
+      "type" : "about:blank",
+      "title" : "Not Found",
+      "status" : 404,
+      "detail" : "No static resource 404.",
+      "instance" : "/404",
+      "properties" : null
     }
   }
 
