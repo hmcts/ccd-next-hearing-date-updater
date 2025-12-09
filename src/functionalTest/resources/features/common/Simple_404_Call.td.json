@@ -21,6 +21,8 @@
   },
 
   "expectedResponse": {
+    "responseCode" : 404,
+    "responseMessage" : "Not Found",
     "body" : {
       "type" : "about:blank",
       "title" : "Not Found",
