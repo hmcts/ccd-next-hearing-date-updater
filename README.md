@@ -4,7 +4,7 @@
 [![Template CI / build Status](https://github.com/hmcts/ccd-next-hearing-date-updater/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/hmcts/ccd-next-hearing-date-updater/actions/workflows/ci.yml?query=branch:master)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=uk.gov.hmcts.reform%3Accd-next-hearing-date-updater&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=uk.gov.hmcts.reform%3Accd-next-hearing-date-updater)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=uk.gov.hmcts.reform%3Accd-next-hearing-date-updater&metric=coverage)](https://sonarcloud.io/summary/overall?id=uk.gov.hmcts.reform%3Accd-next-hearing-date-updater)
-
+ 
 ## Purpose
 
 This microservice implements `The Next Hearing Date` feature outlined in [this wiki](https://tools.hmcts.net/confluence/display/RCCD/Maintain+Next+Hearing+Date+Scope+of+Work).
