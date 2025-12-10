@@ -13,7 +13,7 @@ plugins {
   id 'org.springframework.boot' version '3.4.1'
   id 'uk.gov.hmcts.java' version '0.12.63'
 }
-
+ 
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
