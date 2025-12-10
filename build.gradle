@@ -385,7 +385,7 @@ dependencies {
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
   implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
   implementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: '1.15.0'
-  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.0'
+  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '9.0'
   implementation (group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', version: '0.5') {
     exclude module: "guava"
   }
