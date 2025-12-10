@@ -399,9 +399,12 @@ dependencies {
   testImplementation libraries.junit5
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4'
-
-  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.25.4'
+  //Test reverting as FT fialing consistently on latest versions
+  //testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4'
+  //testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.25.4'
+  
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.0'
+  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.24.2'
 
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
