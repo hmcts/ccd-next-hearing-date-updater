@@ -5,7 +5,6 @@
   },
   "preview": {
     "sampling": {
-      "_comment": "Reduce noise from health check requests by sampling at 1%",
       "overrides": [
         {
           "telemetryType": "request",
