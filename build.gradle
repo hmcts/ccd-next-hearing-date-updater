@@ -310,7 +310,7 @@ ext {
   set('snakeyaml.version', '2.2')
   junit = '5.10.5'
   junitPlatform = '1.10.5'
-  reformLogging = '6.0.1'
+  reformLogging = '8.0.0'
   lombokVersion = '1.18.34'
   // test dependencies
   cucumberVersion = '7.20.1'
