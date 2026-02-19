@@ -375,7 +375,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.3'
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
-  implementation(group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: reformLogging) {
+  implementation(group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: '6.0.1') {
     exclude group: 'ch.qos.logback', module: 'logback-classic'
     exclude group: 'ch.qos.logback', module: 'logback-core'
   }
