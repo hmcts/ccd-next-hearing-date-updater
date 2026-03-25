@@ -35,7 +35,7 @@ public class ContainersBootstrap {
     private static final String TEST_STUB_ENV_FILE_PATH
         = String.format(".%s%s", File.separator, ".env.test.stub.service.env");
 
-    private static final String TEST_STUBS_IMAGE = "hmctspublic.azurecr.io/ccd/test-stubs-service:latest";
+    private static final String TEST_STUBS_IMAGE = "hmctsprod.azurecr.io/ccd/test-stubs-service:latest";
 
     protected static final GenericContainer<?> TEST_STUBS_CONTAINER = new GenericContainer<>(TEST_STUBS_IMAGE)
         .withExposedPorts(5555)
