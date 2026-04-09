@@ -330,8 +330,8 @@ You should get a response similar to this:
 > Log in, using the commands below:
 >
 > ```bash
->  az acr login --name hmctspublic --subscription DCD-CNP-DEV
->  az acr login --name hmctspublic --subscription DCD-CFT-Sandbox
+>  az acr login --name hmctsprod --subscription DCD-CNP-DEV
+>  az acr login --name hmctsprod --subscription DCD-CFT-Sandbox
 > ```
 >
 > … or if [CCD-Docker](https://github.com/hmcts/ccd-docker) repository is already cloned locally, run the login command:
