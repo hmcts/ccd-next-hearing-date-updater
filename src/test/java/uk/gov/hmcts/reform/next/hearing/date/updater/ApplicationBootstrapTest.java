@@ -1,10 +1,8 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater;
 
-import com.microsoft.applicationinsights.TelemetryClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.ApplicationArguments;
@@ -17,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.MockitoAnnotations.openMocks;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.exceptions.ErrorDuringExecutionException.EXIT_FAILURE;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,42 +26,33 @@ class ApplicationBootstrapTest {
     @Mock
     private NextHearingDateUpdaterService nextHearingDateUpdaterService;
 
-    @Mock
-    private TelemetryClient client;
-
-    @InjectMocks
     private ApplicationBootstrap underTest;
 
     @BeforeEach
     void setUp() {
-        openMocks(this);
-        underTest = new ApplicationBootstrap(nextHearingDateUpdaterService, client);
+        underTest = new ApplicationBootstrap(nextHearingDateUpdaterService);
         ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
     }
 
     @Test
     void testShouldRunExecutor() throws Exception {
         doNothing().when(nextHearingDateUpdaterService).execute();
-        doNothing().when(client).flush();
 
         underTest.run(applicationArguments);
 
         verify(nextHearingDateUpdaterService).execute();
-        verify(client).flush();
     }
 
     @Test
-    void testShouldRunExecutorWithException() throws Exception {
+    void testShouldRunExecutorWithException() {
         doThrow(new RuntimeException("test")).when(nextHearingDateUpdaterService).execute();
-        doNothing().when(client).flush();
 
         ErrorDuringExecutionException exception = assertThrows(
             ErrorDuringExecutionException.class, () -> underTest.run(applicationArguments)
         );
 
-        // NB: must still verify execute and `client.flush` have still been actioned
+        // NB: must still verify execute has been actioned
         verify(nextHearingDateUpdaterService).execute();
-        verify(client).flush();
         assertEquals(EXIT_FAILURE, exception.getExitCode(), "Expecting the failure exit code.");
     }
 

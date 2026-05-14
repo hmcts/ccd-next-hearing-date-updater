@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater;
 
-import com.microsoft.applicationinsights.TelemetryClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,21 +21,11 @@ public class ApplicationBootstrap implements ApplicationRunner {
     @Value("${next-hearing-date-updater.processing.enabled}")
     private boolean isProcessingEnabled;
 
-    @Value("${telemetry.wait.period:10000}")
-    private int waitPeriod;
-
     private final NextHearingDateUpdaterService nextHearingDateUpdaterService;
-    private final TelemetryClient client;
 
     @Autowired
     public ApplicationBootstrap(NextHearingDateUpdaterService nextHearingDateUpdaterService) {
         this.nextHearingDateUpdaterService = nextHearingDateUpdaterService;
-        this.client = new TelemetryClient();
-    }
-
-    public ApplicationBootstrap(NextHearingDateUpdaterService nextHearingDateUpdaterService, TelemetryClient client) {
-        this.nextHearingDateUpdaterService = nextHearingDateUpdaterService;
-        this.client = client;
     }
 
     @Override
@@ -48,15 +37,8 @@ public class ApplicationBootstrap implements ApplicationRunner {
                 log.info("Completed the Next-Hearing-Date-Updater job successfully triggered by cron job.");
             } catch (Exception exception) {
                 throw new ErrorDuringExecutionException("Error executing Next-Hearing-Date-Updater job.", exception);
-            } finally {
-                client.flush();
-                waitTelemetryGracefulPeriod();
             }
         }
-    }
-
-    private void waitTelemetryGracefulPeriod() throws InterruptedException {
-        Thread.sleep(waitPeriod);
     }
 
     public static void main(final String[] args) {
