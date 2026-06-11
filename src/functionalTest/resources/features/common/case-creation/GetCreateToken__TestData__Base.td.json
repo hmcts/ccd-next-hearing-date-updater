@@ -27,7 +27,7 @@
       "case_details": {
         "jurisdiction": "BEFTA_MASTER",
         "case_type_id": "${}${[scenarioContext][testData][request][pathVariables][ctid]}",
-        "callback_error_message": null
+        "callback_error_message": "[[ANY_NULLABLE]]"
       },
       "event_id": "CREATE"
     }
