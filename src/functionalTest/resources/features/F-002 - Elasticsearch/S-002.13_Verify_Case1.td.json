@@ -14,7 +14,6 @@
 
   "expectedResponse": {
     "body": {
-      "callback_error_message": null,
       "data": {
         "nextHearingDetails": {
           "hearingID": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateNull][childContexts][Case1][testData][actualResponse][body][data][nextHearingDetails][hearingID]}",

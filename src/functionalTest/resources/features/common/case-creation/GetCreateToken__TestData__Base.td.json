@@ -26,7 +26,8 @@
     "body": {
       "case_details": {
         "jurisdiction": "BEFTA_MASTER",
-        "case_type_id": "${}${[scenarioContext][testData][request][pathVariables][ctid]}"
+        "case_type_id": "${}${[scenarioContext][testData][request][pathVariables][ctid]}",
+        "callback_error_message": null
       },
       "event_id": "CREATE"
     }

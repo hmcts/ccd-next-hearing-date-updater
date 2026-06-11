@@ -22,9 +22,6 @@
     "body": {
       "jurisdiction": "BEFTA_MASTER",
       "case_type": "FT_NextHearingDate",
-      "case_details": {
-        "callback_error_message": null
-      },
       "data": {
         "nextHearingDetails": {
           "hearingID": "[[ANY_INTEGER_NOT_NULLABLE]]",
