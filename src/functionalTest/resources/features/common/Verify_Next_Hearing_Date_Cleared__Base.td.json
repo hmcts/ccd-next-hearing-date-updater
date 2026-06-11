@@ -4,6 +4,9 @@
 
   "expectedResponse": {
     "body": {
+      "case_details": {
+        "callback_error_message": null
+      },
       "case_type": "FT_NextHearingDate_Clear",
       "data": {
         "nextHearingDetails": {
