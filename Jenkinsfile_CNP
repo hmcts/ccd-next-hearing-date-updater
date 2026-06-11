@@ -128,6 +128,7 @@ withPipeline(type, product, component) {
   loadVaultSecrets(secrets)
   nonServiceApp()
   syncBranchesWithMaster(branchesToSync)
+  enableFullFunctionalTest()
 
   afterAlways('test') {
     // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
@@ -155,7 +156,7 @@ withPipeline(type, product, component) {
     junit '**/test-results/test/*.xml'
   }
 
-  afterAlways('akschartsinstall') {
+  before('fullFunctionalTest') {
 
     // check data-store instance is up
     def healthChecker = new HealthChecker(this)
