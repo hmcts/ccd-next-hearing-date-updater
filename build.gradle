@@ -303,6 +303,7 @@ project.tasks['pitest'].group = "Verification"
 
 ext {
   set('springCloudVersion', '2025.0.3')
+  set('jackson-bom.version', '2.21.5')
   set('log4j2.version', '2.26.1')
   set('commons-lang3.version', '3.18.0')
   set('snakeyaml.version', '2.2')
