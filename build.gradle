@@ -302,7 +302,7 @@ pitest {
 project.tasks['pitest'].group = "Verification"
 
 ext {
-  set('springCloudVersion', '2025.1.2')
+  set('springCloudVersion', '2025.0.3')
   set('spring-framework.version', '6.2.14')
   set('spring-security.version', '6.5.7')
   set('log4j2.version', '2.17.1')
@@ -380,8 +380,8 @@ dependencies {
   // Unit test dependencies
   testImplementation libraries.junit5
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.7_CCD-7454'
-  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.27.7-prerelease-CME-537'
+  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.7'
+  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.26.7'
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
   // CFTLib dependencies
