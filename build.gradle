@@ -305,7 +305,6 @@ ext {
   set('springCloudVersion', '2025.0.3')
   set('spring-framework.version', '6.2.14')
   set('spring-security.version', '6.5.7')
-  set('log4j2.version', '2.17.1')
   set('jackson.version', '2.19.2')
   set('snakeyaml.version', '2.2')
   junit = '5.14.4'
