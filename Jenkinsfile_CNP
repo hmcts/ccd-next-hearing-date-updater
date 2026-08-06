@@ -164,8 +164,8 @@ withPipeline(type, product, component) {
       healthChecker.check("$CCD_DATA_STORE_API_BASE_URL/health", 10, 40)
 
       try {
-        // NB: override IDAM_API_URL late so its value does not corrupt config used in integration tests
-        env.IDAM_API_URL = env.IDAM_API_URL_BASE
+        // NB: override IDAM_HMCTS_ACCESS_URL late so its value does not corrupt config used in integration tests
+        env.IDAM_HMCTS_ACCESS_URL = env.IDAM_API_URL_BASE
 
         // suppress SSL warnings as we are crossing boundary jenkins -> preview `feign.httpclient.disable-ssl-validation: true`
         env.FEIGN_HTTPCLIENT_DISABLE_SSL_VALIDATION = true

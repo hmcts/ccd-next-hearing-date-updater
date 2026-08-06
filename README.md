@@ -180,7 +180,7 @@ The following environment variables control the downstream API calls:
 
 | Name                        | Description                                                  | Example <span style="font-weight:normal">(when: [running in local terminal](#running-in-local-terminal) or [running in local docker](#running-in-local-docker))</span> |
 |-----------------------------|--------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| IDAM_API_URL                | Base URL for IdAM's User API service (idam-app).             | `http://localhost:9002` or `http://host.docker.internal:9002`                                                                                                          |
+| IDAM_HMCTS_ACCESS_URL         | Base URL for IdAM's Public Web service (idam-public-web).    | `http://localhost:9002` or `http://host.docker.internal:9002`                                                                                                          |
 | IDAM_S2S_URL                | Base URL for IdAM's S2S API service (service-auth-provider). | `http://localhost:4502` or `http://host.docker.internal:4502`                                                                                                          |
 | CCD_DATA_STORE_API_BASE_URL | Base URL for CCD Data-Store APIs.                            | `http://localhost:4452` or `http://host.docker.internal:4452`                                                                                                          |
 
