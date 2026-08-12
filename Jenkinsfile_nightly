@@ -56,7 +56,7 @@ withNightlyPipeline(type, product, component) {
   // Set required environment variables to run functional tests apart from one in vaults.
   env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
   env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-  env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+  env.IDAM_API_URL_BASE = "https://idam-web-public.aat.platform.hmcts.net"
   env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
   env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
   env.BEFTA_OAUTH2_CLIENT_ID_OF_XUIWEBAPP = "xuiwebapp"
@@ -67,6 +67,8 @@ withNightlyPipeline(type, product, component) {
   // NB: legacy config for def file import
   env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
   env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
+  env.OAUTH2_ACCESS_TOKEN_TYPE = "OIDC"
+  env.OAUTH2_SCOPE_VARIABLES = "profile openid roles"
   env.CCD_API_GATEWAY_S2S_ID = "ccd_gw"
 
   // temporary workaround for platform changes: turn BEFTA header checks to warning mode
@@ -105,8 +107,8 @@ withNightlyPipeline(type, product, component) {
     sh "sleep 30s"
     echo "Verifying that functional test run correctly"
     try {
-      // NB: override IDAM_API_URL late as per `Jenkinsfile_CNP` tests
-      env.IDAM_API_URL = env.IDAM_API_URL_BASE
+      // NB: override IDAM_HMCTS_ACCESS_URL late as per `Jenkinsfile_CNP` tests
+      env.IDAM_HMCTS_ACCESS_URL = env.IDAM_API_URL_BASE
 
       builder.functionalTest()
     } finally {
