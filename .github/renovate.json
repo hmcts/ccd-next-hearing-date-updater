@@ -1,7 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["local>hmcts/.github:renovate-config"],
-  "labels": ["Renovate-dependencies"],
+  "extends": [
+    "local>hmcts/.github:renovate-config"
+  ],
+  "labels": [
+    "Renovate-dependencies"
+  ],
   "major": {
     "dependencyDashboardApproval": true
   },
@@ -17,6 +21,17 @@
         "Renovate All-minor-patch"
       ],
       "automerge": false
+    },
+    {
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchDepNames": [
+        "ccd-test-definitions",
+        "befta-fw"
+      ],
+      "matchCurrentValue": "!/^[0-9]+\\.[0-9]+\\.[0-9]+$/",
+      "enabled": false
     }
   ]
 }
