@@ -16,7 +16,7 @@ properties([
   disableConcurrentBuilds()
 ])
 
-@Library("Infrastructure@2.4.9")
+@Library("Infrastructure@2.5.4")
 
 def type = "java"
 def product = "ccd"
