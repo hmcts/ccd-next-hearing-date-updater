@@ -11,6 +11,10 @@ job:
 
 global:
   jobKind: CronJob
+  postgresql:
+    auth:
+      postgresUsername: ${DEFINITION_STORE_DB_USERNAME}
+      postgresPassword: ${DEFINITION_STORE_DB_PASSWORD}
 
 elastic:
   enabled: true
