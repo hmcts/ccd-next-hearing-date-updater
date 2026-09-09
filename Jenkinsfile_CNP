@@ -129,39 +129,6 @@ withPipeline(type, product, component) {
   disableLegacyDeployment()
   loadVaultSecrets(secrets)
 
-  stage('Check PostgreSQL secrets') {
-    steps.sh '''
-      test -n "$DATASTORE_POSTGRES_USERNAME" || {
-        echo "DATASTORE_POSTGRES_USERNAME is not set"
-        exit 1
-      }
-      test -n "$DATASTORE_POSTGRES_PASSWORD" || {
-        echo "DATASTORE_POSTGRES_PASSWORD is not set"
-        exit 1
-      }
-      case "$DATASTORE_POSTGRES_USERNAME" in
-        (*[!A-Za-z0-9_]*|'')
-          echo "DATASTORE_POSTGRES_USERNAME contains unsafe PostgreSQL identifier characters"
-          exit 1
-          ;;
-      esac
-
-      rendered_preview_values=$(mktemp)
-      trap 'rm -f "$rendered_preview_values"' EXIT
-      envsubst '$DATASTORE_POSTGRES_USERNAME $DATASTORE_POSTGRES_PASSWORD' \
-        < charts/ccd-next-hearing-date-updater/values.preview.template.yaml \
-        > "$rendered_preview_values"
-
-      if grep -Fq '\${DATASTORE_POSTGRES_USERNAME}' "$rendered_preview_values" \
-        || grep -Fq '\${DATASTORE_POSTGRES_PASSWORD}' "$rendered_preview_values"; then
-        echo "Preview PostgreSQL credentials were not rendered correctly"
-        exit 1
-      fi
-
-      echo "Preview PostgreSQL credentials validated successfully"
-    '''
-  }
-
   nonServiceApp()
   syncBranchesWithMaster(branchesToSync)
 
@@ -192,6 +159,38 @@ withPipeline(type, product, component) {
   }
 
   afterAlways('akschartsinstall') {
+    stage('Check PostgreSQL secrets') {
+      steps.sh '''
+        test -n "$DATASTORE_POSTGRES_USERNAME" || {
+          echo "DATASTORE_POSTGRES_USERNAME is not set"
+          exit 1
+        }
+        test -n "$DATASTORE_POSTGRES_PASSWORD" || {
+          echo "DATASTORE_POSTGRES_PASSWORD is not set"
+          exit 1
+        }
+        case "$DATASTORE_POSTGRES_USERNAME" in
+          (*[!A-Za-z0-9_]*|'')
+            echo "DATASTORE_POSTGRES_USERNAME contains unsafe PostgreSQL identifier characters"
+            exit 1
+            ;;
+        esac
+
+        rendered_preview_values=$(mktemp)
+        trap 'rm -f "$rendered_preview_values"' EXIT
+        envsubst '$DATASTORE_POSTGRES_USERNAME $DATASTORE_POSTGRES_PASSWORD' \
+          < charts/ccd-next-hearing-date-updater/values.preview.template.yaml \
+          > "$rendered_preview_values"
+
+        if grep -Fq '\${DATASTORE_POSTGRES_USERNAME}' "$rendered_preview_values" \
+          || grep -Fq '\${DATASTORE_POSTGRES_PASSWORD}' "$rendered_preview_values"; then
+          echo "Preview PostgreSQL credentials were not rendered correctly"
+          exit 1
+        fi
+
+        echo "Preview PostgreSQL credentials validated successfully"
+      '''
+    }
     stage("Functional Test - ${env.ENV}") {
       // check data-store instance is up
       def healthChecker = new HealthChecker(this)
