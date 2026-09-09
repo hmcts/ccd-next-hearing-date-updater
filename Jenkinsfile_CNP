@@ -54,6 +54,7 @@ def secrets = [
     secret('idam-data-store-system-user-username', 'IDAM_DATA_STORE_SYSTEM_USER_USERNAME'),
     secret('idam-data-store-system-user-password', 'IDAM_DATA_STORE_SYSTEM_USER_PASSWORD'),
     secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
+    secret('data-store-api-POSTGRES-USER-V15', 'DATASTORE_POSTGRES_USERNAME'),
     secret('definition-store-api-POSTGRES-PASS-V15', 'CCD_DEFINITION_STORE_POSTGRES_PASSWORD'),
     secret('data-store-api-POSTGRES-PASS-V15', 'DATASTORE_POSTGRES_PASSWORD'),
     secret('AppInsightsInstrumentationKey', 'CCD_APPINSIGHTS_INSTRUMENTATION_KEY'),
@@ -154,6 +155,16 @@ withPipeline(type, product, component) {
       reportName           : "Next Hearing Date Updater Unit Tests Report"
     ]
     junit '**/test-results/test/*.xml'
+  }
+
+  afterAlways('checkPostgresSecrets') {
+    steps.sh '''
+      test -n "$DATASTORE_POSTGRES_USERNAME" || exit 1
+      test -n "$DATASTORE_POSTGRES_PASSWORD" || exit 1
+      case "$DATASTORE_POSTGRES_USERNAME" in
+        (*[!A-Za-z0-9_]*|'') exit 1 ;;
+      esac
+    '''
   }
 
   afterAlways('akschartsinstall') {
