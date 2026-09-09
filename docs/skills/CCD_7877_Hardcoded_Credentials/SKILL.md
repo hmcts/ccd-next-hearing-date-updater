@@ -15,7 +15,7 @@ Ensure Next Hearing Date Updater credentials are supplied by runtime secret inje
 - Removed the committed defaults from `src/main/resources/application.yaml` for `CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET`, `IDAM_NEXT_HEARING_DATE_SYSTEM_USER`, `IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD`, and `IDAM_KEY_NEXT_HEARING_UPDATER`.
 - The repository already maps these values through `Jenkinsfile_nightly` and the chart’s secret references.
 - The tracked `.env` contains URLs and case-type configuration only; no credential value was identified in it.
-- Preview PostgreSQL values now reference the chart’s existing `global.postgresql.auth` values rather than committed credentials.
+- Preview PostgreSQL values now receive `DATASTORE_POSTGRES_USERNAME` and `DATASTORE_POSTGRES_PASSWORD` from Jenkins/Azure Key Vault. The PostgreSQL chart creates the `${SERVICE_NAME}-postgresql` Secret, which is referenced by CCD services through `global.postgresSecret`; Logstash mounts the same Secret and reads its password from a file.
 
 ## Local validation
 
