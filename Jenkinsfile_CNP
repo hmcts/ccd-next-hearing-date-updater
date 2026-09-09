@@ -128,36 +128,8 @@ withPipeline(type, product, component) {
   enableAksStagingDeployment()
   disableLegacyDeployment()
   loadVaultSecrets(secrets)
-  nonServiceApp()
-  syncBranchesWithMaster(branchesToSync)
 
-  afterAlways('test') {
-    // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/integration",
-      reportFiles          : "index.html",
-      reportName           : "Next Hearing Date Updater Integration Tests Report"
-    ]
-    junit '**/test-results/integration/*.xml'
-
-    publishHTML target: [
-      allowMissing         : true,
-      alwaysLinkToLastBuild: true,
-      keepAll              : true,
-      reportDir            : "build/reports/tests/test",
-      reportFiles          : "index.html",
-      reportName           : "Next Hearing Date Updater Unit Tests Report"
-    ]
-    junit '**/test-results/test/*.xml'
-  }
-
-  afterAlways('checkPostgresSecrets') {
+  stage('Check PostgreSQL secrets') {
     steps.sh '''
       test -n "$DATASTORE_POSTGRES_USERNAME" || {
         echo "DATASTORE_POSTGRES_USERNAME is not set"
@@ -188,6 +160,35 @@ withPipeline(type, product, component) {
 
       echo "Preview PostgreSQL credentials validated successfully"
     '''
+  }
+
+  nonServiceApp()
+  syncBranchesWithMaster(branchesToSync)
+
+  afterAlways('test') {
+    // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/pmd/*.html'
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/integration",
+      reportFiles          : "index.html",
+      reportName           : "Next Hearing Date Updater Integration Tests Report"
+    ]
+    junit '**/test-results/integration/*.xml'
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/test",
+      reportFiles          : "index.html",
+      reportName           : "Next Hearing Date Updater Unit Tests Report"
+    ]
+    junit '**/test-results/test/*.xml'
   }
 
   afterAlways('akschartsinstall') {
