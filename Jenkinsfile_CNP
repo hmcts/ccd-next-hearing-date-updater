@@ -185,6 +185,8 @@ withPipeline(type, product, component) {
         echo "Preview PostgreSQL credentials were not rendered correctly"
         exit 1
       fi
+
+      echo "Preview PostgreSQL credentials validated successfully"
     '''
   }
 
