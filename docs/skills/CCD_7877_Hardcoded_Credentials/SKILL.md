@@ -7,7 +7,7 @@ Ensure Next Hearing Date Updater credentials are supplied by runtime secret inje
 ## Acceptance criteria
 
 - IDAM client secret, system-user credentials, and S2S secret have no committed credential defaults.
-- Existing environment variable names, Jenkins Azure Key Vault mappings, and Helm secret aliases remain unchanged.
+- Existing application environment variable names and Jenkins Azure Key Vault mappings remain available; preview PostgreSQL consumers now use the shared `${SERVICE_NAME}-postgresql` Secret and its `password` key.
 - No live secret rotation is performed or implied.
 
 ## Findings and changes
