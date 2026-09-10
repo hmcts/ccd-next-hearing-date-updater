@@ -15,6 +15,7 @@ idam:
     url: http://localhost:${wiremock.server.port:5000}
   s2s-auth:
     url: http://localhost:${wiremock.server.port:5000}/s2s
+    totp_secret: integration-test-secret
 
 elasticsearch:
   hosts: ${ELASTIC_SEARCH_DATA_NODES_HOSTS:"http://localhost:4578"}
