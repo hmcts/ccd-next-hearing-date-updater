@@ -254,7 +254,7 @@ To run all functional tests execute the following command:
 > [Configuring a local CCD environment](#configuring-a-local-ccd-environment).
 
 > :information_source: Note: The functional Gradle task will import the environment variables from the
-> [.env.befta.local.env](./.env.befta.local.env) file prior to execution.  This will set all the variables needed to
+> the generated `.env.befta.local.env` file prior to execution. Create it from the [local BEFTA environment template](./.env.befta.local.env.example) with `./bin/setup-local-befta-env.sh`, supplying approved local values for all credential variables. This will set all the variables needed to
 > execute the [BEFTA Framework](https://github.com/hmcts/befta-fw) based tests.
 
 ### Configuring a local CCD environment
