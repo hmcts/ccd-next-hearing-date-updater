@@ -26,6 +26,6 @@ services:
       # these environment variables control the process
       - CASE_TYPES
       # these environment variables control the downstream calls
-      - IDAM_API_URL
+      - IDAM_HMCTS_ACCESS_URL
       - IDAM_S2S_URL
       - CCD_DATA_STORE_API_BASE_URL

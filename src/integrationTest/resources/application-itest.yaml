@@ -12,9 +12,9 @@ next-hearing-date-updater:
 
 idam:
   api:
-    url: http://localhost:${wiremock.server.port:5000}
+    url: http://localhost:${wiremock.server.port:9002}
   s2s-auth:
-    url: http://localhost:${wiremock.server.port:5000}/s2s
+    url: http://localhost:${wiremock.server.port:9002}/s2s
 
 elasticsearch:
   hosts: ${ELASTIC_SEARCH_DATA_NODES_HOSTS:"http://localhost:4578"}
