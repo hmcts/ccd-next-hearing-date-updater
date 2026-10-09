@@ -20,14 +20,14 @@ idam:
     url: ${IDAM_API_URL:http://localhost:5000}
   client:
     id: ccd_next_hearing_date_updater
-    secret:  ${CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET:AAAAAAAAAAAAAAAA}
+    secret:  ${CCD_NEXT_HEARING_DATE_UPDATER_SERVICE_IDAM_CLIENT_SECRET:}
     redirect_uri: http://ccd-next-hearing-date-updater/oauth2redirect
   nextHearingDateSystemUser:
-    username: ${IDAM_NEXT_HEARING_DATE_SYSTEM_USER:next.hearing.date.admin@gmail.com}
-    password: ${IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD:Pa55word11}
+    username: ${IDAM_NEXT_HEARING_DATE_SYSTEM_USER:}
+    password: ${IDAM_NEXT_HEARING_DATE_SYSTEM_PASSWORD:}
   s2s-auth:
     url: ${IDAM_S2S_URL:http://localhost:4502}
-    totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:AAAAAAAAAAAAAAAA}
+    totp_secret: ${IDAM_KEY_NEXT_HEARING_UPDATER:}
     microservice: ccd_next_hearing_date_updater
 
 next-hearing-date-updater:
