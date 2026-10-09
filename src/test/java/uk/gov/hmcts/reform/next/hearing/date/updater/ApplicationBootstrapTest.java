@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.next.hearing.date.updater;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.ApplicationArguments;
@@ -26,11 +27,11 @@ class ApplicationBootstrapTest {
     @Mock
     private NextHearingDateUpdaterService nextHearingDateUpdaterService;
 
+    @InjectMocks
     private ApplicationBootstrap underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new ApplicationBootstrap(nextHearingDateUpdaterService);
         ReflectionTestUtils.setField(underTest, "isProcessingEnabled", true);
     }
 
