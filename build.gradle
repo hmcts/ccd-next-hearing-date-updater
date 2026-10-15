@@ -311,7 +311,7 @@ ext {
   junit = '5.13.4'
   junitPlatform = '1.13.4'
   reformLogging = '8.0.0'
-  lombokVersion = '1.18.42'
+  lombokVersion = '1.18.48'
   // test dependencies
   cucumberVersion = '7.28.2'
   elasticsearchVersion = '7.17.8'
