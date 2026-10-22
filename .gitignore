@@ -27,3 +27,4 @@ applicationinsights-agent-*.jar
 target
 /befta_recent_executions_info_LOCAL.json
 .env.test.stub.service.env
+.env.befta.local.env
