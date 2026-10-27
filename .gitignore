@@ -4,6 +4,7 @@
 *.class
 bin/
 !bin/run-in-docker.sh
+.gradle-user-home
 
 ### STS ###
 .apt_generated
