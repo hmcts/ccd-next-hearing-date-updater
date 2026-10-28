@@ -1,0 +1,11 @@
+{
+  "_guid_": "Simple_200_Response",
+
+  "responseCode" : 200,
+  "responseMessage" : "OK",
+  "headers" : {
+    "Content-Type" : "[[ANYTHING_PRESENT]]",
+    "Date" : "[[ANYTHING_PRESENT]]",
+    "Transfer-Encoding" : "chunked"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "_guid_": "F-001_Verify_Case1_Cleared",
+  "_extends_": "Verify_Next_Hearing_Date_Cleared__Base",
+
+  "specs": [
+    "to verify next hearing date for Case1 has been cleared"
+  ],
+
+  "request": {
+    "pathVariables": {
+      "cid": "${[scenarioContext][siblingContexts][F-001-CreateTestCases_Clear][childContexts][Case1][testData][actualResponse][body][id]}"
+    }
+  }
+}

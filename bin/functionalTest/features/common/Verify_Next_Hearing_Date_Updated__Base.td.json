@@ -1,0 +1,42 @@
+{
+  "_guid_": "Verify_Next_Hearing_Date_Updated__Base",
+  "_extends_": "GetCaseDetails__PositiveResponse_Base",
+
+  "specs": [
+    "to verify"
+  ],
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "BeftaMasterCaseworker"
+    }
+  },
+
+  "request": {
+    "pathVariables": {
+      "cid": "OVERRIDE"
+    }
+  },
+
+  "expectedResponse": {
+    "body": {
+      "jurisdiction": "BEFTA_MASTER",
+      "case_type": "FT_NextHearingDate",
+      "data": {
+        "nextHearingDetails": {
+          "hearingID": "[[ANY_INTEGER_NOT_NULLABLE]]",
+          "hearingDateTime": "${[scenarioContext][customValues][VerifyHearingDateTimeIsFutureDate]}"
+        }
+      },
+      "data_classification" : {
+        "nextHearingDetails" : {
+          "value" : {
+            "hearingID" : "PUBLIC",
+            "hearingDateTime" : "PUBLIC"
+          },
+          "classification" : "PUBLIC"
+        }
+      }
+    }
+  }
+}

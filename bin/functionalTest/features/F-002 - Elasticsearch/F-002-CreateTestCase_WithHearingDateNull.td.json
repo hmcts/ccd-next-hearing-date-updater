@@ -1,0 +1,16 @@
+{
+  "_guid_": "F-002-CreateTestCase_WithHearingDateNull",
+  "_extends_": "CreateTestCase_NextHearingDate",
+
+
+  "request": {
+    "body": {
+      "data": {
+        "nextHearingDetails": {
+          "hearingDateTime": null
+        }
+      }
+    }
+  }
+
+}

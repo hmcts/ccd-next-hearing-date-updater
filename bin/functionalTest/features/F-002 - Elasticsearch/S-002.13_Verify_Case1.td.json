@@ -1,0 +1,25 @@
+{
+  "_guid_": "S-002.13_Verify_Case1",
+  "_extends_": "Verify_Next_Hearing_Date_Updated__Base",
+
+  "specs": [
+    "to verify next hearing date for Case1 is unchanged"
+  ],
+
+  "request": {
+    "pathVariables": {
+      "cid": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateNull][childContexts][Case1][testData][actualResponse][body][id]}"
+    }
+  },
+
+  "expectedResponse": {
+    "body": {
+      "data": {
+        "nextHearingDetails": {
+          "hearingID": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateNull][childContexts][Case1][testData][actualResponse][body][data][nextHearingDetails][hearingID]}",
+          "hearingDateTime": "${[scenarioContext][siblingContexts][F-002-CreateTestCases_WithHearingDateNull][childContexts][Case1][testData][actualResponse][body][data][nextHearingDetails][hearingDateTime]}"
+        }
+      }
+    }
+  }
+}

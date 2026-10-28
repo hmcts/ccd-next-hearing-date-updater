@@ -1,0 +1,11 @@
+{
+  "_guid_": "F-001-CreateTestCases_Bad_StartEvent",
+  "_extends_": "CreateTestCases__Base",
+
+  "prerequisites": [
+    {
+      "Case1": "CreateTestCase_NextHearingDate_Bad_StartEvent"
+    }
+  ]
+
+}
