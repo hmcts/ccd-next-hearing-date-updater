@@ -342,6 +342,7 @@ dependencies {
 
   // put CVE Vulnerability (sub)dependency overrides here e.g.
   // implementation group: 'com.example', name: 'example-lib', version: '1.0.0' //  parent dependency name
+  implementation group: 'com.sun.mail', name: 'mailapi', version: '2.0.2' // CVE-2025-7962
 
   // end::CVE Vulnerability dependency overrides                                                      // MAIN PARENT DEPENDEDNCY
 
