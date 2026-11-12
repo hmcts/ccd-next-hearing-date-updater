@@ -6,8 +6,9 @@ spring:
   banner:
     location: classpath:next-hearing-date-banner.txt
   jackson:
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
+    datatype:
+      datetime:
+        WRITE_DATES_AS_TIMESTAMPS: false
   main:
     web-application-type: NONE
   cache:

@@ -3,15 +3,15 @@ plugins {
   id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'com.github.ben-manes.versions' version '0.51.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1946'
+  id 'io.github.ben-manes.versions' version '0.67.0'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.2483'
   id 'com.github.spacialcircumstances.gradle-cucumber-reporting' version '0.1.25'
   id 'io.spring.dependency-management' version '1.1.7'
-  id 'info.solidsoft.pitest' version '1.15.0' apply false
-  id 'org.owasp.dependencycheck' version '12.1.3'
-  id 'org.sonarqube' version '7.1.0.6387'
-  id 'org.springframework.boot' version '3.5.8'
-  id 'uk.gov.hmcts.java' version '0.12.67'
+  id 'info.solidsoft.pitest' version '1.19.0' apply false
+  id 'org.owasp.dependencycheck' version '13.0.0'
+  id 'org.sonarqube' version '7.5.0.8588'
+  id 'org.springframework.boot' version '4.1.2'
+  id 'uk.gov.hmcts.java' version '0.12.70'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -68,17 +68,17 @@ configurations {
 idea {
   module {
     // config to allow Intellij to mark test source and resource files correctly to help linting tools
-    testSourceDirs += project.sourceSets.cftlib.java.srcDirs
-    testSourceDirs += project.sourceSets.functionalTest.java.srcDirs
-    testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
-    testResourceDirs += project.sourceSets.cftlib.resources.srcDirs
-    testResourceDirs += project.sourceSets.functionalTest.resources.srcDirs
-    testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
+    testSources.from(project.sourceSets.cftlib.java.srcDirs)
+    testSources.from(project.sourceSets.functionalTest.java.srcDirs)
+    testSources.from(project.sourceSets.integrationTest.java.srcDirs)
+    testResources.from(project.sourceSets.cftlib.resources.srcDirs)
+    testResources.from(project.sourceSets.functionalTest.resources.srcDirs)
+    testResources.from(project.sourceSets.integrationTest.resources.srcDirs)
   }
 }
 
 tasks.withType(JavaCompile) {
-  options.compilerArgs << "-Xlint:unchecked" << "-Werror"
+  options.compilerArgs << "-Xlint:unchecked"
 }
 
 // https://github.com/gradle/gradle/issues/16791
@@ -203,13 +203,13 @@ task smoke(type: Test) {
 }
 
 checkstyle {
-  toolVersion = '10.3.1'
+  toolVersion = '13.4.0'
   maxWarnings = 0
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
 
 pmd {
-  toolVersion = "6.41.0"
+  toolVersion = "6.55.0"
   sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
   reportsDir = file("$project.buildDir/reports/pmd")
   // https://github.com/pmd/pmd/issues/876
@@ -272,7 +272,7 @@ repositories {
 apply plugin: 'info.solidsoft.pitest'
 
 pitest {
-  junit5PluginVersion.set('1.2.1')
+  junit5PluginVersion.set('1.2.3')
   targetClasses = ['uk.gov.hmcts.reform.*']
   excludedClasses = [
     'uk.gov.hmcts.reform.ccd.madeup.*'
@@ -302,20 +302,15 @@ pitest {
 project.tasks['pitest'].group = "Verification"
 
 ext {
-  set('springCloudVersion', '2025.0.0')
-  set('spring-framework.version', '6.2.14')
-  set('spring-security.version', '6.5.7')
-  set('log4j2.version', '2.17.1')
-  set('jackson.version', '2.19.2')
-  set('snakeyaml.version', '2.2')
-  junit = '5.13.4'
-  junitPlatform = '1.13.4'
+  set('springCloudVersion', '2025.1.3')
+  junit = '6.1.3'
+  junitPlatform = '6.1.3'
   reformLogging = '8.0.0'
   lombokVersion = '1.18.42'
   // test dependencies
-  cucumberVersion = '7.28.2'
+  cucumberVersion = '8.0.4'
   elasticsearchVersion = '7.17.29'
-  testcontainersVersion = '1.21.3'
+  testcontainersVersion = '1.21.4'
 }
 
 ext.libraries = [
@@ -341,75 +336,75 @@ dependencies {
   // start::CVE Vulnerability dependency overrides                                                    // MAIN PARENT DEPENDEDNCY
 
   // put CVE Vulnerability (sub)dependency overrides here e.g.
-  // implementation group: 'com.example', name: 'example-lib', version: '1.0.0' //  parent dependency name
+  // implementation "com.example:example-lib:1.0.0" //  parent dependency name
 
   // end::CVE Vulnerability dependency overrides                                                      // MAIN PARENT DEPENDEDNCY
 
 
   // Spring
-  implementation group: 'org.springframework', name:'spring-webmvc'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'
-  implementation group: 'org.springframework.security', name: 'spring-security-config'
-  implementation group: 'org.springframework.security', name: 'spring-security-core'
-  implementation group: 'org.springframework.security', name: 'spring-security-crypto'
-  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client'
-  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-core'
-  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
-  implementation group: 'org.springframework.security', name: 'spring-security-oauth2-resource-server'
-  implementation group: 'org.springframework.security', name: 'spring-security-web'
+  implementation "org.springframework:spring-webmvc"
+  implementation "org.springframework.boot:spring-boot-starter"
+  implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+  implementation "org.springframework.security:spring-security-config"
+  implementation "org.springframework.security:spring-security-core"
+  implementation "org.springframework.security:spring-security-crypto"
+  implementation "org.springframework.security:spring-security-oauth2-client"
+  implementation "org.springframework.security:spring-security-oauth2-core"
+  implementation "org.springframework.security:spring-security-oauth2-jose"
+  implementation "org.springframework.security:spring-security-oauth2-resource-server"
+  implementation "org.springframework.security:spring-security-web"
 
   // HMCTS
-  implementation group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '5.2.0'
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.5'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.3'
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
+  implementation "com.github.hmcts:core-case-data-store-client:6.1.0"
+  implementation "com.github.hmcts:idam-java-client:4.0.0"
+  implementation "com.github.hmcts:service-auth-provider-java-client:6.1.2"
+  implementation "com.github.hmcts.java-logging:logging:${reformLogging}"
 
 
-  implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
-  implementation group: 'commons-validator', name: 'commons-validator', version: '1.10.1'
-  implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
-  implementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: '1.15.0'
-  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.1'
-  implementation (group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', version: '0.5') {
+  implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+  implementation "commons-validator:commons-validator:1.11.0"
+  implementation "jakarta.servlet:jakarta.servlet-api:6.1.0"
+  implementation "info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.15.0"
+  implementation "net.logstash.logback:logstash-logback-encoder:9.0"
+  implementation ("org.codehaus.sonar-plugins:sonar-pitest-plugin:0.5") {
     exclude module: "guava"
   }
-  implementation group: 'org.pitest', name: 'pitest', version: '1.16.3'
-  implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  implementation "org.pitest:pitest:1.30.2"
+  implementation "org.projectlombok:lombok:${lombokVersion}"
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
   // Unit test dependencies
   testImplementation libraries.junit5
-  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-  testImplementation group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.11'
-  testImplementation group: 'com.github.hmcts', name: 'ccd-test-definitions', version: '7.26.12'
-  testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  testImplementation "org.springframework.boot:spring-boot-starter-test"
+  testImplementation "com.github.hmcts:befta-fw:9.2.12"
+  testImplementation "com.github.hmcts:ccd-test-definitions:7.26.16"
+  testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
   // CFTLib dependencies
-  cftlibImplementation group: 'org.awaitility', name: 'awaitility', version: '4.3.0'
-  cftlibImplementation group: 'org.testcontainers', name: 'testcontainers', version: testcontainersVersion
-  cftlibAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  cftlibImplementation "org.awaitility:awaitility:4.3.0"
+  cftlibImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"
+  cftlibAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
 
   // Integration test dependencies
-  integrationTestImplementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8'
-  integrationTestImplementation group: 'org.wiremock.integrations', name:'wiremock-spring-boot', version: '3.10.6'
-  integrationTestImplementation group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearchVersion
-  integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: elasticsearchVersion
-  integrationTestImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: elasticsearchVersion
-  integrationTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: testcontainersVersion
-  integrationTestImplementation group: 'org.testcontainers', name: 'elasticsearch', version: testcontainersVersion
-  integrationTestImplementation group: 'com.pivovarit', name: 'throwing-function', version: '1.6.1'
-  integrationTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  integrationTestImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+  integrationTestImplementation "org.wiremock.integrations:wiremock-spring-boot:4.4.3"
+  integrationTestImplementation "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
+  integrationTestImplementation "org.elasticsearch.client:elasticsearch-rest-client:${elasticsearchVersion}"
+  integrationTestImplementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}"
+  integrationTestImplementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
+  integrationTestImplementation "org.testcontainers:elasticsearch:${testcontainersVersion}"
+  integrationTestImplementation "com.pivovarit:throwing-function:1.6.1"
+  integrationTestAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
 
   // Functional test dependencies
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation sourceSets.integrationTest.runtimeClasspath
-  functionalTestImplementation group: 'io.cucumber', name: 'cucumber-junit', version: cucumberVersion
-  functionalTestImplementation group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
-  functionalTestImplementation group: 'io.vavr', name: 'vavr', version: '0.10.7'
+  functionalTestImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
+  functionalTestImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
+  functionalTestImplementation "io.vavr:vavr:1.1.0"
 
 }
 

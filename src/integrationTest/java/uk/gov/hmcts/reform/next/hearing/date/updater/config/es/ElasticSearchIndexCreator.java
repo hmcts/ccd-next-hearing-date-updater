@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater.config.es;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pivovarit.function.ThrowingConsumer;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -9,6 +11,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.next.hearing.date.updater.utils.CaseData;
 import uk.gov.hmcts.reform.next.hearing.date.updater.utils.ElasticSearchIntegrationTestUtils;
@@ -29,8 +32,9 @@ public class ElasticSearchIndexCreator {
     @Autowired
     private ElasticSearchIntegrationTestUtils elasticSearchIntegrationTestUtils;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
+        .modules(new Jdk8Module(), new JavaTimeModule())
+        .build();
 
     public void insertDataIntoElasticsearch(final String indexName,
                                             final List<CaseData> caseDataEntities) throws IOException {
