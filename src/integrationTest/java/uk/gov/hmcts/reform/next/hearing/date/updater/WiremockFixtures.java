@@ -1,9 +1,5 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import tools.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.FileSource;
@@ -13,11 +9,11 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.next.hearing.date.updater.config.CaseEventConfig;
 
-import static tools.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
@@ -26,14 +22,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_OK;
+
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import static uk.gov.hmcts.reform.next.hearing.date.updater.WireMockBootstrap.WIRE_MOCK_SERVER;
 
 public class WiremockFixtures {
 
-    private static final ObjectMapper OBJECT_MAPPER = new Jackson2ObjectMapperBuilder()
-        .modules(new Jdk8Module(), new JavaTimeModule())
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
+        .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         .build();
     public static final String SUBMIT_CASE_EVENT_URL = "/cases/%s/events";
 
@@ -137,9 +137,8 @@ public class WiremockFixtures {
     // see https://github.com/tomakehurst/wiremock/issues/1127
     private static String getJsonString(Object object) {
         try {
-            OBJECT_MAPPER.configure(WRITE_DATES_AS_TIMESTAMPS, false);
             return OBJECT_MAPPER.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }

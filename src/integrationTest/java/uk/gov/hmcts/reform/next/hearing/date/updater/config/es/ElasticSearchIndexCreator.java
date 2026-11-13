@@ -1,8 +1,5 @@
 package uk.gov.hmcts.reform.next.hearing.date.updater.config.es;
 
-import tools.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pivovarit.function.ThrowingConsumer;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -11,8 +8,10 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import uk.gov.hmcts.reform.next.hearing.date.updater.utils.CaseData;
 import uk.gov.hmcts.reform.next.hearing.date.updater.utils.ElasticSearchIntegrationTestUtils;
 
@@ -32,8 +31,8 @@ public class ElasticSearchIndexCreator {
     @Autowired
     private ElasticSearchIntegrationTestUtils elasticSearchIntegrationTestUtils;
 
-    private ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
-        .modules(new Jdk8Module(), new JavaTimeModule())
+    private ObjectMapper objectMapper = JsonMapper.builder()
+        .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         .build();
 
     public void insertDataIntoElasticsearch(final String indexName,
