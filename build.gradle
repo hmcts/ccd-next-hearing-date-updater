@@ -405,6 +405,7 @@ dependencies {
   functionalTestImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
   functionalTestImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
   functionalTestImplementation "io.vavr:vavr:1.1.0"
+  functionalTestImplementation "org.springframework.boot:spring-boot-jackson2" // temporary jackson 2 support for BEFTA
 
 }
 
