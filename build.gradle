@@ -338,6 +338,10 @@ dependencies {
   // put CVE Vulnerability (sub)dependency overrides here e.g.
   // implementation "com.example:example-lib:1.0.0" //  parent dependency name
 
+  // BEFTA 9.2.12 was compiled with Jackson 2.13 which has SnakeCaseStrategy.
+  // Jackson 2.14+ removed this class. Pin to 2.13.4 for functional tests compatibility.
+  functionalTestImplementation "com.fasterxml.jackson.core:jackson-databind:2.13.4"
+
   // end::CVE Vulnerability dependency overrides                                                      // MAIN PARENT DEPENDEDNCY
 
 
@@ -405,7 +409,6 @@ dependencies {
   functionalTestImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
   functionalTestImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
   functionalTestImplementation "io.vavr:vavr:1.1.0"
-  functionalTestImplementation "org.springframework.boot:spring-boot-jackson2" // temporary jackson 2 support for BEFTA
 
 }
 
