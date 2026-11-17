@@ -64,11 +64,12 @@ configurations {
 
   cftlibRuntimeClasspath.extendsFrom(runtimeClasspath)
   
-  // Exclude Jackson 3.x only from functional tests to avoid conflicts with Jackson 2.13.4
+  // Exclude Jackson 3.x and Groovy 5.x only from functional tests to avoid conflicts
   functionalTestRuntimeClasspath {
     exclude group: 'tools.jackson.core', module: 'jackson-databind'
     exclude group: 'tools.jackson.core', module: 'jackson-core'
     exclude group: 'tools.jackson'
+    exclude group: 'org.apache.groovy', module: 'groovy-bom'
   }
 }
 
