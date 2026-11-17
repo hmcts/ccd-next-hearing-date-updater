@@ -2,7 +2,9 @@
 /build/
 !gradle/wrapper/gradle-wrapper.jar
 *.class
-bin/main/application.yaml
+bin/
+!bin/run-in-docker.sh
+.gradle-user-home
 
 ### STS ###
 .apt_generated
