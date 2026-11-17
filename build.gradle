@@ -352,6 +352,11 @@ dependencies {
   functionalTestImplementation "com.fasterxml.jackson.core:jackson-core:2.13.4"
   functionalTestImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4"
   functionalTestImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.4"
+  
+  // REST Assured 5.5.7 is incompatible with Groovy 5.0.8. Pin Groovy to 4.0.22 for compatibility.
+  functionalTestImplementation "org.apache.groovy:groovy:4.0.22"
+  functionalTestImplementation "org.apache.groovy:groovy-json:4.0.22"
+  functionalTestImplementation "org.apache.groovy:groovy-xml:4.0.22"
 
   // end::CVE Vulnerability dependency overrides                                                      // MAIN PARENT DEPENDEDNCY
 
