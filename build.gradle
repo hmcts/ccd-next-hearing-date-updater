@@ -64,8 +64,8 @@ configurations {
 
   cftlibRuntimeClasspath.extendsFrom(runtimeClasspath)
   
-  // Exclude Jackson 3.x to avoid conflicts with Jackson 2.13.4 in functional tests
-  all {
+  // Exclude Jackson 3.x only from functional tests to avoid conflicts with Jackson 2.13.4
+  functionalTestRuntimeClasspath {
     exclude group: 'tools.jackson.core', module: 'jackson-databind'
     exclude group: 'tools.jackson.core', module: 'jackson-core'
     exclude group: 'tools.jackson'
