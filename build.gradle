@@ -69,7 +69,11 @@ configurations {
     exclude group: 'tools.jackson.core', module: 'jackson-databind'
     exclude group: 'tools.jackson.core', module: 'jackson-core'
     exclude group: 'tools.jackson'
+    // Exclude Groovy 5.x modules to prevent version conflicts with our pinned 4.0.22
     exclude group: 'org.apache.groovy', module: 'groovy-bom'
+    exclude group: 'org.codehaus.groovy', module: 'groovy'
+    exclude group: 'org.codehaus.groovy', module: 'groovy-json'
+    exclude group: 'org.codehaus.groovy', module: 'groovy-xml'
   }
 }
 
