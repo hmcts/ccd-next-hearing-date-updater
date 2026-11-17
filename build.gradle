@@ -63,6 +63,13 @@ configurations {
   smokeTestRuntimeOnly.extendsFrom runtimeOnly
 
   cftlibRuntimeClasspath.extendsFrom(runtimeClasspath)
+  
+  // Exclude Jackson 3.x to avoid conflicts with Jackson 2.13.4 in functional tests
+  all {
+    exclude group: 'tools.jackson.core', module: 'jackson-databind'
+    exclude group: 'tools.jackson.core', module: 'jackson-core'
+    exclude group: 'tools.jackson'
+  }
 }
 
 idea {
@@ -339,10 +346,12 @@ dependencies {
   // implementation "com.example:example-lib:1.0.0" //  parent dependency name
 
   // BEFTA 9.2.12 was compiled with Jackson 2.13 which has SnakeCaseStrategy.
-  // Jackson 2.14+ removed this class. Pin both databind and annotations to 2.13.4 for functional tests compatibility.
+  // Jackson 2.14+ removed this class. Pin all Jackson 2.x components to 2.13.4 for functional tests compatibility.
   functionalTestImplementation "com.fasterxml.jackson.core:jackson-databind:2.13.4"
   functionalTestImplementation "com.fasterxml.jackson.core:jackson-annotations:2.13.4"
   functionalTestImplementation "com.fasterxml.jackson.core:jackson-core:2.13.4"
+  functionalTestImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4"
+  functionalTestImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.4"
 
   // end::CVE Vulnerability dependency overrides                                                      // MAIN PARENT DEPENDEDNCY
 
@@ -408,9 +417,14 @@ dependencies {
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation sourceSets.integrationTest.runtimeClasspath
-  functionalTestImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
-  functionalTestImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
-  functionalTestImplementation "io.vavr:vavr:1.1.0"
+  functionalTestImplementation("io.cucumber:cucumber-junit:${cucumberVersion}")
+  functionalTestImplementation("io.cucumber:cucumber-java:${cucumberVersion}")
+  functionalTestImplementation("io.vavr:vavr:1.1.0")
+  
+  // Exclude Jackson 3 to avoid conflicts with Jackson 2.13.4
+  functionalTestImplementation("org.springframework.boot:spring-boot-starter") {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-jackson'
+  }
 
 }
 
