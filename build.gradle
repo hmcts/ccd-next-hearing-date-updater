@@ -66,16 +66,24 @@ configurations {
   
   // Exclude Jackson 3.x and Groovy 5.x only from functional tests to avoid conflicts
   functionalTestRuntimeClasspath {
+    exclude group: 'org.apache.groovy', module: 'groovy-xml'
+    exclude group: 'org.apache.groovy', module: 'groovy-json'
+    exclude group: 'org.apache.groovy', module: 'groovy'
+    exclude group: 'tools.jackson.core'
+    exclude group: 'tools.jackson'
+    
     resolutionStrategy.eachDependency { details ->
-    if (details.requested.group == 'com.fasterxml.jackson.core'
-        && details.requested.name == 'jackson-databind') {
-      details.useVersion "2.19.2"
-      details.because 'BEFTA 9.2.x requires the Jackson 2.19 naming-strategy compatibility class'
-    } else if (details.requested.group == 'org.apache.groovy') {
-      details.useVersion "4.0.22"
-      details.because 'BEFTA 9.2.x and REST Assured require Groovy 4 compatibility'
+      if (details.requested.group == 'com.fasterxml.jackson.core') {
+        details.useVersion "2.13.4"
+        details.because 'BEFTA 9.2.x requires the Jackson 2.13 naming-strategy compatibility class'
+      } else if (details.requested.group == 'com.fasterxml.jackson.datatype') {
+        details.useVersion "2.13.4"
+        details.because 'BEFTA 9.2.x requires Jackson 2.13 for datatype modules'
+      } else if (details.requested.group == 'org.apache.groovy') {
+        details.useVersion "4.0.22"
+        details.because 'BEFTA 9.2.x and REST Assured require Groovy 4 compatibility'
+      }
     }
-  }
   }
 }
 
