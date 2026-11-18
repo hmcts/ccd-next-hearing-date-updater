@@ -53,8 +53,8 @@ sourceSets {
 }
 
 configurations {
-  functionalTestImplementation.extendsFrom testImplementation
-  functionalTestRuntimeOnly.extendsFrom runtimeOnly
+  functionalTestImplementation.extendsFrom implementation, testImplementation, integrationTestImplementation
+  functionalTestRuntimeOnly.extendsFrom runtimeOnly, testRuntimeOnly, integrationTestRuntimeOnly
 
   integrationTestImplementation.extendsFrom testImplementation
   integrationTestRuntimeOnly.extendsFrom runtimeOnly
@@ -64,11 +64,8 @@ configurations {
 
   cftlibRuntimeClasspath.extendsFrom(runtimeClasspath)
   
-  // Exclude Jackson 3.x and Groovy 5.x only from functional tests to avoid conflicts
+  // Exclude Jackson 3.x from functional tests to avoid conflicts
   functionalTestRuntimeClasspath {
-    exclude group: 'org.apache.groovy', module: 'groovy-xml'
-    exclude group: 'org.apache.groovy', module: 'groovy-json'
-    exclude group: 'org.apache.groovy', module: 'groovy'
     exclude group: 'tools.jackson.core'
     exclude group: 'tools.jackson'
     
@@ -79,9 +76,6 @@ configurations {
       } else if (details.requested.group == 'com.fasterxml.jackson.datatype') {
         details.useVersion "2.13.4"
         details.because 'BEFTA 9.2.x requires Jackson 2.13 for datatype modules'
-      } else if (details.requested.group == 'org.apache.groovy') {
-        details.useVersion "4.0.22"
-        details.because 'BEFTA 9.2.x and REST Assured require Groovy 4 compatibility'
       }
     }
   }
@@ -367,8 +361,9 @@ dependencies {
   functionalTestImplementation "com.fasterxml.jackson.core:jackson-core:2.13.4"
   functionalTestImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4"
   functionalTestImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.4"
-  
-  // REST Assured 5.5.7 requires Groovy 4.0.x compatibility
+  functionalTestImplementation(enforcedPlatform("org.apache.groovy:groovy-bom:4.0.22"))
+
+  // REST Assured 5.5.7 requires Groovy 4; enforce one version across all functional-test dependencies.
   functionalTestImplementation "org.apache.groovy:groovy:4.0.22"
   functionalTestImplementation "org.apache.groovy:groovy-json:4.0.22"
   functionalTestImplementation "org.apache.groovy:groovy-xml:4.0.22"
@@ -435,9 +430,6 @@ dependencies {
 
 
   // Functional test dependencies
-  functionalTestImplementation sourceSets.main.runtimeClasspath
-  functionalTestImplementation sourceSets.test.runtimeClasspath
-  functionalTestImplementation sourceSets.integrationTest.runtimeClasspath
   functionalTestImplementation("io.cucumber:cucumber-junit:${cucumberVersion}")
   functionalTestImplementation("io.cucumber:cucumber-java:${cucumberVersion}")
   functionalTestImplementation("io.vavr:vavr:1.1.0")
